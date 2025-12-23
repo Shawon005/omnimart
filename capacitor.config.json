@@ -1,0 +1,9 @@
+{
+  "appId": "com.techordit.app",
+  "appName": "techOrdit",
+  "webDir": "public",
+  "server": {
+    "url": "http://techorbit.from99.com",
+    "cleartext": true
+  }
+}
