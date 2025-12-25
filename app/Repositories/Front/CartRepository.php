@@ -218,7 +218,8 @@ class CartRepository
             if ($qty_check == 1) {
                 $cart[$item->id . '-' . $cart_item_key]['qty'] =  $qty;
             } else {
-                $cart[$item->id . '-' . $cart_item_key]['qty'] +=  $qty;
+                //dd('add');
+                $cart[$item->id . '-' . $cart_item_key]['qty'] =  $qty;
             }
            
             if ($item->item_type == 'normal') {

@@ -5,5 +5,8 @@
   "server": {
     "url": "http://techorbit.from99.com",
     "cleartext": true
+  },
+  "assets": {
+    "path": "mobile-assets"
   }
 }

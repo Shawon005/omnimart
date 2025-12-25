@@ -186,10 +186,13 @@
                 right: 10px;
                 /* left: 10px; */
             }
-
+  
             .to-chatbot-window {
                 width: 100%;
                 max-height: 60vh;
+            }
+            .bar_mble{          
+                height: 30px;
             }
         }
     </style>
@@ -236,8 +239,9 @@ body_theme4 @endif
     @endif
 
     <!-- Header-->
-
+    
     <header class="site-header navbar-sticky">
+        <div class="bar_mble" style="{{'background:' . $setting->primary_color}}"></div>
         <div class="menu-top-area">
             <div class="container">
                 <div class="row">
@@ -283,7 +287,7 @@ body_theme4 @endif
 
                             <div class="login-register ">
                                 @if (!Auth::user())
-                                    <a class="track-order-link mr-0" href="{{ route('user.login') }}">
+                                    <a class="track-order-link mr-0" href="{{ route('user.login') }}" style="border: 2px solid; border-radius: 10px; padding: 3px 6px;">
                                         {{ __('Login') }}
                                     </a>
                                 @else
