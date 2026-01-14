@@ -62,7 +62,7 @@ class ItemRequest extends FormRequest
             'previous_price'  => 'max:50',
             'stock'           => 'numeric|max:9999999999',
             'tax_id'          => 'required',
-            'photo'           => $required, 'mimes:jpeg,jpg,png,svg'
+            'photo'           => $required, 'mimes:jpeg,jpg,png,svg,webp'
         ];
     }
 

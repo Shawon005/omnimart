@@ -33,16 +33,16 @@ class SettingRequest extends FormRequest
                 'friday_start' => 'required|max:255',
                 'friday_end' => 'required|max:255',
                 'working_days_from_to' => 'required|max:255',
-                'logo' => 'mimes:jpeg,jpg,png,svg',
-                'meta_image' => 'mimes:jpeg,jpg,png,svg',
-                'loader' => 'mimes:jpeg,jpg,png,svg,gif',
-                'favicon' => 'mimes:jpeg,jpg,png,svg,ico',
-                'feature_image' => 'mimes:jpeg,jpg,png,svg',
-                'home_background' => 'mimes:jpeg,jpg,png,svg',
-                'breadcumb_background' => 'mimes:jpeg,jpg,png,svg',
-                'footer_background' => 'mimes:jpeg,jpg,png,svg',
-                'popup_banner' => 'mimes:jpeg,jpg,png,svg',
-                'footer_gateway_img' => 'mimes:jpeg,jpg,png,svg'
+                'logo' => 'mimes:jpeg,jpg,png,svg,webp',
+                'meta_image' => 'mimes:jpeg,jpg,png,svg,webp',
+                'loader' => 'mimes:jpeg,jpg,png,svg,gif,webp',
+                'favicon' => 'mimes:jpeg,jpg,png,svg,ico,webp',
+                'feature_image' => 'mimes:jpeg,jpg,png,svg,webp',
+                'home_background' => 'mimes:jpeg,jpg,png,svg,webp',
+                'breadcumb_background' => 'mimes:jpeg,jpg,png,svg,webp',
+                'footer_background' => 'mimes:jpeg,jpg,png,svg,webp',
+                'popup_banner' => 'mimes:jpeg,jpg,png,svg,webp',
+                'footer_gateway_img' => 'mimes:jpeg,jpg,png,svg,webp'
             ];
         }else{
             return [

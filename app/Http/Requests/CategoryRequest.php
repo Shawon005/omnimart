@@ -29,7 +29,7 @@ class CategoryRequest extends FormRequest
 
         return [
             'slug'      => [$required,'unique:categories,slug'. $id,'regex:/^[a-zA-Z0-9-]+$/'],
-            'photo'     => [$required,'mimes:jpeg,jpg,png,svg'],
+            'photo'     => [$required,'mimes:jpeg,jpg,png,svg,webp'],
             'name'      => 'required|max:255',
             'meta_keywords'=> 'max:255',
         ];

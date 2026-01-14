@@ -24,7 +24,7 @@ class PaymentSettingRequest extends FormRequest
     public function rules()
     {
         return [
-            'photo'  => 'mimes:jpeg,jpg,png,svg'
+            'photo'  => 'mimes:jpeg,jpg,png,svg,webp'
         ];
     }
 

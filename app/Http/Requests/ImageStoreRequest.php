@@ -24,7 +24,7 @@ class ImageStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'photo'  => 'required|mimes:jpeg,jpg,png,svg'
+            'photo'  => 'required|mimes:jpeg,jpg,png,svg,webp'
         ];
     }
 
