@@ -50,6 +50,10 @@
                                         @csrf
                                         <input type="hidden" name="home_page" value="theme1" id="">
                                         @include('alerts.alerts')
+                                        @php
+                                            $languages = \App\Models\Language::whereType('Website')->get();
+                                            $defaultLang = \App\Models\Language::whereType('Website')->where('is_default', 1)->first();
+                                        @endphp
                                         <div class="form-group">
                                             <label id="change_label" for="name">{{ __('Brand Logo') }} </label>
                                             <br>
@@ -67,23 +71,55 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title">{{ __('Title') }} *</label>
-                                            <input type="text" name="title" class="form-control" id="title"
-                                                placeholder="{{ __('Enter Title') }}" value="{{ old('title') }}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="sliderTabs1" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="slider1-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#slider1-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="slider1-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="title1_{{ $lang->id }}">{{ __('Title') }}</label>
+                                                    <textarea name="title_{{ $lang->id }}" id="title1_{{ $lang->id }}"
+                                                            class="form-control text-editor" rows="5"
+                                                            placeholder="{{ __('Enter Title') }}"
+                                                        >{{ old("title_{$lang->id}") }}" </textarea>
+                                                    <!-- <input type="text" name="title_{{ $lang->id }}" class="form-control" id="title1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}" value="> -->
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="details1_{{ $lang->id }}">{{ __('Details') }}</label>
+                                                    <textarea name="details_{{ $lang->id }}" id="details1_{{ $lang->id }}" class="form-control text-editor" rows="5"
+                                                        placeholder="{{ __('Enter Details') }}"
+                                                        >{{ old("details_{$lang->id}") }}</textarea>
+                                                </div>
+                                                @if($lang->id == $defaultLang->id)
+                                                    <input type="hidden" name="title" value="{{ old('title') }}">
+                                                    <input type="hidden" name="details" value="{{ old('details') }}">
+                                                @endif
+                                            </div>
+                                            @endforeach
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="slider-link">{{ __('Link') }} *</label>
+                                            <label for="slider-link">{{ __('Link') }} </label>
                                             <input type="text" name="link" class="form-control" id="slider-link"
                                                 placeholder="{{ __('Enter Link') }}" value="{{ old('link') }}" >
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="details">{{ __('Details') }} *</label>
-                                            <textarea name="details" id="details" class="form-control" rows="5"
-                                                placeholder="{{ __('Enter Details') }}"
-                                                ></textarea>
                                         </div>
 
                                         <div class="form-group">
@@ -134,23 +170,51 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title">{{ __('Title') }} *</label>
-                                            <input type="text" name="title" class="form-control" id="title"
-                                                placeholder="{{ __('Enter Title') }}" value="{{ old('title') }}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="sliderTabs2" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="slider2-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#slider2-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="slider2-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="title2_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif</label>
+                                                    <input type="text" name="title_{{ $lang->id }}" class="form-control" id="title2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}" value="{{ old("title_{$lang->id}") }}" >
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="details2_{{ $lang->id }}">{{ __('Details') }} @if($lang->is_default == 1) * @endif</label>
+                                                    <textarea name="details_{{ $lang->id }}" id="details2_{{ $lang->id }}" class="form-control" rows="5"
+                                                        placeholder="{{ __('Enter Details') }}"
+                                                        >{{ old("details_{$lang->id}") }}</textarea>
+                                                </div>
+                                                @if($lang->id == $defaultLang->id)
+                                                    <input type="hidden" name="title" value="{{ old('title') }}">
+                                                    <input type="hidden" name="details" value="{{ old('details') }}">
+                                                @endif
+                                            </div>
+                                            @endforeach
                                         </div>
 
                                         <div class="form-group">
                                             <label for="slider-link">{{ __('Link') }} *</label>
                                             <input type="text" name="link" class="form-control" id="slider-link"
                                                 placeholder="{{ __('Enter Link') }}" value="{{ old('link') }}" >
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="details">{{ __('Details') }} *</label>
-                                            <textarea name="details" id="details" class="form-control" rows="5"
-                                                placeholder="{{ __('Enter Details') }}"
-                                                ></textarea>
                                         </div>
 
                                         <div class="form-group">
@@ -201,23 +265,51 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title">{{ __('Title') }} *</label>
-                                            <input type="text" name="title" class="form-control" id="title"
-                                                placeholder="{{ __('Enter Title') }}" value="{{ old('title') }}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="sliderTabs3" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="slider3-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#slider3-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="slider3-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="title3_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif</label>
+                                                    <input type="text" name="title_{{ $lang->id }}" class="form-control" id="title3_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}" value="{{ old("title_{$lang->id}") }}" >
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="details3_{{ $lang->id }}">{{ __('Details') }} @if($lang->is_default == 1) * @endif</label>
+                                                    <textarea name="details_{{ $lang->id }}" id="details3_{{ $lang->id }}" class="form-control" rows="5"
+                                                        placeholder="{{ __('Enter Details') }}"
+                                                        >{{ old("details_{$lang->id}") }}</textarea>
+                                                </div>
+                                                @if($lang->id == $defaultLang->id)
+                                                    <input type="hidden" name="title" value="{{ old('title') }}">
+                                                    <input type="hidden" name="details" value="{{ old('details') }}">
+                                                @endif
+                                            </div>
+                                            @endforeach
                                         </div>
 
                                         <div class="form-group">
                                             <label for="slider-link">{{ __('Link') }} *</label>
                                             <input type="text" name="link" class="form-control" id="slider-link"
                                                 placeholder="{{ __('Enter Link') }}" value="{{ old('link') }}" >
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="details">{{ __('Details') }} *</label>
-                                            <textarea name="details" id="details" class="form-control" rows="5"
-                                                placeholder="{{ __('Enter Details') }}"
-                                                ></textarea>
                                         </div>
 
                                         <div class="form-group">

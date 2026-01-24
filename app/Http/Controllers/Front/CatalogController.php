@@ -64,13 +64,13 @@ class CatalogController extends Controller
         $brand = $request->has('brand') ?  ( !empty($request->brand) ? Brand::whereSlug($request->brand)->firstOrFail() : null ) : null;
         $search = $request->has('search') ?  ( !empty($request->search) ? $request->search : null ) : null;
 
-        $category = $request->has('category') ? ( !empty($request->category) ? Category::whereSlug($request->category)->firstOrFail() : null ) : null;
-        $subcategory = $request->has('subcategory') ? ( !empty($request->subcategory) ? Subcategory::whereSlug($request->subcategory)->firstOrFail() : null ) : null;
+        $category = $request->has('category') ? ( !empty($request->category) ? Category::with('translations')->whereSlug($request->category)->firstOrFail() : null ) : null;
+        $subcategory = $request->has('subcategory') ? ( !empty($request->subcategory) ? Subcategory::with('translations')->whereSlug($request->subcategory)->firstOrFail() : null ) : null;
         $childcategory = $request->has('childcategory') ? ( !empty($request->childcategory) ? ChieldCategory::where('slug',$request->childcategory)->first() : null ) : null;
         $minPrice = $request->has('minPrice') ?  ( !empty($request->minPrice) ? PriceHelper::convertPrice($request->minPrice) : null ) : null;
         $maxPrice = $request->has('maxPrice') ?  ( !empty($request->maxPrice) ? PriceHelper::convertPrice($request->maxPrice) : null ) : null;
         $tag = $request->has('tag') ?  ( !empty($request->tag) ? $request->tag : null ) : null;
-        $items = Item::with('category')
+        $items = Item::with(['category', 'translations'])
         ->when($category, function ($query, $category) {
             return $query->where('category_id', $category->id);
         })
@@ -187,7 +187,7 @@ class CatalogController extends Controller
             'childcategory' => $childcategory,
             'checkType'  => $checkType,
             'brands' => Brand::withCount('items')->whereStatus(1)->get(),
-            'categories' => Category::whereStatus(1)->orderby('serial','asc')->withCount(['items' => function($query) {
+            'categories' => Category::with('translations')->whereStatus(1)->orderby('serial','asc')->withCount(['items' => function($query) {
                 $query->where('status',1);
             }])->get(),
         ]);
@@ -208,7 +208,7 @@ class CatalogController extends Controller
             $category = Category::whereSlug($request->category)->first();
         }
         $search = $request->search;
-        $items = Item::whereStatus(1)
+        $items = Item::with('translations')->whereStatus(1)
         ->when($search, function ($query, $search) {
             return $query->where('name', 'like', '%' . $search . '%')->orderby('id','desc')->take(10);
         })

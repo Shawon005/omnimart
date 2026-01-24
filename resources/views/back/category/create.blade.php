@@ -48,35 +48,68 @@
 										</label>
                                     </div>
 
+									@php
+										$languages = \App\Models\Language::whereType('Website')->get();
+										$defaultLang = \App\Models\Language::whereType('Website')->where('is_default', 1)->first();
+									@endphp
+									@if($languages->count() > 1)
+									<ul class="nav nav-tabs mb-3" id="categoryTabs" role="tablist">
+										@foreach($languages as $index => $lang)
+										<li class="nav-item">
+											<a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+											   id="cat-lang-{{ $lang->id }}-tab" 
+											   data-toggle="tab" 
+											   href="#cat-lang-{{ $lang->id }}" 
+											   role="tab">
+												<i class="fas fa-globe"></i> {{ $lang->language }}
+												@if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+											</a>
+										</li>
+										@endforeach
+									</ul>
+									@endif
+									<div class="tab-content">
+										@foreach($languages as $index => $lang)
+										<div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+											 id="cat-lang-{{ $lang->id }}" 
+											 role="tabpanel">
 									<div class="form-group">
-										<label for="name">{{ __('Name') }} *</label>
-										<input type="text" name="name" class="form-control item-name" id="name"
-											placeholder="{{ __('Enter Name') }}" value="{{ old('name') }}" >
+												<label for="name_{{ $lang->id }}">{{ __('Name') }} @if($lang->is_default == 1) * @endif</label>
+												<input type="text" name="name_{{ $lang->id }}" class="form-control item-name {{ $lang->id == $defaultLang->id ? 'slug-source' : '' }}" 
+													id="name_{{ $lang->id }}"
+													placeholder="{{ __('Enter Name') }}" value="{{ old("name_{$lang->id}") }}" >
 									</div>
 
 									<div class="form-group">
-										<label for="slug">{{ __('Slug') }} *</label>
-										<input type="text" name="slug" class="form-control" id="slug"
-											placeholder="{{ __('Enter Slug') }}" value="{{ old('slug') }}" >
+												<label for="slug_{{ $lang->id }}">{{ __('Slug') }} @if($lang->is_default == 1) * @endif</label>
+												<input type="text" name="slug_{{ $lang->id }}" class="form-control slug-input" 
+													id="slug_{{ $lang->id }}"
+													placeholder="{{ __('Enter Slug') }}" value="{{ old("slug_{$lang->id}") }}" >
 									</div>
 
 									<div class="form-group">
-										<label for="meta_keywords">{{ __('Meta Keywords') }}
-											</label>
-										<input type="text" name="meta_keywords" class="tags"
-											id="meta_keywords"
+												<label for="meta_keywords_{{ $lang->id }}">{{ __('Meta Keywords') }}</label>
+												<input type="text" name="meta_keywords_{{ $lang->id }}" class="tags"
+													id="meta_keywords_{{ $lang->id }}"
 											placeholder="{{ __('Enter Meta Keywords') }}"
-											value="">
+													value="{{ old("meta_keywords_{$lang->id}") }}">
 									</div>
 
 									<div class="form-group">
-										<label
-											for="meta_description">{{ __('Meta Description') }}
-											</label>
-										<textarea name="meta_descriptions" id="meta_description"
+												<label for="meta_descriptions_{{ $lang->id }}">{{ __('Meta Description') }}</label>
+												<textarea name="meta_descriptions_{{ $lang->id }}" id="meta_descriptions_{{ $lang->id }}"
 											class="form-control" rows="5"
 											placeholder="{{ __('Enter Meta Description') }}"
-										></textarea>
+												>{{ old("meta_descriptions_{$lang->id}") }}</textarea>
+											</div>
+											@if($lang->id == $defaultLang->id)
+												<input type="hidden" name="name" value="{{ old('name') }}">
+												<input type="hidden" name="slug" value="{{ old('slug') }}">
+												<input type="hidden" name="meta_keywords" value="">
+												<input type="hidden" name="meta_descriptions" value="">
+											@endif
+										</div>
+										@endforeach
 									</div>
 
 									<div class="form-group">

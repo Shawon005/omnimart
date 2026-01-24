@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Models\Wishlist;
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Session;
 
 class Item extends Model
 {
+    use HasTranslations;
 
     protected $fillable = ['category_id','subcategory_id','childcategory_id','brand_id','name','slug','sku','tags','video','sort_details','specification_name','specification_description','is_specification','details','photo','thumbnail','discount_price','previous_price','stock','meta_keywords','meta_description','status','is_type','tax_id','date','item_type','file','link','file_type','license_name','license_key','affiliate_link',"seller_id"];
 
@@ -28,6 +31,66 @@ class Item extends Model
     public function brand()
     {
         return $this->belongsTo('App\Models\Brand')->withDefault();
+    }
+
+    public function translations()
+    {
+        return $this->hasMany(ItemTranslation::class);
+    }
+
+    // Accessors for multilingual attributes
+    public function getNameAttribute($value)
+    {
+        if (!request()->is('admin/*') && method_exists($this, 'translations')) {
+            $translated = $this->getTranslatedAttribute('name', 'name');
+            return $translated ?: $value;
+        }
+        return $value;
+    }
+
+    public function getSortDetailsAttribute($value)
+    {
+        if (!request()->is('admin/*') && method_exists($this, 'translations')) {
+            $translated = $this->getTranslatedAttribute('sort_details', 'sort_details');
+            return $translated ?: $value;
+        }
+        return $value;
+    }
+
+    public function getDetailsAttribute($value)
+    {
+        if (!request()->is('admin/*') && method_exists($this, 'translations')) {
+            $translated = $this->getTranslatedAttribute('details', 'details');
+            return $translated ?: $value;
+        }
+        return $value;
+    }
+
+    public function getMetaKeywordsAttribute($value)
+    {
+        if (!request()->is('admin/*') && method_exists($this, 'translations')) {
+            $translated = $this->getTranslatedAttribute('meta_keywords', 'meta_keywords');
+            return $translated ?: $value;
+        }
+        return $value;
+    }
+
+    public function getMetaDescriptionAttribute($value)
+    {
+        if (!request()->is('admin/*') && method_exists($this, 'translations')) {
+            $translated = $this->getTranslatedAttribute('meta_description', 'meta_description');
+            return $translated ?: $value;
+        }
+        return $value;
+    }
+
+    public function getSlugAttribute($value)
+    {
+        if (!request()->is('admin/*') && method_exists($this, 'translations')) {
+            $translated = $this->getTranslatedAttribute('slug', 'slug');
+            return $translated ?: $value;
+        }
+        return $value;
     }
 
     public function campaigns()

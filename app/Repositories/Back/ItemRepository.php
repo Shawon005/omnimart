@@ -5,6 +5,8 @@ namespace App\Repositories\Back;
 use App\{
     Models\Item,
     Models\Gallery,
+    Models\ItemTranslation,
+    Models\Language,
     Helpers\ImageHelper
 };
 use App\Models\Currency;
@@ -90,7 +92,42 @@ class ItemRepository
 
         $input['is_type'] = 'undefine';
 
-        $item_id = Item::create($input)->id;
+        // Save default language data to main table
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+        $defaultInput = $input;
+        
+        // Get default language values if provided
+        if ($defaultLang && $request->has("name_{$defaultLang->id}")) {
+            $defaultInput['name'] = $request->input("name_{$defaultLang->id}") ?: $input['name'];
+            $defaultInput['slug'] = $request->input("slug_{$defaultLang->id}") ?: $input['slug'];
+            $defaultInput['sort_details'] = $request->input("sort_details_{$defaultLang->id}") ?: ($input['sort_details'] ?? null);
+            $defaultInput['details'] = $request->input("details_{$defaultLang->id}") ?: ($input['details'] ?? null);
+            $defaultInput['meta_keywords'] = $request->input("meta_keywords_{$defaultLang->id}") ?: ($input['meta_keywords'] ?? null);
+            $defaultInput['meta_description'] = $request->input("meta_description_{$defaultLang->id}") ?: ($input['meta_description'] ?? null);
+            $defaultInput['tags'] = $request->input("tags_{$defaultLang->id}") ?: ($input['tags'] ?? null);
+        }
+        
+        $item_id = Item::create($defaultInput)->id;
+
+        // Save translations for all languages
+        $languages = Language::whereType('Website')->get();
+        foreach ($languages as $lang) {
+            $translationData = [
+                'item_id' => $item_id,
+                'language_id' => $lang->id,
+                'name' => $request->input("name_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['name'] : null),
+                'slug' => $request->input("slug_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['slug'] : null),
+                'sort_details' => $request->input("sort_details_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['sort_details'] : null),
+                'details' => $request->input("details_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['details'] : null),
+                'meta_keywords' => $request->input("meta_keywords_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_keywords'] : null),
+                'meta_description' => $request->input("meta_description_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_description'] : null),
+                'tags' => $request->input("tags_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['tags'] : null),
+                'specification_name' => $request->has("specification_name_{$lang->id}") ? json_encode($request->input("specification_name_{$lang->id}")) : ($lang->id == $defaultLang->id && isset($input['specification_name']) ? $input['specification_name'] : null),
+                'specification_description' => $request->has("specification_description_{$lang->id}") ? json_encode($request->input("specification_description_{$lang->id}")) : ($lang->id == $defaultLang->id && isset($input['specification_description']) ? $input['specification_description'] : null),
+            ];
+            
+            ItemTranslation::create($translationData);
+        }
 
         if(isset($input['galleries'])){
             $this->galleriesUpdate($request,$item_id);
@@ -186,7 +223,42 @@ class ItemRepository
             }
         }
 
+        // Update default language values in main table
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+        if ($defaultLang && $request->has("name_{$defaultLang->id}")) {
+            $input['name'] = $request->input("name_{$defaultLang->id}") ?: $input['name'];
+            $input['slug'] = $request->input("slug_{$defaultLang->id}") ?: $input['slug'];
+            $input['sort_details'] = $request->input("sort_details_{$defaultLang->id}") ?: ($input['sort_details'] ?? null);
+            $input['details'] = $request->input("details_{$defaultLang->id}") ?: ($input['details'] ?? null);
+            $input['meta_keywords'] = $request->input("meta_keywords_{$defaultLang->id}") ?: ($input['meta_keywords'] ?? null);
+            $input['meta_description'] = $request->input("meta_description_{$defaultLang->id}") ?: ($input['meta_description'] ?? null);
+            $input['tags'] = $request->input("tags_{$defaultLang->id}") ?: ($input['tags'] ?? null);
+        }
+
         $item->update($input);
+        
+        // Update translations for all languages
+        $languages = Language::whereType('Website')->get();
+        
+        foreach ($languages as $lang) {
+            $translationData = [
+                'name' => $request->input("name_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['name'] : null),
+                'slug' => $request->input("slug_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['slug'] : null),
+                'sort_details' => $request->input("sort_details_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['sort_details'] : null),
+                'details' => $request->input("details_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['details'] : null),
+                'meta_keywords' => $request->input("meta_keywords_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_keywords'] : null),
+                'meta_description' => $request->input("meta_description_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_description'] : null),
+                'tags' => $request->input("tags_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['tags'] : null),
+                'specification_name' => $request->has("specification_name_{$lang->id}") ? json_encode($request->input("specification_name_{$lang->id}")) : ($lang->id == $defaultLang->id && isset($input['specification_name']) ? $input['specification_name'] : null),
+                'specification_description' => $request->has("specification_description_{$lang->id}") ? json_encode($request->input("specification_description_{$lang->id}")) : ($lang->id == $defaultLang->id && isset($input['specification_description']) ? $input['specification_description'] : null),
+            ];
+            
+            ItemTranslation::updateOrCreate(
+                ['item_id' => $item->id, 'language_id' => $lang->id],
+                $translationData
+            );
+        }
+        
         if(isset($input['galleries'])){
             $this->galleriesUpdate($request,$item->id);
         }

@@ -31,9 +31,56 @@
     <div class="row">
 
         <div class="col-lg-8">
+        @php
+                $languages = \App\Models\Language::whereType('Website')->get();
+                $defaultLang = \App\Models\Language::whereType('Website')->where('is_default', 1)->first();
+            @endphp
             <div class="card">
                 <div class="card-body">
-                    <div class="form-group">
+                        @if($languages->count() > 1)
+                            <ul class="nav nav-tabs mb-3" id="nameSlugTabs" role="tablist">
+                                @foreach($languages as $index => $lang)
+                                <li class="nav-item">
+                                    <a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                    id="name-lang-{{ $lang->id }}-tab" 
+                                    data-toggle="tab" 
+                                    href="#name-lang-{{ $lang->id }}" 
+                                    role="tab">
+                                        <i class="fas fa-globe"></i> {{ $lang->language }}
+                                        @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                    </a>
+                                </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        <div class="tab-content">
+                        @foreach($languages as $index => $lang)
+                        @php
+                            $translation = $item->translations->where('language_id', $lang->id)->first();
+                        @endphp
+                        <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                             id="name-lang-{{ $lang->id }}" 
+                             role="tabpanel">
+                            <div class="form-group">
+                                <label for="name_{{ $lang->id }}">{{ __('Name') }} @if($lang->is_default == 1) * @endif</label>
+                                <input type="text" name="name_{{ $lang->id }}" class="form-control item-name {{ $lang->id == $defaultLang->id ? 'slug-source' : '' }}"
+                                    id="name_{{ $lang->id }}" placeholder="{{ __('Enter Name') }}"
+                                    value="{{ $translation ? $translation->name : ($lang->id == $defaultLang->id ? $item->name : '') }}" >
+                            </div>
+                            <div class="form-group">
+                                <label for="slug_{{ $lang->id }}">{{ __('Slug') }} @if($lang->is_default == 1) * @endif</label>
+                                <input type="text" name="slug_{{ $lang->id }}" class="form-control slug-input"
+                                    id="slug_{{ $lang->id }}" placeholder="{{ __('Enter Slug') }}"
+                                    value="{{ $translation ? $translation->slug : ($lang->id == $defaultLang->id ? $item->slug : '') }}" >
+                            </div>
+                        </div>
+                        @if($lang->id == $defaultLang->id)
+                                <input type="hidden" name="name" class="form-control item-name" value="{{ $item->name }}">
+                                <input type="hidden" name="slug" class="form-control" value="{{ $item->slug }}">
+                            @endif
+                        @endforeach
+                    </div>
+                    <!-- <div class="form-group">
                         <label for="name">{{ __('Name') }} *</label>
                         <input type="text" name="name" class="form-control item-name"
                             id="name"
@@ -47,7 +94,7 @@
                             id="slug"
                             placeholder="{{ __('Enter Slug') }}"
                             value="{{ $item->slug }}" >
-                    </div>
+                    </div> -->
 
                 </div>
             </div>
@@ -112,7 +159,55 @@
             </div>
             <div class="card">
                 <div class="card-body">
-                    <div class="form-group">
+                    @if($languages->count() > 1)
+                        <ul class="nav nav-tabs mb-3" id="descriptionTabs" role="tablist">
+                            @foreach($languages as $index => $lang)
+                            <li class="nav-item">
+                                <a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                id="desc-lang-{{ $lang->id }}-tab" 
+                                data-toggle="tab" 
+                                href="#desc-lang-{{ $lang->id }}" 
+                                role="tab">
+                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                </a>
+                            </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                    <div class="tab-content">
+                        @foreach($languages as $index => $lang)
+                        @php
+                            $translation = $item->translations->where('language_id', $lang->id)->first();
+                        @endphp
+                        <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                             id="desc-lang-{{ $lang->id }}" 
+                             role="tabpanel">
+                            <div class="form-group">
+                                <label for="sort_details_{{ $lang->id }}">{{ __('Short Description') }} @if($lang->is_default == 1) * @endif</label>
+                                <textarea name="sort_details_{{ $lang->id }}" id="sort_details_{{ $lang->id }}"
+                                    class="form-control"
+                                    placeholder="{{ __('Short Description') }}"
+                                    >{{ $translation ? $translation->sort_details : ($lang->id == $defaultLang->id ? $item->sort_details : '') }}</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="details_{{ $lang->id }}">{{ __('Description') }} @if($lang->is_default == 1) * @endif</label>
+                                <textarea name="details_{{ $lang->id }}" id="details_{{ $lang->id }}"
+                                    class="form-control text-editor"
+                                    rows="6"
+                                    placeholder="{{ __('Enter Description') }}"
+                                    >{{ $translation ? $translation->details : ($lang->id == $defaultLang->id ? $item->details : '') }}</textarea>
+                            </div>
+                           
+                        </div>
+                        @if($lang->id == $defaultLang->id)
+                                <input type="hidden" name="sort_details" value="{{ $item->sort_details }}">
+                                <input type="hidden" name="details" value="{{ $item->details }}">
+                            @endif
+                        @endforeach
+                    </div>
+                    <!-- <div class="form-group">
                         <label for="sort_details">{{ __('Short Description') }} *</label>
                         <textarea name="sort_details" id="sort_details"
                             class="form-control"
@@ -127,18 +222,44 @@
                             rows="6"
                             placeholder="{{ __('Enter Description') }}"
                             >{{$item->details}}</textarea>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="card">
                 <div class="card-body">
-                    <div class="form-group">
-                        <label for="tags">{{ __('Product Tags') }}
-                            </label>
-                        <input type="text" name="tags" class="tags"
-                            id="tags"
-                            placeholder="{{ __('Tags') }}"
-                            value="{{$item->tags}}">
+                @if($languages->count() > 1)
+                    <ul class="nav nav-tabs mb-3" id="tagsTabs" role="tablist">
+                        @foreach($languages as $index => $lang)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                               id="tags-lang-{{ $lang->id }}-tab" 
+                               data-toggle="tab" 
+                               href="#tags-lang-{{ $lang->id }}" 
+                               role="tab">
+                                <i class="fas fa-globe"></i> {{ $lang->language }}
+                                @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                    @endif
+                    <div class="tab-content">
+                        @foreach($languages as $index => $lang)
+                        @php
+                            $translation = $item->translations->where('language_id', $lang->id)->first();
+                        @endphp
+                        <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                             id="tags-lang-{{ $lang->id }}" 
+                             role="tabpanel">
+                            <div class="form-group mb-2">
+                                <label for="tags_{{ $lang->id }}">{{ __('Product Tags') }}</label>
+                                <input type="text" name="tags_{{ $lang->id }}" class="tags"
+                                    id="tags_{{ $lang->id }}"
+                                    placeholder="{{ __('Tags') }}"
+                                    value="{{ $translation ? $translation->tags : ($lang->id == $defaultLang->id ? $item->tags : '') }}">
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                     <div class="form-group">
                         <label class="switch-primary">

@@ -28,10 +28,10 @@ class ChieldcategoryRequest extends FormRequest
         $required = $this->subcategory ? '' : 'required';
         
         return [
-            'slug'  => [$required,'regex:/^[a-zA-Z0-9-]+$/'],
+            'slug_1'  => [$required,'regex:/^[a-zA-Z0-9-]+$/'],
             'category_id'  => 'required',
             'subcategory_id'  => 'required',
-            'name'  => 'required|max:255'
+            'name_1'  => 'required|max:255'
         ];
     }
 

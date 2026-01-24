@@ -25,7 +25,7 @@ class ItemRequest extends FormRequest
     public function rules()
     {
 
-
+        
         $type_required = $this->item_type == 'digital' || $this->item_type == 'license' ? '' : 'required';
 
 
@@ -51,13 +51,14 @@ class ItemRequest extends FormRequest
 
 
         return [
-            'name'            => 'required|max:255',
-            'slug'            => 'required','unique:items,slug' . $id, 'regex:/^[a-zA-Z0-9-]+$/',
+            'name_1'            => 'required|max:255',
+            'slug_1'            => 'required','unique:items,slug' . $id, 'regex:/^[a-zA-Z0-9-]+$/',
             'category_id'     => 'required',
-            'details'         => 'required',
-            'link'            => $check_link,
+            'details_1'         => 'required',
+            'lin
+            k'            => $check_link,
             'file'            => $check_file.'|file|mimes:zip',
-            'sort_details'    => 'required',
+            'sort_details_1'    => 'required',
             'discount_price'  => 'required|max:50',
             'previous_price'  => 'max:50',
             'stock'           => 'numeric|max:9999999999',

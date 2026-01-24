@@ -180,19 +180,33 @@
             font-size: 12px;
             cursor: pointer;
         }
+        .app-header {
+            display: none;
+        }
 
+        /* Show only in mobile app */
+        .is-mobile-app .app-header {
+            display: block;
+        }
+
+        /* Hide in web */
+        .is-web .app-header {
+            display: none;
+        }
         @media (max-width: 575.98px) {
             .to-chatbot-wrapper {
                 right: 10px;
                 /* left: 10px; */
             }
-  
             .to-chatbot-window {
                 width: 100%;
                 max-height: 60vh;
             }
             .bar_mble{          
                 height: 30px;
+            }
+            .mble_v{
+                display:none;
             }
         }
     </style>
@@ -237,30 +251,37 @@ body_theme4 @endif
 
         <!-- Preloader endif -->
     @endif
-
-    <!-- Header-->
     
+    <!-- Header-->
+    <script>
+        if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+            document.body.classList.add('is-mobile-app');
+        } else {
+            document.body.classList.add('is-web');
+        }
+</script>
     <header class="site-header navbar-sticky">
-        <div class="bar_mble" style="{{'background:' . $setting->primary_color}}"></div>
+        <div class="bar_mble app-header" style="{{'background:' . $setting->primary_color}}"></div>
         <div class="menu-top-area">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-7">
                         <div class="t-m-s-a">
                             <a class="track-order-link" href="{{ route('front.order.track') }}"><i
-                                    class="icon-map-pin"></i>{{ __('Track Order') }}</a>
+                                    class="icon-map-pin"></i><span  class="mble_vs">{{ __('Track Order') }}</span></a>
                             <a class="track-order-link compare-mobile d-lg-none"
-                                href="{{ route('fornt.compare.index') }}">{{ __('Compare') }}</a>
+                                href="{{ route('fornt.compare.index') }}"><i class='icon-repeat'></i><span  class="mble_v">{{ __('Compare') }}
+                                    </span> </a>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-5">
                         <div class="right-area">
 
                             <a class="track-order-link wishlist-mobile d-inline-block d-lg-none"
                                 href="{{ route('user.wishlist.index') }}"><i
-                                    class="icon-heart"></i>{{ __('Wishlist') }}</a>
+                                    class="icon-heart"></i><span class="mble_v">{{ __('Wishlist') }}</span></a>
 
-                            {{-- <div class="t-h-dropdown ">
+                            <div class="t-h-dropdown ">
                                 <a class="main-link" href="#">{{ __('Language') }}<i
                                         class="icon-chevron-down"></i></a>
                                 <div class="t-h-dropdown-menu">
@@ -270,17 +291,17 @@ body_theme4 @endif
                                                 class="icon-chevron-right pr-2"></i>{{ $language->language }}</a>
                                     @endforeach
                                 </div>
-                            </div> --}}
+                            </div>
 
 
                             <div class="t-h-dropdown ">
-                                <a class="main-link" href="#">{{ __('Currency') }}<i
+                                <a class="main-link" href="#"><i class='fas fa-dollar-sign me-2'></i><span class="mble_v">{{ __('Currency') }}</span><i
                                         class="icon-chevron-down"></i></a>
                                 <div class="t-h-dropdown-menu">
                                     @foreach (DB::table('currencies')->get() as $currency)
                                         <a class="{{ Session::get('currency') == $currency->id ? 'active' : ($currency->is_default == 1 && !Session::has('currency') ? 'active' : '') }}"
                                             href="{{ route('front.currency.setup', $currency->id) }}"><i
-                                                class="icon-chevron-right pr-2"></i>{{ $currency->name }}</a>
+                                                class="icon-chevron-right pr-2 "></i> {{ $currency->name }}</a>
                                     @endforeach
                                 </div>
                             </div>

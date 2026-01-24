@@ -47,17 +47,49 @@
 											<span class="file-custom text-left">{{ __('Upload Image...') }}</span>
 										</label>
 									</div>
-									<div class="form-group">
-										<label for="title">{{ __('Title') }} *</label>
-										<input type="text" name="title" class="form-control" id="title"
-											placeholder="{{ __('Enter Title') }}" value="{{ old('title') }}" >
-									</div>
+									@php
+										$languages = \App\Models\Language::whereType('Website')->get();
+										$defaultLang = \App\Models\Language::whereType('Website')->where('is_default', 1)->first();
+									@endphp
+									@if($languages->count() > 1)
+									<ul class="nav nav-tabs mb-3" id="serviceTabs" role="tablist">
+										@foreach($languages as $index => $lang)
+										<li class="nav-item">
+											<a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+											   id="service-lang-{{ $lang->id }}-tab" 
+											   data-toggle="tab" 
+											   href="#service-lang-{{ $lang->id }}" 
+											   role="tab">
+												<i class="fas fa-globe"></i> {{ $lang->language }}
+												@if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+											</a>
+										</li>
+										@endforeach
+									</ul>
+									@endif
+									<div class="tab-content">
+										@foreach($languages as $index => $lang)
+										<div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+											 id="service-lang-{{ $lang->id }}" 
+											 role="tabpanel">
+											<div class="form-group">
+												<label for="title_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif</label>
+												<input type="text" name="title_{{ $lang->id }}" class="form-control" id="title_{{ $lang->id }}"
+													placeholder="{{ __('Enter Title') }}" value="{{ old("title_{$lang->id}") }}" >
+											</div>
 
-									<div class="form-group">
-										<label for="details">{{ __('Details') }} *</label>
-										<textarea name="details" id="details" class="form-control" rows="5"
-											placeholder="{{ __('Enter Details') }}"
-											>{{ old('details') }}</textarea>
+											<div class="form-group">
+												<label for="details_{{ $lang->id }}">{{ __('Details') }} @if($lang->is_default == 1) * @endif</label>
+												<textarea name="details_{{ $lang->id }}" id="details_{{ $lang->id }}" class="form-control" rows="5"
+													placeholder="{{ __('Enter Details') }}"
+													>{{ old("details_{$lang->id}") }}</textarea>
+											</div>
+											@if($lang->id == $defaultLang->id)
+												<input type="hidden" name="title" value="{{ old('title') }}">
+												<input type="hidden" name="details" value="{{ old('details') }}">
+											@endif
+										</div>
+										@endforeach
 									</div>
 
 								<div class="form-group">

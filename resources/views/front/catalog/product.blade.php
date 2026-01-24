@@ -277,8 +277,13 @@
                                 aria-controls="specification" aria-selected="false">{{ __('Specifications') }}</a>
                         </li>
                     </ul>
+                    <style>
+                        .detailsP p{
+                            margin-right:unset !important;
+                        }
+                    </style>
                     <div class="tab-content card">
-                        <div class="tab-pane fade show active" id="description" role="tabpanel"
+                        <div class="tab-pane fade show active detailsP" id="description" role="tabpanel"
                             aria-labelledby="description-tab"">
                             {!! $item->details !!}
                         </div>

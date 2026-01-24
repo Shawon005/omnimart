@@ -53,24 +53,62 @@
 											<span class="file-custom text-left">{{ __('Upload Image...') }}</span>
 										</label>
 									</div>
-									<div class="form-group">
-										<label for="title">{{ __('Title') }} *</label>
-										<input type="text" name="title" class="form-control" id="title"
-											placeholder="{{ __('Enter Title') }}" value="{{ $slider->title }}" >
-									</div>
+									@php
+										$languages = \App\Models\Language::whereType('Website')->get();
+										$defaultLang = \App\Models\Language::whereType('Website')->where('is_default', 1)->first();
+										$slider->load('translations');
+									@endphp
+									@if($languages->count() > 1)
+									<ul class="nav nav-tabs mb-3" id="sliderTabs" role="tablist">
+										@foreach($languages as $index => $lang)
+										<li class="nav-item">
+											<a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+											   id="slider-lang-{{ $lang->id }}-tab" 
+											   data-toggle="tab" 
+											   href="#slider-lang-{{ $lang->id }}" 
+											   role="tab">
+												<i class="fas fa-globe"></i> {{ $lang->language }}
+												@if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+											</a>
+										</li>
+										@endforeach
+									</ul>
+									@endif
+									<div class="tab-content">
+										@foreach($languages as $index => $lang)
+										@php
+											$translation = $slider->translations->where('language_id', $lang->id)->first();
+										@endphp
+										<div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+											 id="slider-lang-{{ $lang->id }}" 
+											 role="tabpanel">
+											<div class="form-group">
+												<label for="title_{{ $lang->id }}">{{ __('Title') }} </label>
+												<textarea name="title_{{ $lang->id }}" id="title_{{ $lang->id }}" class="form-control text-editor" rows="5"
+													placeholder="title_{{ $lang->id }}">{{ $translation ? $translation->title : ($lang->id == $defaultLang->id ? $slider->title : '') }}</textarea>
+												<!-- <input type="text" name="title_{{ $lang->id }}" class="form-control" id="title_{{ $lang->id }}"
+												
+													placeholder="{{ __('Enter Title') }}" 
+													value="{{ $translation ? $translation->title : ($lang->id == $defaultLang->id ? $slider->title : '') }}" > -->
+											</div>
 
+											<div class="form-group">
+												<label for="details_{{ $lang->id }}">{{ __('Details') }} </label>
+												<textarea name="details_{{ $lang->id }}" id="details_{{ $lang->id }}" class="form-control text-editor" rows="5"
+													placeholder="{{ __('Enter Details') }}"
+												>{{ $translation ? $translation->details : ($lang->id == $defaultLang->id ? $slider->details : '') }}</textarea>
+											</div>
+											@if($lang->id == $defaultLang->id)
+												<input type="hidden" name="title" value="{{ $slider->title }}">
+												<input type="hidden" name="details" value="{{ $slider->details }}">
+											@endif
+										</div>
+										@endforeach
+									</div>
 									<div class="form-group">
-										<label for="slider-link">{{ __('Link') }} *</label>
+										<label for="slider-link">{{ __('Link') }} </label>
 										<input type="text" name="link" class="form-control" id="slider-link"
 											placeholder="{{ __('Enter Link') }}" value="{{ $slider->link }}" >
-									</div>
-
-
-									<div class="form-group">
-										<label for="details">{{ __('Details') }} *</label>
-										<textarea name="details" id="details" class="form-control" rows="5"
-											placeholder="{{ __('Enter Details') }}"
-											>{{ $slider->details }}</textarea>
 									</div>
 
 									<div class="form-group">

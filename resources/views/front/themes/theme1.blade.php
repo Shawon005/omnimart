@@ -25,11 +25,11 @@
                                                     <img class="d-inline-block brand-logo"
                                                         src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="logo">
                                                 @endif
-                                                <div class="title text-body">{{ $slider->title }}</div>
-                                                <div class="subtitle text-body">{{ $slider->details }}</div>
+                                                <div class="text-body">{!! $slider->title !!}</div>
+                                                <div class="text-body">{!! $slider->details !!}</div>
                                             </div>
                                             @if ($slider->link != '#')
-                                                <a class="btn btn-primary scale-up delay-1" href="{{ $slider->link }}">
+                                                <a class="btn btn-primary scale-up delay-1" href="{{ $slider->link }}"style="bottom: 40px;buttom: 10px;position: absolute;">
                                                     <span>{{ __('Buy Now') }}</span>
                                                 </a>
                                             @endif
@@ -96,6 +96,7 @@
 
 
     @if ($setting->campaign_status == 1)
+ 
         <div class="deal-of-day-section mt-20">
             <div class="container">
                 <div class="row">
@@ -105,6 +106,7 @@
                             <div class="right-area">
                                 <div class="countdown countdown-alt" data-date-time="{{ $setting->campaign_end_date }}">
                                 </div>
+                               
                                 <a class="right_link" href="{{ route('front.campaign') }}">{{ __('View All') }} <i
                                         class="icon-chevron-right"></i></a>
 
@@ -117,8 +119,10 @@
                     <div class="col-lg-12">
                         <div class="popular-category-slider owl-carousel">
                             @foreach ($campaign_items as $compaign_item)
+                            
                                 <div class="slider-item">
                                     <div class="product-card">
+
                                         <div class="product-thumb">
                                             @if (!$compaign_item->item->is_stock())
                                                 <div
@@ -131,9 +135,12 @@
                                                 <div class="product-badge product-badge2 bg-info">
                                                     -{{ PriceHelper::DiscountPercentage($compaign_item->item) }}</div>
                                             @endif
+                                            <a
+                                                    href="{{ route('front.product', $compaign_item->item->slug) }}">
                                             <img class="lazy"
                                                 data-src="{{ url('/core/public/storage/images/' . $compaign_item->item->thumbnail) }}"
                                                 alt="Product">
+                                            </a>
                                             <div class="product-button-group"><a class="product-button wishlist_store"
                                                     href="{{ route('user.wishlist.store', $compaign_item->item->id) }}"
                                                     title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
@@ -277,9 +284,12 @@
                                                 <div class="product-badge product-badge2 bg-info">
                                                     -{{ PriceHelper::DiscountPercentage($popular_category_item) }}</div>
                                             @endif
+                                            <a
+                                                    href="{{ route('front.product', $popular_category_item->slug) }}">
                                             <img class="lazy"
                                                 data-src="{{ url('/core/public/storage/images/' . $popular_category_item->thumbnail) }}"
                                                 alt="Product">
+                                            </a> 
                                             <div class="product-button-group">
                                                 <a class="product-button wishlist_store"
                                                     href="{{ route('user.wishlist.store', $popular_category_item->id) }}"
@@ -416,9 +426,10 @@
                                                     <div class="product-badge product-badge2 bg-info">
                                                         -{{ PriceHelper::DiscountPercentage($item) }}</div>
                                                 @endif
+                                                <a  href="{{ route('front.product', $item->slug) }}">
                                                 <img class="lazy"
                                                     data-src="{{ url('/core/public/storage/images/' . $item->thumbnail) }}"
-                                                    alt="Product">
+                                                    alt="Product"></a>
                                                 <div class="product-button-group"><a class="product-button wishlist_store"
                                                         href="{{ route('user.wishlist.store', $item->id) }}"
                                                         title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
@@ -679,9 +690,10 @@
                                         <div class="product-badge product-badge2 bg-info">
                                             -{{ PriceHelper::DiscountPercentage($feature_category_item) }}</div>
                                     @endif
+                                    <a    href="{{ route('front.product', $feature_category_item->slug) }}">
                                     <img class="lazy"
                                         data-src="{{ url('/core/public/storage/images/' . $feature_category_item->thumbnail) }}"
-                                        alt="Product">
+                                        alt="Product"></a>
                                     <div class="product-button-group"><a class="product-button wishlist_store"
                                             href="{{ route('user.wishlist.store', $feature_category_item->id) }}"
                                             title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
@@ -769,6 +781,7 @@
     @endif
 
     @if ($setting->is_popular_brand == 1)
+   
         <section class="brand-section mt-30 mb-60">
             <div class="container ">
                 <div class="row">

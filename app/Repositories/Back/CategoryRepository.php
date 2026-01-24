@@ -4,6 +4,8 @@ namespace App\Repositories\Back;
 
 use App\{
     Models\Category,
+    Models\CategoryTranslation,
+    Models\Language,
     Helpers\ImageHelper
 };
 use App\Models\HomeCutomize;
@@ -22,7 +24,30 @@ class CategoryRepository
     {
         $input = $request->all();
         $input['photo'] = ImageHelper::handleUploadedImage($request->file('photo'),'images');
-        Category::create($input);
+        
+        // Save default language data to main table
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+        if ($defaultLang && $request->has("name_{$defaultLang->id}")) {
+            $input['name'] = $request->input("name_{$defaultLang->id}") ?: $input['name'];
+            $input['slug'] = $request->input("slug_{$defaultLang->id}") ?: $input['slug'];
+            $input['meta_keywords'] = $request->input("meta_keywords_{$defaultLang->id}") ?: ($input['meta_keywords'] ?? null);
+            $input['meta_descriptions'] = $request->input("meta_descriptions_{$defaultLang->id}") ?: ($input['meta_descriptions'] ?? null);
+        }
+        
+        $category = Category::create($input);
+        
+        // Save translations for all languages
+        $languages = Language::whereType('Website')->get();
+        foreach ($languages as $lang) {
+            CategoryTranslation::create([
+                'category_id' => $category->id,
+                'language_id' => $lang->id,
+                'name' => $request->input("name_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['name'] : null),
+                'slug' => $request->input("slug_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['slug'] : null),
+                'meta_keywords' => $request->input("meta_keywords_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_keywords'] : null),
+                'meta_descriptions' => $request->input("meta_descriptions_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_descriptions'] : null),
+            ]);
+        }
     }
 
     /**
@@ -38,7 +63,31 @@ class CategoryRepository
         if ($file = $request->file('photo')) {
             $input['photo'] = ImageHelper::handleUpdatedUploadedImage($file,'images',$category,'images','photo');
         }
+        
+        // Update default language values in main table
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+        if ($defaultLang && $request->has("name_{$defaultLang->id}")) {
+            $input['name'] = $request->input("name_{$defaultLang->id}") ?: $input['name'];
+            $input['slug'] = $request->input("slug_{$defaultLang->id}") ?: $input['slug'];
+            $input['meta_keywords'] = $request->input("meta_keywords_{$defaultLang->id}") ?: ($input['meta_keywords'] ?? null);
+            $input['meta_descriptions'] = $request->input("meta_descriptions_{$defaultLang->id}") ?: ($input['meta_descriptions'] ?? null);
+        }
+        
         $category->update($input);
+        
+        // Update translations for all languages
+        $languages = Language::whereType('Website')->get();
+        foreach ($languages as $lang) {
+            CategoryTranslation::updateOrCreate(
+                ['category_id' => $category->id, 'language_id' => $lang->id],
+                [
+                    'name' => $request->input("name_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['name'] : null),
+                    'slug' => $request->input("slug_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['slug'] : null),
+                    'meta_keywords' => $request->input("meta_keywords_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_keywords'] : null),
+                    'meta_descriptions' => $request->input("meta_descriptions_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_descriptions'] : null),
+                ]
+            );
+        }
     }
 
     /**

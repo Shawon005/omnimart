@@ -81,7 +81,7 @@ class FrontendController extends Controller
 
         $feature_categories = [];
         foreach ($feature_category as $key => $cat) {
-            $feature_categories[] = Category::findOrFail($cat);
+            $feature_categories[] = Category::with('translations')->findOrFail($cat);
         }
 
         $feature_category_items = [];
@@ -295,7 +295,7 @@ class FrontendController extends Controller
     public function product($slug)
     {
 
-        $item = Item::with('category')->whereStatus(1)->whereSlug($slug)->firstOrFail();
+        $item = Item::with(['category', 'translations'])->whereStatus(1)->whereSlug($slug)->firstOrFail();
         $video = explode('=', $item->video);
         return view('front.catalog.product', [
             'item'          => $item,
