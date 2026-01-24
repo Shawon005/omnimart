@@ -1,0 +1,31 @@
+{
+  "../installer/css/style.css": {
+    "file": "assets/style-916616d7.css",
+    "isEntry": true,
+    "src": "../installer/css/style.css"
+  },
+  "../installer/fonts/fontawesome-webfont.eot": {
+    "file": "assets/fontawesome-webfont-7bfcab6d.eot",
+    "src": "../installer/fonts/fontawesome-webfont.eot"
+  },
+  "../installer/fonts/fontawesome-webfont.svg": {
+    "file": "assets/fontawesome-webfont-ad615792.svg",
+    "src": "../installer/fonts/fontawesome-webfont.svg"
+  },
+  "../installer/fonts/fontawesome-webfont.ttf": {
+    "file": "assets/fontawesome-webfont-aa58f33f.ttf",
+    "src": "../installer/fonts/fontawesome-webfont.ttf"
+  },
+  "../installer/fonts/fontawesome-webfont.woff": {
+    "file": "assets/fontawesome-webfont-ba0c59de.woff",
+    "src": "../installer/fonts/fontawesome-webfont.woff"
+  },
+  "../installer/fonts/fontawesome-webfont.woff2": {
+    "file": "assets/fontawesome-webfont-2adefcbc.woff2",
+    "src": "../installer/fonts/fontawesome-webfont.woff2"
+  },
+  "../installer/img/background.png": {
+    "file": "assets/background-7102c2c2.png",
+    "src": "../installer/img/background.png"
+  }
+}
