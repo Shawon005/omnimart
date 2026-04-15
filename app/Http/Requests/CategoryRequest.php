@@ -28,9 +28,9 @@ class CategoryRequest extends FormRequest
         $required = $this->category ? '' : 'required';
 
         return [
-            'slug'      => [$required,'unique:categories,slug'. $id,'regex:/^[a-zA-Z0-9-]+$/'],
+            'slug_1'      => [$required,'unique:categories,slug'. $id,'regex:/^[a-zA-Z0-9-]+$/'],
             'photo'     => [$required,'mimes:jpeg,jpg,png,svg,webp'],
-            'name'      => 'required|max:255',
+            'name_1'      => 'required|max:255',
             'meta_keywords'=> 'max:255',
         ];
     }

@@ -98,6 +98,15 @@
                                                 <img class="admin-gallery-img" src="{{ $gallery->photo ? url('/core/public/storage/images/'.$gallery->photo) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             </a>
+                                            <div class="mt-2">
+                                                <input type="number" name="gallery_positions[{{ $gallery->id }}]" class="form-control form-control-sm"
+                                                    value="{{ $gallery->position ?? 0 }}" placeholder="Position" min="0" style="width: 80px;">
+                                            </div>
+                                            <div class="mt-2">
+                                                <input type="text" name="gallery_alt_texts[{{ $gallery->id }}]" class="form-control form-control-sm"
+                                                    value="{{ old('gallery_alt_texts.' . $gallery->id, $gallery->alt_text) }}"
+                                                    placeholder="{{ __('Alt Text') }}" style="width: 180px;">
+                                            </div>
                                     </div>
                                 @empty
                                     <h6><b>{{ __('No Images Added') }}</b></h6>

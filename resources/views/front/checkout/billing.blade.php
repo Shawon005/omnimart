@@ -101,8 +101,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                    <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="checkout-state">{{ __('State') }}*</label>
+                                            <input class="form-control {{ $errors->has('bill_state') ? 'requireInput' : '' }}" name="bill_state" type="text"
+                                                id="checkout-state" value="{{ old('bill_state') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="checkout-country">{{ __('Country') }}</label>
                                             <select class="form-control {{ $errors->has('bill_country') ? 'requireInput' : '' }}"  name="bill_country"
@@ -116,7 +123,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                </div> -->
+                                </div>
                             @endif
 
                             <div class="form-group">
@@ -132,8 +139,7 @@
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         <input class="custom-control-input" type="checkbox" id="trams__condition">
-                                        <label class="custom-control-label" for="trams__condition">This site is protected
-                                            by reCAPTCHA and the <a href="{{ $setting->policy_link }}"
+                                        <label class="custom-control-label" for="trams__condition"> The <a href="{{ $setting->policy_link }}"
                                                 target="_blank">Privacy Policy</a> and <a
                                                 href="{{ $setting->terms_link }}" target="_blank">Terms of Service</a>
                                             apply.</label>

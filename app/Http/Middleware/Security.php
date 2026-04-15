@@ -27,19 +27,25 @@ class Security
             if($route && $route->getName()){
 
                 $domain = request()->getHost();
-                
-                $client = new Client();
-                $response = $client->post('https://support.geniusdevs.com/api/clients/verify', [
-                    'form_params' => [
-                        'domin_url' => $domain,
-                    ]
-                ]);
-                
-                $responseBody = json_decode($response->getBody(), true);
-  
-                if($responseBody && $responseBody['status']){
-                    Session::put('securityData', $responseBody);
+                try {
+                    // $response = $client->post('https://support.geniusdevs.com/api/clients/verify', [
+                    //     'form_params' => [
+                    //         'domin_url' => $domain,
+                    //     ],
+                    //     'timeout' => 5
+                    // ]);
+
+                    // $responseBody = json_decode($response->getBody(), true);
+
+                    // if($responseBody && $responseBody['status']){
+                    //     Session::put('securityData', $responseBody);
+                    // }
+
+                } catch (\Exception $e) {
+                    // Log error but don't break site
+                    \Log::error('License verification failed: ' . $e->getMessage());
                 }
+                $client = new Client();
             }
             
             $securityDataSession2 = Session::get('securityData');

@@ -26,6 +26,7 @@
 					<thead>
 						<tr>
 							<th>{{ __('Image') }}</th>
+							<th>{{ __('Feature Text') }}</th>
                             <th width="25%">{{ __('Title') }}</th>
                             <th>{{ __('Home Page') }}</th>
 							<th width="25%">{{ __('Details') }}</th>
@@ -85,5 +86,60 @@
   </div>
 
 {{-- DELETE MODAL ENDS --}}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusButtons = document.querySelectorAll('.status-toggle');
+    
+    statusButtons.forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const sliderId = this.getAttribute('data-id');
+            const currentStatus = this.getAttribute('data-status');
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            fetch('{{ route("back.slider.toggle-status") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token
+                },
+                body: JSON.stringify({
+                    id: sliderId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Toggle status
+                    const newStatus = currentStatus == 1 ? 0 : 1;
+                    button.setAttribute('data-status', newStatus);
+                    
+                    // Update button appearance
+                    if (newStatus == 1) {
+                        button.classList.remove('btn-danger');
+                        button.classList.add('btn-success');
+                        button.innerHTML = '<i class="fas fa-check-circle"></i>';
+                        button.setAttribute('title', '{{ __("Active") }}');
+                    } else {
+                        button.classList.remove('btn-success');
+                        button.classList.add('btn-danger');
+                        button.innerHTML = '<i class="fas fa-times-circle"></i>';
+                        button.setAttribute('title', '{{ __("Inactive") }}');
+                    }
+                } else {
+                    alert('{{ __("Error updating status") }}');
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => {
+                alert('{{ __("An error occurred") }}');
+                console.error('Error:', error);
+            });
+        });
+    });
+});
+</script>
 
 @endsection

@@ -58,15 +58,68 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title1">{{ __('Title') }} *</label>
-                                            <input type="text" name="title1" class="form-control" id="title1"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($hero_banner['title1']) ? $hero_banner['title1'] : ''}}" >
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="subtitle1">{{ __('Subtitle') }} </label>
-                                            <input type="text" name="subtitle1" class="form-control" id="subtitle1"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($hero_banner['subtitle1']) ? $hero_banner['subtitle1'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="heroTabs1" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="hero1-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#hero1-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $heroTrans = $translation ? json_decode($translation->hero_banner, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="hero1-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                              
+                                                <div class="form-group">
+                                                    <label for="subtitle1_{{ $lang->id }}">{{ __('Heading') }} <small>({{ $lang->language }})</small></label>
+                                                    <textarea name="heading1_{{ $lang->id }}" id="heading1_{{ $lang->id }}" class="form-control text-editor" placeholder="{{ __('Enter Subtitle') }}">
+                                                    {{ $heroTrans ? ($heroTrans['heading1'] ?? '') : (isset($hero_banner['heading1']) ? $hero_banner['heading1'] : '') }}
+                                                    </textarea>
+                                                    <!-- <input type="text" name="subtitle1_{{ $lang->id }}" class="form-control" id="subtitle1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $heroTrans ? ($heroTrans['subtitle1'] ?? '') : (isset($hero_banner['subtitle1']) ? $hero_banner['subtitle1'] : '') }}" > -->
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="title1_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <textarea name="title1_{{ $lang->id }}" id="title1_{{ $lang->id }}" class="form-control text-editor" placeholder="{{ __('Enter Title') }}">
+                                                    {{ $heroTrans ? ($heroTrans['title1'] ?? '') : (isset($hero_banner['title1']) ? $hero_banner['title1'] : '') }}
+                                                    </textarea>
+                                                    <!-- <input type="text" name="title1_{{ $lang->id }}" class="form-control" id="title1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $heroTrans ? ($heroTrans['title1'] ?? '') : (isset($hero_banner['title1']) ? $hero_banner['title1'] : '') }}" > -->
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="subtitle1_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+
+                                                    <textarea name="subtitle1_{{ $lang->id }}" id="subtitle1_{{ $lang->id }}" class="form-control text-editor" placeholder="{{ __('Enter Subtitle') }}">
+                                                    {{ $heroTrans ? ($heroTrans['subtitle1'] ?? '') : (isset($hero_banner['subtitle1']) ? $hero_banner['subtitle1'] : '') }}
+                                                    </textarea>
+                                                    <!-- <input type="text" name="subtitle1_{{ $lang->id }}" class="form-control" id="subtitle1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $heroTrans ? ($heroTrans['subtitle1'] ?? '') : (isset($hero_banner['subtitle1']) ? $hero_banner['subtitle1'] : '') }}" > -->
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="subtitle1_{{ $lang->id }}">{{ __('Payment') }} <small>({{ $lang->language }})</small></label>
+
+                                                    <textarea name="payment1_{{ $lang->id }}" id="payment1_{{ $lang->id }}" class="form-control text-editor" placeholder="{{ __('Enter Subtitle') }}">
+                                                    {{ $heroTrans ? ($heroTrans['payment1'] ?? '') : (isset($hero_banner['payment1']) ? $hero_banner['payment1'] : '') }}
+                                                    </textarea>
+                                                    <!-- <input type="text" name="subtitle1_{{ $lang->id }}" class="form-control" id="subtitle1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $heroTrans ? ($heroTrans['subtitle1'] ?? '') : (isset($hero_banner['subtitle1']) ? $hero_banner['subtitle1'] : '') }}" > -->
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
                                         <div class="form-group">
                                             <label for="url1">{{ __('URL 1') }} *</label>
@@ -93,15 +146,65 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title2">{{ __('Title') }} *</label>
-                                            <input type="text" name="title2" class="form-control" id="title2"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($hero_banner['title2']) ? $hero_banner['title2'] : ''}}" >
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="subtitle2">{{ __('Subtitle') }} </label>
-                                            <input type="text" name="subtitle2" class="form-control" id="subtitle2"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($hero_banner['subtitle2']) ? $hero_banner['subtitle2'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="heroTabs2" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="hero2-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#hero2-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $heroTrans = $translation ? json_decode($translation->hero_banner, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="hero2-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                 <div class="form-group">
+                                                    <label for="heading2_{{ $lang->id }}">{{ __('Heading') }} <small>({{ $lang->language }})</small></label>
+                                                    <textarea name="heading2_{{ $lang->id }}" id="heading2_{{ $lang->id }}" class="form-control text-editor" placeholder="{{ __('Enter Subtitle') }}">
+                                                    {{ $heroTrans ? ($heroTrans['heading2'] ?? '') : (isset($hero_banner['heading2']) ? $hero_banner['heading2'] : '') }}
+                                                    </textarea>
+                                                    <!-- <input type="text" name="subtitle1_{{ $lang->id }}" class="form-control" id="subtitle1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $heroTrans ? ($heroTrans['subtitle1'] ?? '') : (isset($hero_banner['subtitle1']) ? $hero_banner['subtitle1'] : '') }}" > -->
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="title2_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <textarea name="title2_{{ $lang->id }}" id="title2_{{ $lang->id }}" class="form-control text-editor" placeholder="{{ __('Enter Subtitle') }}">
+                                                    {{ $heroTrans ? ($heroTrans['title2'] ?? '') : (isset($hero_banner['title2']) ? $hero_banner['title2'] : '') }}
+                                                    </textarea>
+                                                    <!-- <input type="text" name="title2_{{ $lang->id }}" class="form-control" id="title2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $heroTrans ? ($heroTrans['title2'] ?? '') : (isset($hero_banner['title2']) ? $hero_banner['title2'] : '') }}" > -->
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="subtitle2_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+                                                    <textarea name="subtitle2_{{ $lang->id }}" id="subtitle2_{{ $lang->id }}" class="form-control text-editor" placeholder="{{ __('Enter Subtitle') }}">
+                                                    {{ $heroTrans ? ($heroTrans['subtitle2'] ?? '') : (isset($hero_banner['subtitle2']) ? $hero_banner['subtitle2'] : '') }}
+                                                    </textarea>
+                                                    <!-- <input type="text" name="subtitle2_{{ $lang->id }}" class="form-control" id="subtitle2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $heroTrans ? ($heroTrans['subtitle2'] ?? '') : (isset($hero_banner['subtitle2']) ? $hero_banner['subtitle2'] : '') }}" > -->
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="payment2_{{ $lang->id }}">{{ __('Payment') }} <small>({{ $lang->language }})</small></label>
+                                                    <textarea name="payment2_{{ $lang->id }}" id="payment2_{{ $lang->id }}" class="form-control text-editor" placeholder="{{ __('Enter Subtitle') }}">
+                                                    {{ $heroTrans ? ($heroTrans['payment2'] ?? '') : (isset($hero_banner['payment2']) ? $hero_banner['payment2'] : '') }}
+                                                    </textarea>
+                                                    <!-- <input type="text" name="subtitle1_{{ $lang->id }}" class="form-control" id="subtitle1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $heroTrans ? ($heroTrans['subtitle1'] ?? '') : (isset($hero_banner['subtitle1']) ? $hero_banner['subtitle1'] : '') }}" > -->
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
                                         <div class="form-group">
                                             <label for="url2">{{ __('URL 2') }} *</label>
@@ -118,11 +221,12 @@
                         <div class="tab-pane fade show " id="v-pills-t1" role="tabpanel" aria-labelledby="v-pills-t1-tab">
                             <form class="admin-form" action="{{route('back.first.banner.update')}}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                        <h4 class="mb-3"><b>{{ __('Banner 1') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 1') }} *</label>
                                             <br>
                                                 <img class="admin-img"
-                                                    src="{{  url('/core/public/storage/images/'.$first_banner['img1']) }}"
+                                                    src="{{ isset($first_banner['img1']) ? url('/core/public/storage/images/'.$first_banner['img1']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
                                             <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
@@ -135,29 +239,58 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title1">{{ __('Title') }} *</label>
-                                            <input type="text" name="title1" class="form-control" id="title1"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($first_banner['title1']) ? $first_banner['title1'] : ''}}" >
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="subtitle1">{{ __('Subtitle') }} *</label>
-                                            <input type="text" name="subtitle1" class="form-control" id="subtitle1"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($first_banner['subtitle1']) ? $first_banner['subtitle1'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="firstBanner1Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="first1-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#first1-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $firstTrans = $translation ? json_decode($translation->banner_first, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="first1-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="title1_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="title1_{{ $lang->id }}" class="form-control" id="first_title1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $firstTrans ? ($firstTrans['title1'] ?? '') : (isset($first_banner['title1']) ? $first_banner['title1'] : '') }}" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="subtitle1_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="subtitle1_{{ $lang->id }}" class="form-control" id="first_subtitle1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $firstTrans ? ($firstTrans['subtitle1'] ?? '') : (isset($first_banner['subtitle1']) ? $first_banner['subtitle1'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
 
                                         <div class="form-group">
                                             <label for="url">{{ __('URL 1') }} *</label>
                                             <input type="text" name="firsturl1" class="form-control" id="firsturl1"
-                                                placeholder="{{ __('Enter Banner Url') }}" value="{{$first_banner['firsturl1']}}" >
+                                                placeholder="{{ __('Enter Banner Url') }}" value="{{ isset($first_banner['firsturl1']) ? $first_banner['firsturl1'] : '' }}" >
                                         </div>
                                         <hr>
 
+                                        <h4 class="mb-3"><b>{{ __('Banner 2') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 2') }} *</label>
                                             <br>
                                                 <img class="admin-img"
-                                                    src="{{  url('/core/public/storage/images/'.$first_banner['img2']) }}"
+                                                    src="{{ isset($first_banner['img2']) ? url('/core/public/storage/images/'.$first_banner['img2']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
                                             <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
@@ -170,29 +303,58 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title2">{{ __('Title') }} *</label>
-                                            <input type="text" name="title2" class="form-control" id="title2"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($first_banner['title2']) ? $first_banner['title2'] : ''}}" >
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="subtitle2">{{ __('Subtitle') }} *</label>
-                                            <input type="text" name="subtitle2" class="form-control" id="subtitle2"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($first_banner['subtitle2']) ? $first_banner['subtitle2'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="firstBanner2Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="first2-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#first2-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $firstTrans = $translation ? json_decode($translation->banner_first, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="first2-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="title2_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="title2_{{ $lang->id }}" class="form-control" id="first_title2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $firstTrans ? ($firstTrans['title2'] ?? '') : (isset($first_banner['title2']) ? $first_banner['title2'] : '') }}" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="subtitle2_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="subtitle2_{{ $lang->id }}" class="form-control" id="first_subtitle2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $firstTrans ? ($firstTrans['subtitle2'] ?? '') : (isset($first_banner['subtitle2']) ? $first_banner['subtitle2'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
 
                                         <div class="form-group">
                                             <label for="firsturl2">{{ __('URL 2') }} *</label>
                                             <input type="text" name="firsturl2" class="form-control" id="firsturl2"
-                                                placeholder="{{ __('Enter Banner Url') }}" value="{{$first_banner['firsturl2']}}" >
+                                                placeholder="{{ __('Enter Banner Url') }}" value="{{ isset($first_banner['firsturl2']) ? $first_banner['firsturl2'] : '' }}" >
                                         </div>
                                         <hr>
 
+                                        <h4 class="mb-3"><b>{{ __('Banner 3') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 3') }} *</label>
                                             <br>
                                                 <img class="admin-img"
-                                                    src="{{  url('/core/public/storage/images/'.$first_banner['img3']) }}"
+                                                    src="{{ isset($first_banner['img3']) ? url('/core/public/storage/images/'.$first_banner['img3']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
                                             <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
@@ -205,22 +367,49 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title3">{{ __('Title') }} *</label>
-                                            <input type="text" name="title3" class="form-control" id="title3"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($first_banner['title3']) ? $first_banner['title3'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="firstBanner3Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="first3-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#first3-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $firstTrans = $translation ? json_decode($translation->banner_first, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="first3-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="title3_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="title3_{{ $lang->id }}" class="form-control" id="first_title3_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $firstTrans ? ($firstTrans['title3'] ?? '') : (isset($first_banner['title3']) ? $first_banner['title3'] : '') }}" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="subtitle3_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="subtitle3_{{ $lang->id }}" class="form-control" id="first_subtitle3_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $firstTrans ? ($firstTrans['subtitle3'] ?? '') : (isset($first_banner['subtitle3']) ? $first_banner['subtitle3'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
-                                        <div class="form-group">
-                                            <label for="subtitle3">{{ __('Subtitle') }} *</label>
-                                            <input type="text" name="subtitle3" class="form-control" id="subtitle3"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($first_banner['subtitle3']) ? $first_banner['subtitle3'] : ''}}" >
-                                        </div>
-
 
                                         <div class="form-group">
                                             <label for="firsturl3">{{ __('URL 3') }} *</label>
                                             <input type="text" name="firsturl3" class="form-control" id="firsturl3"
-                                                placeholder="{{ __('Enter Banner Url') }}" value="{{$first_banner['firsturl3']}}" >
+                                                placeholder="{{ __('Enter Banner Url') }}" value="{{ isset($first_banner['firsturl3']) ? $first_banner['firsturl3'] : '' }}" >
                                         </div>
 
                                     <div class="form-group">
@@ -232,10 +421,38 @@
 
                             <form class="admin-form" action="{{route('back.popular.category.update')}}" method="POST">
                                 @csrf
-                                    <div class="form-group">
-                                        <label for="popular_title">{{ __('Section Title') }} *</label>
-                                        <input type="text" name="popular_title" class="form-control" id="popular_title"
-                                            placeholder="{{ __('Popular Category') }}" value="{{$popular_category['popular_title']}}" >
+                                    @if($languages->count() > 1)
+                                    <ul class="nav nav-tabs mb-3" id="popularCatTabs" role="tablist">
+                                        @foreach($languages as $index => $lang)
+                                        <li class="nav-item">
+                                            <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                               id="popular-lang-{{ $lang->id }}-tab" 
+                                               data-toggle="tab" 
+                                               href="#popular-lang-{{ $lang->id }}" 
+                                               role="tab">
+                                                <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                            </a>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                    @endif
+                                    <div class="tab-content">
+                                        @foreach($languages as $index => $lang)
+                                        @php
+                                            $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                            $popularTrans = $translation ? json_decode($translation->popular_category, true) : null;
+                                        @endphp
+                                        <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                             id="popular-lang-{{ $lang->id }}" 
+                                             role="tabpanel">
+                                            <div class="form-group">
+                                                <label for="popular_title_{{ $lang->id }}">{{ __('Section Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                <input type="text" name="popular_title_{{ $lang->id }}" class="form-control" id="popular_title_{{ $lang->id }}"
+                                                    placeholder="{{ __('Popular Category') }}" value="{{ $popularTrans ? ($popularTrans['popular_title'] ?? '') : (isset($popular_category['popular_title']) ? $popular_category['popular_title'] : '') }}" >
+                                            </div>
+                                        </div>
+                                        @endforeach
                                     </div>
                                     <hr>
                                     <h2 class=""><b>{{ __('Category 1 :') }}</b></h2>
@@ -370,11 +587,12 @@
                         <div class="tab-pane fade" id="v-pills-t5" role="tabpanel" aria-labelledby="v-pills-t5-tab">
                             <form class="admin-form" action="{{route('back.secend.banner.update')}}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                        <h4 class="mb-3"><b>{{ __('Banner 1') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 1') }} *</label>
                                             <br>
                                                 <img class="admin-img"
-                                                    src="{{  url('/core/public/storage/images/'.$secend_banner['img1']) }}"
+                                                    src="{{ isset($secend_banner['img1']) ? url('/core/public/storage/images/'.$secend_banner['img1']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
                                             <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
@@ -387,29 +605,58 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title1">{{ __('Title') }} *</label>
-                                            <input type="text" name="title1" class="form-control" id="title1"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($secend_banner['title1']) ? $secend_banner['title1'] : ''}}" >
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="subtitle1">{{ __('Subtitle') }} *</label>
-                                            <input type="text" name="subtitle1" class="form-control" id="subtitle1"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($secend_banner['subtitle1']) ? $secend_banner['subtitle1'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="secendBanner1Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="secend1-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#secend1-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $secendTrans = $translation ? json_decode($translation->banner_secend, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="secend1-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="secend_title1_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="title1_{{ $lang->id }}" class="form-control" id="secend_title1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $secendTrans ? ($secendTrans['title1'] ?? '') : (isset($secend_banner['title1']) ? $secend_banner['title1'] : '') }}" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="secend_subtitle1_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="subtitle1_{{ $lang->id }}" class="form-control" id="secend_subtitle1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $secendTrans ? ($secendTrans['subtitle1'] ?? '') : (isset($secend_banner['subtitle1']) ? $secend_banner['subtitle1'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
 
                                         <div class="form-group">
                                             <label for="url">{{ __('URL 1') }} *</label>
-                                            <input type="text" name="url1" class="form-control" id="url1"
-                                                placeholder="{{ __('Enter Banner Url') }}" value="{{$secend_banner['url1']}}" >
+                                            <input type="text" name="url1" class="form-control" id="secend_url1"
+                                                placeholder="{{ __('Enter Banner Url') }}" value="{{ isset($secend_banner['url1']) ? $secend_banner['url1'] : '' }}" >
                                         </div>
                                         <hr>
 
+                                        <h4 class="mb-3"><b>{{ __('Banner 2') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 2') }} *</label>
                                             <br>
                                                 <img class="admin-img"
-                                                    src="{{  url('/core/public/storage/images/'.$secend_banner['img2']) }}"
+                                                    src="{{ isset($secend_banner['img2']) ? url('/core/public/storage/images/'.$secend_banner['img2']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
                                             <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
@@ -422,29 +669,58 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title2">{{ __('Title') }} *</label>
-                                            <input type="text" name="title2" class="form-control" id="title2"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($secend_banner['title2']) ? $secend_banner['title2'] : ''}}" >
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="subtitle2">{{ __('Subtitle') }} *</label>
-                                            <input type="text" name="subtitle2" class="form-control" id="subtitle2"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($secend_banner['subtitle2']) ? $secend_banner['subtitle2'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="secendBanner2Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="secend2-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#secend2-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $secendTrans = $translation ? json_decode($translation->banner_secend, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="secend2-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="secend_title2_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="title2_{{ $lang->id }}" class="form-control" id="secend_title2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $secendTrans ? ($secendTrans['title2'] ?? '') : (isset($secend_banner['title2']) ? $secend_banner['title2'] : '') }}" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="secend_subtitle2_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="subtitle2_{{ $lang->id }}" class="form-control" id="secend_subtitle2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $secendTrans ? ($secendTrans['subtitle2'] ?? '') : (isset($secend_banner['subtitle2']) ? $secend_banner['subtitle2'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
 
                                         <div class="form-group">
                                             <label for="url">{{ __('URL 2') }} *</label>
-                                            <input type="text" name="url2" class="form-control" id="url2"
-                                                placeholder="{{ __('Enter Banner Url') }}" value="{{$secend_banner['url2']}}" >
+                                            <input type="text" name="url2" class="form-control" id="secend_url2"
+                                                placeholder="{{ __('Enter Banner Url') }}" value="{{ isset($secend_banner['url2']) ? $secend_banner['url2'] : '' }}" >
                                         </div>
                                         <hr>
 
+                                        <h4 class="mb-3"><b>{{ __('Banner 3') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 3') }} *</label>
                                             <br>
                                                 <img class="admin-img"
-                                                    src="{{  url('/core/public/storage/images/'.$secend_banner['img3']) }}"
+                                                    src="{{ isset($secend_banner['img3']) ? url('/core/public/storage/images/'.$secend_banner['img3']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
                                             <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
@@ -457,22 +733,49 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title3">{{ __('Title') }} *</label>
-                                            <input type="text" name="title3" class="form-control" id="title3"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($secend_banner['title3']) ? $secend_banner['title3'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="secendBanner3Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="secend3-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#secend3-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $secendTrans = $translation ? json_decode($translation->banner_secend, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="secend3-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="secend_title3_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="title3_{{ $lang->id }}" class="form-control" id="secend_title3_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $secendTrans ? ($secendTrans['title3'] ?? '') : (isset($secend_banner['title3']) ? $secend_banner['title3'] : '') }}" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="secend_subtitle3_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="subtitle3_{{ $lang->id }}" class="form-control" id="secend_subtitle3_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $secendTrans ? ($secendTrans['subtitle3'] ?? '') : (isset($secend_banner['subtitle3']) ? $secend_banner['subtitle3'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
-                                        <div class="form-group">
-                                            <label for="subtitle3">{{ __('Subtitle') }} *</label>
-                                            <input type="text" name="subtitle3" class="form-control" id="subtitle3"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($secend_banner['subtitle3']) ? $secend_banner['subtitle3'] : ''}}" >
-                                        </div>
-
 
                                         <div class="form-group">
                                             <label for="url">{{ __('URL 3') }} *</label>
-                                            <input type="text" name="url3" class="form-control" id="url3"
-                                                placeholder="{{ __('Enter Banner Url') }}" value="{{$secend_banner['url3']}}" >
+                                            <input type="text" name="url3" class="form-control" id="secend_url3"
+                                                placeholder="{{ __('Enter Banner Url') }}" value="{{ isset($secend_banner['url3']) ? $secend_banner['url3'] : '' }}" >
                                         </div>
 
                                     <div class="form-group">
@@ -603,10 +906,38 @@
                         <div class="tab-pane fade" id="v-pills-t4" role="tabpanel" aria-labelledby="v-pills-t4-tab">
                             <form class="admin-form" action="{{route('back.feature.category.update')}}" method="POST">
                                 @csrf
-                                <div class="form-group">
-                                    <label for="feature_title">{{ __('Section Title') }} *</label>
-                                    <input type="text" name="feature_title" class="form-control" id="feature_title"
-                                        placeholder="{{ __('Feture Category') }}" value="{{$feature_category['feature_title']}}" >
+                                @if($languages->count() > 1)
+                                <ul class="nav nav-tabs mb-3" id="featureCatTabs" role="tablist">
+                                    @foreach($languages as $index => $lang)
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                           id="feature-lang-{{ $lang->id }}-tab" 
+                                           data-toggle="tab" 
+                                           href="#feature-lang-{{ $lang->id }}" 
+                                           role="tab">
+                                            <i class="fas fa-globe"></i> {{ $lang->language }}
+                                            @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                        </a>
+                                    </li>
+                                    @endforeach
+                                </ul>
+                                @endif
+                                <div class="tab-content">
+                                    @foreach($languages as $index => $lang)
+                                    @php
+                                        $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                        $featureTrans = $translation ? json_decode($translation->feature_category, true) : null;
+                                    @endphp
+                                    <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                         id="feature-lang-{{ $lang->id }}" 
+                                         role="tabpanel">
+                                        <div class="form-group">
+                                            <label for="feature_title_{{ $lang->id }}">{{ __('Section Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                            <input type="text" name="feature_title_{{ $lang->id }}" class="form-control" id="feature_title_{{ $lang->id }}"
+                                                placeholder="{{ __('Featured Category') }}" value="{{ $featureTrans ? ($featureTrans['feature_title'] ?? '') : (isset($feature_category['feature_title']) ? $feature_category['feature_title'] : '') }}" >
+                                        </div>
+                                    </div>
+                                    @endforeach
                                 </div>
                                 <hr>
                                 <h2 class=""><b>{{ __('Category 1 :') }}</b></h2>
@@ -743,11 +1074,12 @@
 
                                 method="post" enctype="multipart/form-data">
                                 @csrf
+                                        <h4 class="mb-3"><b>{{ __('Banner 1') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 1') }} *</label>
                                             <br>
                                                 <img class="admin-img"
-                                                    src="{{  url('/core/public/storage/images/'.$third_banner['img1']) }}"
+                                                    src="{{ isset($third_banner['img1']) ? url('/core/public/storage/images/'.$third_banner['img1']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
                                             <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
@@ -759,29 +1091,59 @@
                                                 <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
                                             </label>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="title1">{{ __('Title') }} *</label>
-                                            <input type="text" name="title1" class="form-control" id="title1"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($third_banner['title1']) ? $third_banner['title1'] : ''}}" >
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="subtitle1">{{ __('Subtitle') }} *</label>
-                                            <input type="text" name="subtitle1" class="form-control" id="subtitle1"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($third_banner['subtitle1']) ? $third_banner['subtitle1'] : ''}}" >
+
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="thirdBanner1Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="third1-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#third1-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $thirdTrans = $translation ? json_decode($translation->banner_third, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="third1-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="third_title1_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="title1_{{ $lang->id }}" class="form-control" id="third_title1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $thirdTrans ? ($thirdTrans['title1'] ?? '') : (isset($third_banner['title1']) ? $third_banner['title1'] : '') }}" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="third_subtitle1_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="subtitle1_{{ $lang->id }}" class="form-control" id="third_subtitle1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $thirdTrans ? ($thirdTrans['subtitle1'] ?? '') : (isset($third_banner['subtitle1']) ? $third_banner['subtitle1'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
 
                                         <div class="form-group">
                                             <label for="url">{{ __('URL 1') }} *</label>
-                                            <input type="text" name="url1" class="form-control" id="url1"
-                                                placeholder="{{ __('Enter Banner Url') }}" value="{{$third_banner['url1']}}" >
+                                            <input type="text" name="url1" class="form-control" id="third_url1"
+                                                placeholder="{{ __('Enter Banner Url') }}" value="{{ isset($third_banner['url1']) ? $third_banner['url1'] : '' }}" >
                                         </div>
                                         <hr>
 
+                                        <h4 class="mb-3"><b>{{ __('Banner 2') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 2') }} *</label>
                                             <br>
                                                 <img class="admin-img"
-                                                    src="{{  url('/core/public/storage/images/'.$third_banner['img2']) }}"
+                                                    src="{{ isset($third_banner['img2']) ? url('/core/public/storage/images/'.$third_banner['img2']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
                                             <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
@@ -794,20 +1156,49 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title2">{{ __('Title') }} *</label>
-                                            <input type="text" name="title2" class="form-control" id="title2"
-                                                placeholder="{{ __('Enter Title') }}"  value="{{isset($third_banner['title2']) ? $third_banner['title2'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="thirdBanner2Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="third2-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#third2-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $thirdTrans = $translation ? json_decode($translation->banner_third, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="third2-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="third_title2_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="title2_{{ $lang->id }}" class="form-control" id="third_title2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Title') }}"  value="{{ $thirdTrans ? ($thirdTrans['title2'] ?? '') : (isset($third_banner['title2']) ? $third_banner['title2'] : '') }}" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="third_subtitle2_{{ $lang->id }}">{{ __('Subtitle') }} <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="subtitle2_{{ $lang->id }}" class="form-control" id="third_subtitle2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Subtitle') }}"  value="{{ $thirdTrans ? ($thirdTrans['subtitle2'] ?? '') : (isset($third_banner['subtitle2']) ? $third_banner['subtitle2'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
-                                        <div class="form-group">
-                                            <label for="subtitle2">{{ __('Subtitle') }} *</label>
-                                            <input type="text" name="subtitle2" class="form-control" id="subtitle2"
-                                                placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($third_banner['subtitle2']) ? $third_banner['subtitle2'] : ''}}" >
-                                        </div>
+
                                         <div class="form-group">
                                             <label for="url">{{ __('URL 2') }} *</label>
-                                            <input type="text" name="url2" class="form-control" id="url2"
-                                                placeholder="{{ __('Enter Banner Url') }}" value="{{$third_banner['url2']}}" >
+                                            <input type="text" name="url2" class="form-control" id="third_url2"
+                                                placeholder="{{ __('Enter Banner Url') }}" value="{{ isset($third_banner['url2']) ? $third_banner['url2'] : '' }}" >
                                         </div>
 
                                     <div class="form-group">
@@ -821,6 +1212,7 @@
                             <form class="admin-form" action="{{route('back.home_page4.banner.update')}}"method="POST" enctype="multipart/form-data">
                                 @include('alerts.alerts')
                                 @csrf
+                                        <h4 class="mb-3"><b>{{ __('Banner 1') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Banner 1 Image') }} *</label>
                                             <br>
@@ -837,19 +1229,49 @@
                                                 <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
                                             </label>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="label1">{{ __('Banner 1 Button Text') }} *</label>
-                                            <input type="text" name="label1" class="form-control" id="label1"
-                                                placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['label1']) ? $home4_banner['label1'] : ''}}" >
+
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="home4Banner1Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="home4b1-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#home4b1-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $home4Trans = $translation ? json_decode($translation->home_page4, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="home4b1-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="label1_{{ $lang->id }}">{{ __('Banner 1 Button Text') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="label1_{{ $lang->id }}" class="form-control" id="home4_label1_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Button Text') }}"  value="{{ $home4Trans ? ($home4Trans['label1'] ?? '') : (isset($home4_banner['label1']) ? $home4_banner['label1'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
                                         <div class="form-group">
                                             <label for="url1">{{ __('Banner 1 Button Link') }} *</label>
-                                            <input type="text" name="url1" class="form-control" id="url1"
+                                            <input type="text" name="url1" class="form-control" id="home4_url1"
                                                 placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['url1']) ? $home4_banner['url1']: ''}}" >
                                         </div>
 
                                         <hr>
 
+                                        <h4 class="mb-3"><b>{{ __('Banner 2') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Banner 2 Image') }} *</label>
                                             <br>
@@ -868,21 +1290,50 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="label2">{{ __('Banner 2 Button Text') }} *</label>
-                                            <input type="text" name="label2" class="form-control" id="label2"
-                                                placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['label2']) ? $home4_banner['label2'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="home4Banner2Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="home4b2-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#home4b2-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $home4Trans = $translation ? json_decode($translation->home_page4, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="home4b2-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="label2_{{ $lang->id }}">{{ __('Banner 2 Button Text') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="label2_{{ $lang->id }}" class="form-control" id="home4_label2_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Button Text') }}"  value="{{ $home4Trans ? ($home4Trans['label2'] ?? '') : (isset($home4_banner['label2']) ? $home4_banner['label2'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
                                         <div class="form-group">
                                             <label for="url2">{{ __('Banner 2 Button Link') }} *</label>
-                                            <input type="text" name="url2" class="form-control" id="url2"
+                                            <input type="text" name="url2" class="form-control" id="home4_url2"
                                                 placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['url2']) ? $home4_banner['url2'] : ''}}" >
                                         </div>
 
                                         <hr>
 
+                                        <h4 class="mb-3"><b>{{ __('Banner 3') }} <small>({{ __('Middle Big Image') }})</small></b></h4>
                                         <div class="form-group">
-                                            <label for="name">{{ __('Banner 3 Image') }} * <small>({{ __('Middle Big Image') }})</small></label>
+                                            <label for="name">{{ __('Banner 3 Image') }} *</label>
                                             <br>
                                                 <img class="admin-img"
                                                     src="{{ isset($home4_banner['img3']) ?  url('/core/public/storage/images/'.$home4_banner['img3']) : url('/core/public/storage/images/placeholder.png') }}"
@@ -897,19 +1348,49 @@
                                                 <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
                                             </label>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="label3">{{ __('Banner 3 Button Text') }} *</label>
-                                            <input type="text" name="label3" class="form-control" id="label3"
-                                                placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['label3']) ? $home4_banner['label3'] : ''}}" >
+
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="home4Banner3Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="home4b3-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#home4b3-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $home4Trans = $translation ? json_decode($translation->home_page4, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="home4b3-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="label3_{{ $lang->id }}">{{ __('Banner 3 Button Text') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="label3_{{ $lang->id }}" class="form-control" id="home4_label3_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Button Text') }}"  value="{{ $home4Trans ? ($home4Trans['label3'] ?? '') : (isset($home4_banner['label3']) ? $home4_banner['label3'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
                                         <div class="form-group">
                                             <label for="url3">{{ __('Banner 3 Button Link') }} *</label>
-                                            <input type="text" name="url3" class="form-control" id="url3"
+                                            <input type="text" name="url3" class="form-control" id="home4_url3"
                                                 placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['url3']) ? $home4_banner['url3'] : ''}}" >
                                         </div>
 
                                         <hr>
 
+                                        <h4 class="mb-3"><b>{{ __('Banner 4') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Banner 4 Image') }} *</label>
                                             <br>
@@ -926,19 +1407,49 @@
                                                 <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
                                             </label>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="label4">{{ __('Banner 4 Button Text') }} *</label>
-                                            <input type="text" name="label4" class="form-control" id="label4"
-                                                placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['label4']) ? $home4_banner['label4'] : ''}}" >
+
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="home4Banner4Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="home4b4-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#home4b4-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $home4Trans = $translation ? json_decode($translation->home_page4, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="home4b4-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="label4_{{ $lang->id }}">{{ __('Banner 4 Button Text') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="label4_{{ $lang->id }}" class="form-control" id="home4_label4_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Button Text') }}"  value="{{ $home4Trans ? ($home4Trans['label4'] ?? '') : (isset($home4_banner['label4']) ? $home4_banner['label4'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
                                         <div class="form-group">
                                             <label for="url4">{{ __('Banner 4 Button Link') }} *</label>
-                                            <input type="text" name="url4" class="form-control" id="url4"
+                                            <input type="text" name="url4" class="form-control" id="home4_url4"
                                                 placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['url4']) ? $home4_banner['url4'] : ''}}" >
                                         </div>
 
                                         <hr>
 
+                                        <h4 class="mb-3"><b>{{ __('Banner 5') }}</b></h4>
                                         <div class="form-group">
                                             <label for="name">{{ __('Banner 5 Image') }} *</label>
                                             <br>
@@ -956,14 +1467,42 @@
                                             </label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="label5">{{ __('Banner 5 Button Text') }} *</label>
-                                            <input type="text" name="label5" class="form-control" id="label5"
-                                                placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['label5']) ? $home4_banner['label5'] : ''}}" >
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="home4Banner5Tabs" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="home4b5-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#home4b5-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            @php
+                                                $translation = $homeCutomize->translations->where('language_id', $lang->id)->first();
+                                                $home4Trans = $translation ? json_decode($translation->home_page4, true) : null;
+                                            @endphp
+                                            <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="home4b5-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                                <div class="form-group">
+                                                    <label for="label5_{{ $lang->id }}">{{ __('Banner 5 Button Text') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                    <input type="text" name="label5_{{ $lang->id }}" class="form-control" id="home4_label5_{{ $lang->id }}"
+                                                        placeholder="{{ __('Enter Button Text') }}"  value="{{ $home4Trans ? ($home4Trans['label5'] ?? '') : (isset($home4_banner['label5']) ? $home4_banner['label5'] : '') }}" >
+                                                </div>
+                                            </div>
+                                            @endforeach
                                         </div>
                                         <div class="form-group">
                                             <label for="url5">{{ __('Banner 5 Button Link') }} *</label>
-                                            <input type="text" name="url5" class="form-control" id="url5"
+                                            <input type="text" name="url5" class="form-control" id="home4_url5"
                                                 placeholder="{{ __('Enter Banner Url') }}"  value="{{isset($home4_banner['url5']) ? $home4_banner['url5'] : ''}}" >
                                         </div>
 

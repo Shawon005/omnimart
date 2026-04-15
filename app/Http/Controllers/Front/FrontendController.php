@@ -234,18 +234,18 @@ class FrontendController extends Controller
 
 
         if ($setting->theme == 'theme1') {
-            $sliders = Slider::where('home_page', 'theme1')->get();
+            $sliders = Slider::where('home_page', 'theme1')->where('status', 1)->get();
         } elseif ($setting->theme == 'theme2') {
-            $sliders = Slider::where('home_page', 'theme2')->get();
+            $sliders = Slider::where('home_page', 'theme2')->where('status', 1)->get();
         } elseif ($setting->theme == 'theme3') {
-            $sliders = Slider::where('home_page', 'theme3')->get();
+            $sliders = Slider::where('home_page', 'theme3')->where('status', 1)->get();
         } else {
-            $sliders = Slider::where('home_page', 'theme4')->get();
+            $sliders = Slider::where('home_page', 'theme4')->where('status', 1)->get();
         }
 
 
         // {"title1":"Watchtt","subtitle1":"50% OFF","url1":"#","title2":"Man","subtitle2":"40% OFF","url2":"#","img1":"1637766462banner-h2-4-1.jpeg","img2":"1637766420banner-h2-4-1.jpeg"}
-
+       
         return view('front.index', [
             'hero_banner'   => $home_customize->hero_banner != '[]' ? json_decode($home_customize->hero_banner, true) : null,
             'banner_first'   => json_decode($home_customize->banner_first, true),
@@ -300,7 +300,7 @@ class FrontendController extends Controller
         return view('front.catalog.product', [
             'item'          => $item,
             'reviews'       => $item->reviews()->where('status', 1)->paginate(3),
-            'galleries'     => $item->galleries,
+            'galleries'     => $item->galleries()->orderBy('position', 'asc')->get(),
             'video'         => $item->video ? end($video) : '',
             'sec_name'      => isset($item->specification_name) ? json_decode($item->specification_name, true) : [],
             'sec_details'   => isset($item->specification_description) ? json_decode($item->specification_description, true) : [],
@@ -559,6 +559,17 @@ class FrontendController extends Controller
             $gateway->text = "Paytabs is the faster & safer way to send money. Make an online payment via Paytabs.";
             $gateway->status = 0;
 
+            $gateway->save();
+        }
+
+        $ifthenpayExists = PaymentSetting::where("unique_keyword", "ifthenpay")->exists();
+        if (!$ifthenpayExists) {
+            $gateway = new PaymentSetting();
+            $gateway->name = "IfthenPay";
+            $gateway->unique_keyword = "ifthenpay";
+            $gateway->information = '{"backoffice_key":"","anti_phishing_key":"","gateway_key":"","multibanco_entity":"","multibanco_sub_entity":"","mbway_key":"","payshop_key":"","credit_card_key":"","default_method":"CCARD","language":"pt","days_to_expire":"3","is_one_time_payment":1,"close_button_label":"Close"}';
+            $gateway->text = "Pay securely through IfthenPay. Configure your Pay By Link gateway key and the payment methods you want to expose.";
+            $gateway->status = 0;
             $gateway->save();
         }
 

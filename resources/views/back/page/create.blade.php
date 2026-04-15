@@ -32,42 +32,78 @@
 
 									@include('alerts.alerts')
 
-									<div class="form-group">
-										<label for="title">{{ __('Title') }} *</label>
-										<input type="text" name="title" class="form-control" id="title"
-											placeholder="{{ __('Enter Title') }}" value="{{ old('title') }}" required>
-									</div>
+									@php
+										$languages = \App\Models\Language::whereType('Website')->get();
+										$defaultLang = \App\Models\Language::whereType('Website')->where('is_default', 1)->first();
+									@endphp
+									@if($languages->count() > 1)
+									<ul class="nav nav-tabs mb-3" id="pageTabs" role="tablist">
+										@foreach($languages as $index => $lang)
+										<li class="nav-item">
+											<a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+											   id="page-lang-{{ $lang->id }}-tab" 
+											   data-toggle="tab" 
+											   href="#page-lang-{{ $lang->id }}" 
+											   role="tab">
+												<i class="fas fa-globe"></i> {{ $lang->language }}
+												@if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+											</a>
+										</li>
+										@endforeach
+									</ul>
+									@endif
+									<div class="tab-content">
+										@foreach($languages as $index => $lang)
+										<div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+											 id="page-lang-{{ $lang->id }}" 
+											 role="tabpanel">
 
-									<div class="form-group">
-										<label for="slug">{{ __('Slug') }} *</label>
-										<input type="text" name="slug" class="form-control" id="slug"
-											placeholder="{{ __('Enter Slug') }}" value="{{ old('slug') }}" required>
-									</div>
+										<div class="form-group">
+											<label for="title_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif</label>
+											<input type="text" name="title_{{ $lang->id }}" class="form-control" id="title_{{ $lang->id }}"
+												placeholder="{{ __('Enter Title') }}" value="{{ old("title_{$lang->id}") }}" >
+										</div>
 
-									<div class="form-group">
-										<label for="details">{{ __('Details') }} *</label>
-										<textarea name="details" id="details" class="form-control text-editor" rows="5"
-											placeholder="{{ __('Enter Details') }}"
-											required>{{ old('details') }}</textarea>
-									</div>
+										<div class="form-group">
+											<label for="slug_{{ $lang->id }}">{{ __('Slug') }} @if($lang->is_default == 1) * @endif</label>
+											<input type="text" name="slug_{{ $lang->id }}" class="form-control" id="slug_{{ $lang->id }}"
+												placeholder="{{ __('Enter Slug') }}" value="{{ old("slug_{$lang->id}") }}" >
+										</div>
 
-									<div class="form-group">
-										<label for="meta_keywords">{{ __('Meta Keywords') }}
-											</label>
-										<input type="text" name="meta_keywords" class="form-control tags"
-											id="meta_keywords"
-											placeholder="{{ __('Enter Meta Keywords') }}"
-											value="">
-									</div>
+										<div class="form-group">
+											<label for="details_{{ $lang->id }}">{{ __('Details') }} @if($lang->is_default == 1) * @endif</label>
+											<textarea name="details_{{ $lang->id }}" id="details_{{ $lang->id }}" class="form-control text-editor" rows="5"
+												placeholder="{{ __('Enter Details') }}"
+												>{{ old("details_{$lang->id}") }}</textarea>
+										</div>
 
-									<div class="form-group">
-										<label
-											for="meta_description">{{ __('Meta Description') }}
-											</label>
-										<textarea name="meta_descriptions" id="meta_description"
-											class="form-control" rows="5"
-											placeholder="{{ __('Enter Meta Description') }}"
-										></textarea>
+										<div class="form-group">
+											<label for="meta_keywords_{{ $lang->id }}">{{ __('Meta Keywords') }}
+												</label>
+											<input type="text" name="meta_keywords_{{ $lang->id }}" class="form-control tags"
+												id="meta_keywords_{{ $lang->id }}"
+												placeholder="{{ __('Enter Meta Keywords') }}"
+												value="{{ old("meta_keywords_{$lang->id}") }}">
+										</div>
+
+										<div class="form-group">
+											<label
+												for="meta_description_{{ $lang->id }}">{{ __('Meta Description') }}
+												</label>
+											<textarea name="meta_descriptions_{{ $lang->id }}" id="meta_description_{{ $lang->id }}"
+												class="form-control" rows="5"
+												placeholder="{{ __('Enter Meta Description') }}"
+											>{{ old("meta_descriptions_{$lang->id}") }}</textarea>
+										</div>
+										@if($lang->id == $defaultLang->id)
+											<input type="hidden" name="title" value="{{ old('title') }}">
+											<input type="hidden" name="slug" value="{{ old('slug') }}">
+											<input type="hidden" name="details" value="{{ old('details') }}">
+											<input type="hidden" name="meta_keywords" value="">
+											<input type="hidden" name="meta_descriptions" value="">
+										@endif
+										</div>
+										@endforeach
 									</div>
 
 									<div class="form-group text-center">

@@ -6,15 +6,15 @@
 
 
 @section('meta')
-    <meta name="tile" content="{{ $item->title }}">
+    <meta name="title" content="{{ $item->meta_title }}">
     <meta name="keywords" content="{{ $item->meta_keywords }}">
     <meta name="description" content="{{ $item->meta_description }}">
 
-    <meta name="twitter:title" content="{{ $item->title }}">
+    <meta name="twitter:title" content="{{ $item->meta_title }}">
     <meta name="twitter:image" content="{{ url('/core/public/storage/images/' . $item->photo) }}">
     <meta name="twitter:description" content="{{ $item->meta_description }}">
 
-    <meta name="og:title" content="{{ $item->title }}">
+    <meta name="og:title" content="{{ $item->name }}">
     <meta name="og:image" content="{{ url('/core/public/storage/images/' . $item->photo) }}">
     <meta name="og:description" content="{{ $item->meta_description }}">
 @endsection
@@ -76,11 +76,11 @@
                     <div class="product-thumbnails insize">
                         <div class="product-details-slider owl-carousel">
                             <div class="item"><img src="{{ url('/core/public/storage/images/' . $item->photo) }}"
-                                    alt="zoom" />
+                                    alt="{{ $item->alt_text ?? 'zoom' }}" />
                             </div>
                             @foreach ($galleries as $key => $gallery)
                                 <div class="item"><img src="{{ url('/core/public/storage/images/' . $gallery->photo) }}"
-                                        alt="zoom" /></div>
+                                        alt="{{ $gallery->alt_text ?? 'zoom' }}" /></div>
                             @endforeach
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                         <input type="hidden" value="{{ PriceHelper::setCurrencySign() }}" id="set_currency">
                         <input type="hidden" value="{{ PriceHelper::setCurrencyValue() }}" id="set_currency_val">
                         <input type="hidden" value="{{ $setting->currency_direction }}" id="currency_direction">
-                        <h4 class="mb-2 p-title-main">{{ $item->name }}</h4>
+                        <h1 class="mb-2 p-title-main">{{ $item->name }}</h1>
                         <div class="mb-3">
                             <div class="rating-stars d-inline-block gmr-3">
                                 {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
@@ -204,13 +204,14 @@
                                 </div>
                                 <div class="pt-1 mb-1"><span class="text-medium">{{ __('Tags') }}:</span>
                                     @if ($item->tags)
-                                        @foreach (explode(',', $item->tags) as $tag)
+                                    
+                                        @foreach (json_decode($item->tags) as $tag)
                                             @if ($loop->last)
                                                 <a
-                                                    href="{{ route('front.catalog') . '?tag=' . $tag }}">{{ $tag }}</a>
+                                                    href="{{ route('front.catalog') . '?tag=' . $tag->value }}">{{$tag->value}}</a>
                                             @else
                                                 <a
-                                                    href="{{ route('front.catalog') . '?tag=' . $tag }}">{{ $tag }}</a>,
+                                                    href="{{ route('front.catalog') . '?tag=' . $tag->value }}">{{ $tag->value }}</a>,
                                             @endif
                                         @endforeach
                                     @endif

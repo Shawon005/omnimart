@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Back;
 
 use App\{
     Models\Post,
+    Models\PostTranslation,
+    Models\Language,
     Repositories\Back\PostRepository,
     Http\Requests\ImageStoreRequest,
     Http\Requests\ImageUpdateRequest,
@@ -47,7 +49,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('back.post.create');
+        $languages = Language::whereType('Website')->get();
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+        return view('back.post.create', compact('languages', 'defaultLang'));
     }
 
     /**
@@ -58,12 +62,12 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
 
         $request->validate([
             'photo*' => 'required|image',
-            'title' => 'required|unique:posts|max:255',
-            'details' => 'required',
-            'tags' => 'nullable|max:255'
+            'title_'.$defaultLang->id => 'required|unique:posts,title|max:255',
+            'details_'.$defaultLang->id => 'required',
         ]);
 
         $this->repository->store($request);
@@ -78,7 +82,10 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('back.post.edit',compact('post'));
+        $languages = Language::whereType('Website')->get();
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+        $post->load('translations');
+        return view('back.post.edit', compact('post', 'languages', 'defaultLang'));
     }
 
     /**
@@ -90,12 +97,13 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+
         $request->validate([
             'photo*' => 'image',
-            'title' => 'required|max:255|unique:posts,title,'.$post->id,
+            'title_'.$defaultLang->id => 'required|max:255|unique:posts,title,'.$post->id,
             'category_id' => 'required',
-            'details' => 'required',
-            'tags' => 'nullable|max:255'
+            'details_'.$defaultLang->id => 'required',
         ]);
 
         $this->repository->update($post, $request);

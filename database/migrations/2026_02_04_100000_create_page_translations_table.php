@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateChieldcategoryTranslationsTable extends Migration
+class CreatePageTranslationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,19 @@ class CreateChieldcategoryTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('chieldcategory_translations', function (Blueprint $table) {
+        Schema::create('page_translations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('chieldcategory_id');
+            $table->unsignedBigInteger('page_id');
             $table->unsignedBigInteger('language_id');
-            $table->string('name')->nullable();
+            $table->string('title')->nullable();
             $table->string('slug')->nullable();
-            $table->timestamps();
+            $table->text('details')->nullable();
+            $table->text('meta_keywords')->nullable();
+            $table->text('meta_descriptions')->nullable();
 
-            $table->foreign('chieldcategory_id')->references('id')->on('chieldcategories')->onDelete('cascade');
+            $table->foreign('page_id')->references('id')->on('pages')->onDelete('cascade');
             $table->foreign('language_id')->references('id')->on('languages')->onDelete('cascade');
-            $table->unique(['chieldcategory_id', 'language_id']);
+            $table->unique(['page_id', 'language_id']);
         });
     }
 
@@ -34,7 +36,6 @@ class CreateChieldcategoryTranslationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('chieldcategory_translations');
+        Schema::dropIfExists('page_translations');
     }
 }
-

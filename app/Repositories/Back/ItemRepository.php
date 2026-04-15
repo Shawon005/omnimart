@@ -102,6 +102,7 @@ class ItemRepository
             $defaultInput['slug'] = $request->input("slug_{$defaultLang->id}") ?: $input['slug'];
             $defaultInput['sort_details'] = $request->input("sort_details_{$defaultLang->id}") ?: ($input['sort_details'] ?? null);
             $defaultInput['details'] = $request->input("details_{$defaultLang->id}") ?: ($input['details'] ?? null);
+            $defaultInput['meta_title'] = $request->input("meta_title_{$defaultLang->id}") ?: ($input['meta_title'] ?? null);
             $defaultInput['meta_keywords'] = $request->input("meta_keywords_{$defaultLang->id}") ?: ($input['meta_keywords'] ?? null);
             $defaultInput['meta_description'] = $request->input("meta_description_{$defaultLang->id}") ?: ($input['meta_description'] ?? null);
             $defaultInput['tags'] = $request->input("tags_{$defaultLang->id}") ?: ($input['tags'] ?? null);
@@ -119,6 +120,7 @@ class ItemRepository
                 'slug' => $request->input("slug_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['slug'] : null),
                 'sort_details' => $request->input("sort_details_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['sort_details'] : null),
                 'details' => $request->input("details_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['details'] : null),
+                'meta_title' => $request->input("meta_title_{$lang->id}") ?: ($lang->id == $defaultLang->id ? ($input['meta_title'] ?? null) : null),
                 'meta_keywords' => $request->input("meta_keywords_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_keywords'] : null),
                 'meta_description' => $request->input("meta_description_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_description'] : null),
                 'tags' => $request->input("tags_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['tags'] : null),
@@ -230,6 +232,7 @@ class ItemRepository
             $input['slug'] = $request->input("slug_{$defaultLang->id}") ?: $input['slug'];
             $input['sort_details'] = $request->input("sort_details_{$defaultLang->id}") ?: ($input['sort_details'] ?? null);
             $input['details'] = $request->input("details_{$defaultLang->id}") ?: ($input['details'] ?? null);
+            $input['meta_title'] = $request->input("meta_title_{$defaultLang->id}") ?: ($input['meta_title'] ?? null);
             $input['meta_keywords'] = $request->input("meta_keywords_{$defaultLang->id}") ?: ($input['meta_keywords'] ?? null);
             $input['meta_description'] = $request->input("meta_description_{$defaultLang->id}") ?: ($input['meta_description'] ?? null);
             $input['tags'] = $request->input("tags_{$defaultLang->id}") ?: ($input['tags'] ?? null);
@@ -246,6 +249,7 @@ class ItemRepository
                 'slug' => $request->input("slug_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['slug'] : null),
                 'sort_details' => $request->input("sort_details_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['sort_details'] : null),
                 'details' => $request->input("details_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['details'] : null),
+                'meta_title' => $request->input("meta_title_{$lang->id}") ?: ($lang->id == $defaultLang->id ? ($input['meta_title'] ?? null) : null),
                 'meta_keywords' => $request->input("meta_keywords_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_keywords'] : null),
                 'meta_description' => $request->input("meta_description_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['meta_description'] : null),
                 'tags' => $request->input("tags_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['tags'] : null),
@@ -261,6 +265,30 @@ class ItemRepository
         
         if(isset($input['galleries'])){
             $this->galleriesUpdate($request,$item->id);
+        }
+
+        // Update existing gallery metadata from the edit page.
+        $galleryPositions = $request->input('gallery_positions', []);
+        $galleryAltTexts = $request->input('gallery_alt_texts', []);
+
+        if(!empty($galleryPositions) || !empty($galleryAltTexts)){
+            $galleryIds = array_unique(array_merge(array_keys($galleryPositions), array_keys($galleryAltTexts)));
+
+            foreach($galleryIds as $galleryId){
+                $updateData = [];
+
+                if(array_key_exists($galleryId, $galleryPositions)){
+                    $updateData['position'] = $galleryPositions[$galleryId];
+                }
+
+                if(array_key_exists($galleryId, $galleryAltTexts)){
+                    $updateData['alt_text'] = $galleryAltTexts[$galleryId];
+                }
+
+                if(!empty($updateData)){
+                    Gallery::where('id', $galleryId)->update($updateData);
+                }
+            }
         }
     }
 
@@ -348,6 +376,7 @@ class ItemRepository
                 $storeData[$key] = [
                     'photo'=>  ImageHelper::handleUploadedImage($gallery,'images'),
                     'item_id' => $item_id ? $item_id : $request['item_id'],
+                    'position' => $key,
                 ];
             }
         }

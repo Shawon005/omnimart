@@ -11,7 +11,7 @@ class Item extends Model
 {
     use HasTranslations;
 
-    protected $fillable = ['category_id','subcategory_id','childcategory_id','brand_id','name','slug','sku','tags','video','sort_details','specification_name','specification_description','is_specification','details','photo','thumbnail','discount_price','previous_price','stock','meta_keywords','meta_description','status','is_type','tax_id','date','item_type','file','link','file_type','license_name','license_key','affiliate_link',"seller_id"];
+    protected $fillable = ['category_id','subcategory_id','childcategory_id','brand_id','name','slug','sku','tags','video','sort_details','specification_name','specification_description','is_specification','details','photo','thumbnail','alt_text','discount_price','previous_price','stock','meta_title','meta_keywords','meta_description','status','is_type','tax_id','date','item_type','file','link','file_type','license_name','license_key','affiliate_link',"seller_id"];
 
     public function category()
     {
@@ -75,10 +75,28 @@ class Item extends Model
         return $value;
     }
 
+    public function getMetaTitleAttribute($value)
+    {
+        if (!request()->is('admin/*') && method_exists($this, 'translations')) {
+            $translated = $this->getTranslatedAttribute('meta_title', 'meta_title');
+            return $translated ?: $value;
+        }
+        return $value;
+    }
+
     public function getMetaDescriptionAttribute($value)
     {
         if (!request()->is('admin/*') && method_exists($this, 'translations')) {
             $translated = $this->getTranslatedAttribute('meta_description', 'meta_description');
+            return $translated ?: $value;
+        }
+        return $value;
+    }
+
+    public function getTagsAttribute($value)
+    {
+        if (!request()->is('admin/*') && method_exists($this, 'translations')) {
+            $translated = $this->getTranslatedAttribute('tags', 'tags');
             return $translated ?: $value;
         }
         return $value;

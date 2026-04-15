@@ -36,7 +36,7 @@ class ChieldCategoryRepository
         $languages = Language::whereType('Website')->get();
         foreach ($languages as $lang) {
             ChieldCategoryTranslation::create([
-                'chieldcategory_id' => $chieldcategory->id,
+                'chield_category_id' => $chieldcategory->id,
                 'language_id' => $lang->id,
                 'name' => $request->input("name_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['name'] : null),
                 'slug' => $request->input("slug_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['slug'] : null),
@@ -68,7 +68,7 @@ class ChieldCategoryRepository
         $languages = Language::whereType('Website')->get();
         foreach ($languages as $lang) {
             ChieldCategoryTranslation::updateOrCreate(
-                ['chieldcategory_id' => $fcategory->id, 'language_id' => $lang->id],
+                ['chield_category_id' => $fcategory->id, 'language_id' => $lang->id],
                 [
                     'name' => $request->input("name_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['name'] : null),
                     'slug' => $request->input("slug_{$lang->id}") ?: ($lang->id == $defaultLang->id ? $input['slug'] : null),

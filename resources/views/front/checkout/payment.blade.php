@@ -3,6 +3,7 @@
     {{ __('Payment') }}
 @endsection
 @section('content')
+    @include('includes.checkout-payment-radio-styles')
     <!-- Page Title-->
     <div class="page-title">
         <div class="container">
@@ -73,25 +74,34 @@
                         @endif
                         <div class="row">
                             <div class="col-sm-6  mb-4">
-                                 @if (PriceHelper::CheckDigital() == true)
+                                @if (PriceHelper::CheckDigital() == true)
                                     
                             
                                     @php
                                         $free_shipping = DB::table('shipping_services')->whereStatus(1)->whereIsCondition(1)->first();
+                                        $shippingAddress = Session::get('shipping_address', []);
+                                        $billingAddress = Session::get('billing_address', []);
+                                        $autoShippingCountry = $shippingAddress['ship_country'] ?? ($billingAddress['bill_country'] ?? '');
+                                        $autoShippingPostal = $shippingAddress['ship_zip'] ?? ($billingAddress['bill_zip'] ?? '');
                                     @endphp
                             
-                                    <select name="shipping_id" class="form-control" id="shipping_id_select" required>
+                                    <select name="shipping_id" class="form-control" id="shipping_id_select" required
+                                        data-auto-country="{{ $autoShippingCountry }}"
+                                        data-auto-postal="{{ $autoShippingPostal }}"
+                                        data-base-grand-total="{{ PriceHelper::setCurrencyPrice($grand_total) }}">
                                         <option value="" selected disabled>{{ __('Select Shipping Method') }}</option>
 
                                         @foreach (DB::table('shipping_services')->whereStatus(1)->get() as $shipping)
                                             @if ($shipping->id == 1 && isset($free_shipping) &&  $free_shipping->minimum_price <= $cart_total)
                                                 <option value="{{ $shipping->id }}"
-                                                    data-href="{{ route('front.shipping.setup') }}">{{ $shipping->title }}
+                                                    data-href="{{ route('front.shipping.setup') }}"
+                                                    data-title="{{ $shipping->title }}">{{ $shipping->title }}
                                                 </option>
                                             @else
                                                 @if ($shipping->id != 1 && $free_shipping->minimum_price >= $cart_total)
                                                     <option value="{{ $shipping->id }}"
-                                                        data-href="{{ route('front.shipping.setup') }}">{{ $shipping->title }}
+                                                        data-href="{{ route('front.shipping.setup') }}"
+                                                        data-title="{{ $shipping->title }}">{{ $shipping->title }}
                                                         ({{ PriceHelper::setCurrencyPrice($shipping->price) }})
                                                     </option>
                                                 @endif
@@ -106,34 +116,7 @@
 
                                 @endif
                             </div>
-                            <div class="col-sm-6  mb-4">
-                                @if (PriceHelper::CheckDigital() == true)
-                                    
-                                
-                                @if (DB::table('states')->whereStatus(1)->count() > 0)
-                                    <select name="state_id" class="form-control" id="state_id_select" required>
-                                        <option value="" selected disabled>{{ __('Select Shipping Division') }}</option>
-                                        @foreach (DB::table('states')->whereStatus(1)->get() as $state)
-                                            <option value="{{ $state->id }}"
-                                                data-href="{{ route('front.state.setup') }}"
-                                                {{ Auth::check() && Auth::user()->state_id == $state->id ? 'selected' : '' }}>
-                                                {{ $state->name }}
-                                                @if ($state->type == 'fixed')
-                                                    ({{ PriceHelper::setCurrencyPrice($state->price) }})
-                                                @else
-                                                    ({{ $state->price }}%)
-                                                @endif
-
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <small class="text-primary state_message">{{ __('Please select shipping Division') }}</small>
-                                    @error('state_id')
-                                        <p class="text-danger state_message">{{ $message }}</p>
-                                    @enderror
-                                @endif
-                            @endif
-                            </div>
+                            <div class="col-sm-6  mb-4"></div>
                         </div>
                         <h6 class="pb-2 widget-title2">{{ __('Pay With') }} :</h6>
                         <div class="row mt-4">

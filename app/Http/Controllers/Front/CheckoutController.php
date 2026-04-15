@@ -20,7 +20,6 @@ use App\Models\Currency;
 use App\Models\Item;
 use App\Models\Setting;
 use App\Models\ShippingService;
-use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -92,8 +91,6 @@ class CheckoutController extends Controller
 
         $grand_total = ($cart_total  + $total_tax);
         $grand_total = $grand_total - ($discount ? $discount['discount'] : 0);
-        $state_tax = Auth::check() && Auth::user()->state_id ? ($cart_total * Auth::user()->state->price) / 100 : 0;
-        $grand_total = $grand_total + $state_tax;
 
 
         $total_amount = $grand_total;
@@ -158,8 +155,6 @@ class CheckoutController extends Controller
 
         $grand_total = $cart_total + $total_tax;
         $grand_total = $grand_total - ($discount ? $discount['discount'] : 0);
-        $state_tax = Auth::check() && Auth::user()->state_id ? ($cart_total * Auth::user()->state->price) / 100 : 0;
-        $grand_total = $grand_total + $state_tax;
 
         $total_amount = $grand_total;
         $data['cart'] = $cart;
@@ -186,6 +181,7 @@ class CheckoutController extends Controller
             'bill_address1' => 'required',
             'bill_city' => 'required',
             'bill_zip' => 'required',
+            'bill_state' => 'required',
         ]);
 
         if ($request->same_ship_address) {
@@ -266,8 +262,6 @@ class CheckoutController extends Controller
 
         $grand_total = $cart_total + $total_tax;
         $grand_total = $grand_total - ($discount ? $discount['discount'] : 0);
-        $state_tax = Auth::check() && Auth::user()->state_id ? ($cart_total * Auth::user()->state->price) / 100 : 0;
-        $grand_total = $grand_total + $state_tax;
 
         $total_amount = $grand_total;
         $data['cart'] = $cart;
@@ -344,8 +338,6 @@ class CheckoutController extends Controller
 
         $grand_total = ($cart_total  + $total_tax);
         $grand_total = $grand_total - ($discount ? $discount['discount'] : 0);
-        $state_tax = Auth::check() && Auth::user()->state_id ? ($cart_total * Auth::user()->state->price) / 100 : 0;
-        $grand_total = $grand_total + $state_tax;
 
 
         $total_amount = $grand_total;
@@ -727,27 +719,7 @@ class CheckoutController extends Controller
         $grand_total = $grand_total - ($discount ? $discount['discount'] : 0);
 
         $state_price = 0;
-        if ($state_id) {
-            $state = State::findOrFail($state_id);
-            if ($state->type == 'fixed') {
-                $state_price = $state->price;
-            } else {
-                $state_price = ($cart_total * $state->price) / 100;
-            }
-        } else {
-            if (Auth::check() && Auth::user()->state_id) {
-                $state = Auth::user()->state;
-                if ($state->type == 'fixed') {
-                    $state_price = $state->price;
-                } else {
-                    $state_price = ($cart_total * $state->price) / 100;
-                }
-            } else {
-                $state_price = 0;
-            }
-        }
-
-        $total_amount = $grand_total + $state_price;
+        $total_amount = $grand_total;
 
         $data['state_price'] = PriceHelper::setCurrencyPrice($state_price);
         $data['grand_total'] = PriceHelper::setCurrencyPrice($total_amount);
@@ -792,27 +764,7 @@ class CheckoutController extends Controller
         $grand_total = $grand_total - ($discount ? $discount['discount'] : 0);
 
         $state_price = 0;
-        if ($state_id && $state_id != 'undefined') {
-            $state = State::findOrFail($state_id);
-            if ($state->type == 'fixed') {
-                $state_price = $state->price;
-            } else {
-                $state_price = ($cart_total * $state->price) / 100;
-            }
-        } else {
-            if (Auth::check() && Auth::user()->state_id) {
-                $state = Auth::user()->state;
-                if ($state->type == 'fixed') {
-                    $state_price = $state->price;
-                } else {
-                    $state_price = ($cart_total * $state->price) / 100;
-                }
-            } else {
-                $state_price = 0;
-            }
-        }
-
-        $total_amount = $grand_total + $state_price;
+        $total_amount = $grand_total;
 
         $data['state_price'] = PriceHelper::setCurrencyPrice($state_price);
         $data['shipping_price'] = PriceHelper::setCurrencyPrice($shipping->price);

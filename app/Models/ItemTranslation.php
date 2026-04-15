@@ -10,9 +10,11 @@ class ItemTranslation extends Model
         'item_id',
         'language_id',
         'name',
+        'alt_text',
         'slug',
         'sort_details',
         'details',
+        'meta_title',
         'meta_keywords',
         'meta_description',
         'tags',
@@ -30,4 +32,3 @@ class ItemTranslation extends Model
         return $this->belongsTo(Language::class);
     }
 }
-

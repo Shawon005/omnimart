@@ -1,19 +1,18 @@
 <?php
 
 namespace App\Repositories\Front;
-
 use App\{
     Models\Post,
     Models\Page,
     Models\Order,
+    Models\Language,
 };
 use App\Helpers\PriceHelper;
 use App\Models\Bcategory;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Session;
 class FrontRepository
 {
-
     public function displayPosts($request){
         if($request->has('category')){
             return Post::with('category')->whereCategoryId(Bcategory::where('slug',$request->category)->first()->id)->latest('id')->paginate(6);
@@ -48,7 +47,25 @@ class FrontRepository
     }
 
     public function displayPage($slug){
-        return Page::whereSlug($slug)->firstOrFail();
+        // Get current language
+        $currentLanguage = Session::has('language') ? Session::get('language') : Language::whereType('Website')->where('is_default', 1)->first()->id;
+        
+        // Get page
+        $page = Page::whereSlug($slug)->firstOrFail();
+        
+        // Load translation for current language
+        $translation = $page->translations()->where('language_id', $currentLanguage)->first();
+        
+        // If translation exists, merge it with the page data
+        if ($translation) {
+            $page->title = $translation->title ?? $page->title;
+            $page->slug = $translation->slug ?? $page->slug;
+            $page->details = $translation->details ?? $page->details;
+            $page->meta_keywords = $translation->meta_keywords ?? $page->meta_keywords;
+            $page->meta_descriptions = $translation->meta_descriptions ?? $page->meta_descriptions;
+        }
+        
+        return $page;
     }
 
     public function reviewSubmit($request)

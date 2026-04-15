@@ -60,7 +60,7 @@ class SliderController extends Controller
     {
        
         $request->validate([
-            'logo' => 'image',
+            // 'logo' => 'image',
             'photo' => 'required|image',
             // 'title' => 'required|max:100',
             // 'link' => 'required|max:255',
@@ -93,7 +93,7 @@ class SliderController extends Controller
         $request->validate([
             // 'title' => 'required|max:100',
             // 'link' => 'required|max:255',
-            'logo' => 'image',
+            // 'logo' => 'image',
             'photo' => 'image',
             // 'details' => 'required|max:255',
         ]);
@@ -111,5 +111,28 @@ class SliderController extends Controller
     {
         $this->repository->delete($slider);
         return redirect()->route('back.slider.index')->withSuccess(__('Slider Deleted Successfully.'));
+    }
+
+    /**
+     * Toggle the status of a slider.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toggleStatus(Request $request)
+    {
+        try {
+            $slider = Slider::find($request->id);
+            if (!$slider) {
+                return response()->json(['success' => false, 'message' => 'Slider not found']);
+            }
+            
+            $slider->status = $slider->status == 1 ? 0 : 1;
+            $slider->save();
+            
+            return response()->json(['success' => true, 'status' => $slider->status]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 }

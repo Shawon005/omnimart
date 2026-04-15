@@ -1,7 +1,24 @@
 @extends('master.back')
 
 @section('content')
+<style>
+	    /* General style for the div inside the editor and website */
+.responsive-bg-box {
+    background-color: transparent; /* No background on Desktop */
+    padding: 0;
+    transition: all 0.3s ease;
+}
 
+/* Media Query: Only apply the background on Mobile */
+@media screen and (max-width: 768px) {
+    .responsive-bg-box {
+        /* This pulls the color from the --mobile-bg variable we set in JS */
+        background-color: var(--mobile-bg); 
+        padding: 10px;
+        border-radius: 6px;
+    }
+}
+</style>
 <div class="container-fluid">
 
 	<!-- Page Heading -->
@@ -54,22 +71,49 @@
                                             $languages = \App\Models\Language::whereType('Website')->get();
                                             $defaultLang = \App\Models\Language::whereType('Website')->where('is_default', 1)->first();
                                         @endphp
-                                        <div class="form-group">
-                                            <label id="change_label" for="name">{{ __('Brand Logo') }} </label>
-                                            <br>
-                                                <img class="admin-img" src="{{  url('/core/public/storage/images/placeholder.png') }}"
-                                                    alt="No Image Found">
-                                            <br>
-                                            <span id="change_message" class="mt-1">{{ __('Image Size Should Be 130 x 40') }}</span>
-                                        </div>
 
-                                        <div class="form-group position-relative">
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="sliderTabs3" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="slider3-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#slider3-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+                                            <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="slider3-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                               
+                                                 <div class="form-group">
+                                                <label id="change_label" for="logo_{{ $lang->id }}">{{ __('Feature Text') }} </label>
+                                                <br>
+                                                <textarea name="logo_{{ $lang->id }}" id="logo_{{ $lang->id }}" class="form-control text-editor" rows="5"
+													placeholder="Feature Text"
+													></textarea>
+                                            <!-- <span id="change_message" class="mt-1">{{ __('Image Size Should Be 130 x 40') }}</span> -->
+                                            </div> 
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                        
+
+                                        <!-- <div class="form-group position-relative">
                                             <label class="file">
                                                 <input type="file"  accept="image/*"  class="upload-photo" name="logo" id="file"
                                                     aria-label="File browser example" >
                                                 <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
                                             </label>
-                                        </div>
+                                        </div> -->
 
                                         @if($languages->count() > 1)
                                         <ul class="nav nav-tabs mb-3" id="sliderTabs1" role="tablist">
@@ -94,17 +138,17 @@
                                                  role="tabpanel">
                                                 <div class="form-group">
                                                     <label for="title1_{{ $lang->id }}">{{ __('Title') }}</label>
-                                                    <textarea name="title_{{ $lang->id }}" id="title1_{{ $lang->id }}"
-                                                            class="form-control text-editor" rows="5"
+                                                    <textarea name="title_{{ $lang->id }}" id="myeditorinstance"
+                                                            class="form-control " rows="5"
                                                             placeholder="{{ __('Enter Title') }}"
-                                                        >{{ old("title_{$lang->id}") }}" </textarea>
+                                                        >{{ old("title_{$lang->id}") }} </textarea>
                                                     <!-- <input type="text" name="title_{{ $lang->id }}" class="form-control" id="title1_{{ $lang->id }}"
                                                         placeholder="{{ __('Enter Title') }}" value="> -->
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="details1_{{ $lang->id }}">{{ __('Details') }}</label>
-                                                    <textarea name="details_{{ $lang->id }}" id="details1_{{ $lang->id }}" class="form-control text-editor" rows="5"
+                                                    <textarea name="details_{{ $lang->id }}" id="myeditorinstance1" class="form-control" rows="5"
                                                         placeholder="{{ __('Enter Details') }}"
                                                         >{{ old("details_{$lang->id}") }}</textarea>
                                                 </div>
@@ -161,14 +205,29 @@
                                             <br>
                                             <span id="change_message" class="mt-1">{{ __('Image Size Should Be 130 x 40') }}</span>
                                         </div>
-
-                                        <div class="form-group position-relative">
+                                        @if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="sliderTabs2" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="slider2-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#slider2-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <!-- <div class="form-group position-relative">
                                             <label class="file">
                                                 <input type="file"  accept="image/*"  class="upload-photo" name="logo" id="file"
                                                     aria-label="File browser example" >
                                                 <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
                                             </label>
-                                        </div>
+                                        </div> -->
 
                                         @if($languages->count() > 1)
                                         <ul class="nav nav-tabs mb-3" id="sliderTabs2" role="tablist">

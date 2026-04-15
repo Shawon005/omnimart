@@ -889,12 +889,15 @@
                                                                                 <label
                                                                                     for="footer_address">{{ __('Store Address') }}
                                                                                     *</label>
-                                                                                <input type="text"
+                                                                                    <textarea name="footer_address" id="footer_address" class="form-control text-editor" rows="5"
+													placeholder="Feature Text"
+													>{{ $setting->footer_address }}</textarea>
+                                                                                <!-- <input type="text"
                                                                                     name="footer_address"
                                                                                     class="form-control"
                                                                                     id="footer_address"
                                                                                     placeholder="{{ __('Store Address') }}"
-                                                                                    value="{{ $setting->footer_address }}">
+                                                                                    value="{{ $setting->footer_address }}"> -->
                                                                             </div>
 
                                                                             <div class="form-group">

@@ -23,7 +23,7 @@ class ChieldCategory extends Model
 
     public function items()
     {
-        return $this->hasMany('App\Models\Item','childcategory_id')->where('status',1);
+        return $this->hasMany('App\Models\Item','child_category_id')->where('status',1);
     }
 
     public function translations()

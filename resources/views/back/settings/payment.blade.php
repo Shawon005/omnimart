@@ -38,6 +38,7 @@
                                     <a class="nav-link" data-toggle="pill" href="#paystack">{{ __('Paystack') }}</a>
                                     <a class="nav-link" data-toggle="pill" href="#flutterwave">{{ __('Flutterwave') }}</a>
                                     <a class="nav-link" data-toggle="pill" href="#paytabs">{{ __('Paytabs') }}</a>
+                                    <a class="nav-link" data-toggle="pill" href="#ifthenpay">{{ __('IfthenPay') }}</a>
                                     <a class="nav-link" data-toggle="pill" href="#bank">{{ __('Bank Transfer') }}</a>
 
                                 </div>
@@ -1428,6 +1429,206 @@
                                                                         </div>
                                                                         <input type="hidden" name="unique_keyword"
                                                                             value="paytabs">
+                                                                    </div>
+                                                                    <div>
+                                                                        <div
+                                                                            class="form-group d-flex justify-content-center">
+                                                                            <button type="submit"
+                                                                                class="btn btn-secondary btn-block w-50">{{ __('Submit') }}</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="ifthenpay" class="container tab-pane"><br>
+                                                        <div class="row justify-content-center">
+                                                            <div class="col-lg-8">
+                                                                <form action="{{ route('back.setting.payment.update') }}"
+                                                                    method="POST" enctype="multipart/form-data">
+
+                                                                    @csrf
+
+                                                                    <div class="form-group">
+                                                                        <label class="switch-primary">
+                                                                            <input type="checkbox"
+                                                                                class="switch switch-bootstrap "
+                                                                                name="status" value="1"
+                                                                                {{ $ifthenpay->status == 1 ? 'checked' : '' }}>
+                                                                            <span class="switch-body"></span>
+                                                                            <span
+                                                                                class="switch-text">{{ __('Display IfthenPay') }}</span>
+                                                                        </label>
+                                                                    </div>
+
+                                                                    <div
+                                                                        class="image-show {{ $ifthenpay->status == 1 ? '' : 'd-none' }}">
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label
+                                                                                for="name">{{ __('Current Image') }}</label>
+                                                                            <div class="col-lg-12 pb-1">
+                                                                                <img class="admin-setting-img"
+                                                                                    src="{{ $ifthenpay->photo ? url('/core/public/storage/images/' . $ifthenpay->photo) : url('/core/public/storage/images/placeholder.png') }}"
+                                                                                    alt="No Image Found">
+                                                                            </div>
+                                                                            <span>{{ __('Image Size Should Be 52 x 35.') }}</span>
+                                                                        </div>
+
+                                                                        <div
+                                                                            class="form-group position-relative col-xl-12">
+                                                                            <label class="file">
+                                                                                <input type="file" class="upload-photo"
+                                                                                    name="photo" id="file"
+                                                                                    aria-label="File browser example">
+                                                                                <span
+                                                                                    class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                                            </label>
+                                                                        </div>
+
+                                                                        <div class="form-group">
+                                                                            <label for="name">{{ __('Enter Name') }}
+                                                                                *</label>
+                                                                            <input type="text" class="form-control"
+                                                                                name="name" id="name"
+                                                                                value="{{ $ifthenpay->name }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-backoffice_key">{{ __('IfthenPay Backoffice Key') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-backoffice_key"
+                                                                                name="pkey[backoffice_key]"
+                                                                                placeholder="{{ __('IfthenPay Backoffice Key') }}"
+                                                                                value="{{ $ifthenpayData['backoffice_key'] ?? '' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-anti_phishing_key">{{ __('IfthenPay Anti Phishing Key') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-anti_phishing_key"
+                                                                                name="pkey[anti_phishing_key]"
+                                                                                placeholder="{{ __('IfthenPay Anti Phishing Key') }}"
+                                                                                value="{{ $ifthenpayData['anti_phishing_key'] ?? '' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-gateway_key">{{ __('IfthenPay Gateway Key') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-gateway_key"
+                                                                                name="pkey[gateway_key]"
+                                                                                placeholder="{{ __('IfthenPay Gateway Key') }}"
+                                                                                value="{{ $ifthenpayData['gateway_key'] ?? '' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-credit_card_key">{{ __('IfthenPay Credit Or Debit Card Key') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-credit_card_key"
+                                                                                name="pkey[credit_card_key]"
+                                                                                placeholder="{{ __('IfthenPay Credit Or Debit Card Key') }}"
+                                                                                value="{{ $ifthenpayData['credit_card_key'] ?? '' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-mbway_key">{{ __('IfthenPay MB WAY Key') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-mbway_key"
+                                                                                name="pkey[mbway_key]"
+                                                                                placeholder="{{ __('IfthenPay MB WAY Key') }}"
+                                                                                value="{{ $ifthenpayData['mbway_key'] ?? '' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-payshop_key">{{ __('IfthenPay Payshop Key') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-payshop_key"
+                                                                                name="pkey[payshop_key]"
+                                                                                placeholder="{{ __('IfthenPay Payshop Key') }}"
+                                                                                value="{{ $ifthenpayData['payshop_key'] ?? '' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-multibanco_entity">{{ __('IfthenPay Multibanco Entity') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-multibanco_entity"
+                                                                                name="pkey[multibanco_entity]"
+                                                                                placeholder="{{ __('IfthenPay Multibanco Entity') }}"
+                                                                                value="{{ $ifthenpayData['multibanco_entity'] ?? '' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-multibanco_sub_entity">{{ __('IfthenPay Multibanco Sub Entity') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-multibanco_sub_entity"
+                                                                                name="pkey[multibanco_sub_entity]"
+                                                                                placeholder="{{ __('IfthenPay Multibanco Sub Entity') }}"
+                                                                                value="{{ $ifthenpayData['multibanco_sub_entity'] ?? '' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-default_method">{{ __('IfthenPay Default Method') }}</label>
+                                                                            <select class="form-control"
+                                                                                id="inp-ifthenpay-default_method"
+                                                                                name="pkey[default_method]">
+                                                                                <option value="CCARD" {{ ($ifthenpayData['default_method'] ?? 'CCARD') == 'CCARD' ? 'selected' : '' }}>{{ __('Credit Or Debit Card') }}</option>
+                                                                                <option value="MB" {{ ($ifthenpayData['default_method'] ?? '') == 'MB' ? 'selected' : '' }}>{{ __('Multibanco') }}</option>
+                                                                                <option value="MBWAY" {{ ($ifthenpayData['default_method'] ?? '') == 'MBWAY' ? 'selected' : '' }}>{{ __('MB WAY') }}</option>
+                                                                                <option value="PAYSHOP" {{ ($ifthenpayData['default_method'] ?? '') == 'PAYSHOP' ? 'selected' : '' }}>{{ __('Payshop') }}</option>
+                                                                            </select>
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-language">{{ __('IfthenPay Language') }}</label>
+                                                                            <select class="form-control"
+                                                                                id="inp-ifthenpay-language"
+                                                                                name="pkey[language]">
+                                                                                <option value="pt" {{ ($ifthenpayData['language'] ?? 'pt') == 'pt' ? 'selected' : '' }}>Portuguese</option>
+                                                                                <option value="en" {{ ($ifthenpayData['language'] ?? '') == 'en' ? 'selected' : '' }}>English</option>
+                                                                            </select>
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-days_to_expire">{{ __('IfthenPay Days To Expire') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-days_to_expire"
+                                                                                name="pkey[days_to_expire]"
+                                                                                placeholder="{{ __('IfthenPay Days To Expire') }}"
+                                                                                value="{{ $ifthenpayData['days_to_expire'] ?? '3' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-12">
+                                                                            <label for="inp-ifthenpay-close_button_label">{{ __('IfthenPay Close Button Label') }}</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="inp-ifthenpay-close_button_label"
+                                                                                name="pkey[close_button_label]"
+                                                                                placeholder="{{ __('IfthenPay Close Button Label') }}"
+                                                                                value="{{ $ifthenpayData['close_button_label'] ?? 'Close' }}">
+                                                                        </div>
+
+                                                                        <div class="form-group col-xl-4 col-md-6">
+                                                                            <div class="custom-control custom-checkbox">
+                                                                                <input type="checkbox"
+                                                                                    name="pkey[is_one_time_payment]"
+                                                                                    class="custom-control-input"
+                                                                                    {{ ($ifthenpayData['is_one_time_payment'] ?? 1) == 1 ? 'checked' : '' }}
+                                                                                    id="ifthenpay_is_one_time_payment">
+                                                                                <label class="custom-control-label"
+                                                                                    for="ifthenpay_is_one_time_payment">
+                                                                                    {{ __('Enable one time payment') }}
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="form-group">
+                                                                            <label for="text">{{ __('Enter Text') }}
+                                                                                *</label>
+                                                                            <textarea name="text" id="text" class="form-control " rows="5"
+                                                                                placeholder="{{ __('Enter Text') }}">{{ $ifthenpay->text }}</textarea>
+                                                                        </div>
+                                                                        <input type="hidden" name="unique_keyword"
+                                                                            value="ifthenpay">
                                                                     </div>
                                                                     <div>
                                                                         <div

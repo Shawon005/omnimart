@@ -3,6 +3,7 @@
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $setting->title }}</title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <link rel="icon" type="image/x-icon" href="{{ url('/core/public/storage/images/' . $setting->favicon) }}" />
@@ -20,12 +21,13 @@
     <link rel="stylesheet" href="{{ asset('assets/back/css/editor.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/back/css/bootstrap-iconpicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/back/css/magnific-popup.css') }}">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/outline" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/back/css/custom.css') }}">
 
 
-    @if (DB::table('languages')->where('type', 'Dashboard')->where('is_default', 1)->first()->rtl == 1)
+    @if (DB::table('languages')->where('is_default', 1)->first()->rtl == 1)
         <link rel="stylesheet" href="{{ asset('assets/back/css/rtl.css') }}">
     @endif
 
@@ -240,6 +242,233 @@
 
     @yield('scripts')
     <script src="{{ asset('assets/back/js/custom.js') }}"></script>
+
+    <script src="https://cdn.tiny.cloud/1/zwmet5zwiseexmg68njgwjjj65x0q9rufht5kvy00dyzsd56/tinymce/8/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+
+tinymce.init({
+    selector: 'textarea#myeditorinstance',
+    // 1. Improved CSS: Added font-weight and color for visibility
+    content_style: ".text-outline { -webkit-text-stroke: 1px rgb(204, 180, 134); color: black; font-weight: bold; }",
+    
+    style_formats: [
+        { title: 'Text Outline', inline: 'span', classes: 'text-outline' }
+    ],
+    setup: (editor) => {
+        /* Define the Custom Button */
+        editor.ui.registry.addButton('outlinepicker', {
+            icon: 'unformatted',
+            tooltip: 'Apply Text Outline Color',
+            onAction: () => {
+                /* Open a Dialog with a Color Input */
+                editor.windowManager.open({
+                    title: 'Set Outline Color',
+                    body: {
+                        type: 'panel',
+                        items: [{
+                            type: 'colorinput',
+                            name: 'strokeColor',
+                            label: 'Pick Outline Color',
+                           
+                        }]
+                    },
+                    buttons: [
+                        { type: 'cancel', text: 'Close' },
+                        { type: 'submit', text: 'Apply', primary: true }
+                    ],
+                    onSubmit: (api) => {
+                        const data = api.getData();
+                        /* Apply the style to the selected text */
+                        editor.formatter.register('dynamic_outline', {
+                            inline: 'span',
+                            styles: {
+                                '-webkit-text-stroke': `1px ${data.strokeColor}`,
+                                // Inside fill
+                               
+                            }
+                        });
+                        editor.formatter.apply('dynamic_outline');
+                        api.close();
+                    }
+                });
+            }
+        });
+    },
+
+
+    font_family_formats:
+        "Arial=arial,helvetica,sans-serif;" +
+        "Arial Black=arial black,avant garde;" +
+        "Academy=Academy;" +
+        "Comic Sans MS=comic sans ms,sans-serif;" +
+        "Courier New=courier new,courier;" +
+        "Helvetica=helvetica;" +
+        "Impact=impact;" +
+        "Tahoma=tahoma;" +
+        "Times New Roman=times new roman,times;" +
+        "Verdana=verdana,geneva;",
+    plugins: [
+        'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+        'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
+    ],
+
+    // 2. IMPORTANT: Change 'styleselect' to 'blocks styles'
+    toolbar: 'undo redo | blocks   fontfamily fontsize | bold italic underline strikethrough outlinepicker| link media table mergetags | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+    font_size_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 26pt 28pt 30pt 32pt 34pt 36pt 38pt 40pt 42pt 44pt 46pt 48pt',
+    tinycomments_mode: 'embedded',
+    tinycomments_author: 'Author name',
+    mergetags_list: [
+        { value: 'First.Name', title: 'First Name' },
+        { value: 'Email', title: 'Email' },
+    ],
+    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+    uploadcare_public_key: '34f8d9cb6174fd2c38b9',
+});
+tinymce.init({
+selector: 'textarea#myeditorinstance1',
+content_style: ".text-outline { -webkit-text-stroke: 1px rgb(204, 180, 134); color: black; font-weight: bold; }",
+
+style_formats: [
+    { title: 'Text Outline', inline: 'span', classes: 'text-outline' }
+],
+font_family_formats:
+        "Arial=arial,helvetica,sans-serif;" +
+        "Arial Black=arial black,avant garde;" +
+        "Academy=Academy;" +
+        "Comic Sans MS=comic sans ms,sans-serif;" +
+        "Courier New=courier new,courier;" +
+        "Helvetica=helvetica;" +
+        "Impact=impact;" +
+        "Tahoma=tahoma;" +
+        "Times New Roman=times new roman,times;" +
+        "Verdana=verdana,geneva;",
+setup: (editor) => {
+    /* Define the Custom Button */
+    editor.ui.registry.addButton('outlinepicker', {
+        icon: 'unformatted',
+        tooltip: 'Apply Text Outline Color',
+        onAction: () => {
+            /* Open a Dialog with a Color Input */
+            editor.windowManager.open({
+                title: 'Set Outline Color',
+                body: {
+                    type: 'panel',
+                    items: [{
+                        type: 'colorinput',
+                        name: 'strokeColor',
+                        label: 'Pick Outline Color'
+                    }]
+                },
+                buttons: [
+                    { type: 'cancel', text: 'Close' },
+                    { type: 'submit', text: 'Apply', primary: true }
+                ],
+                onSubmit: (api) => {
+                    const data = api.getData();
+                    /* Apply the style to the selected text */
+                    editor.formatter.register('dynamic_outline', {
+                        inline: 'span',
+                        styles: {
+                            '-webkit-text-stroke': `1px ${data.strokeColor}`,
+                            // Inside fill
+                            
+                        }
+                    });
+                    editor.formatter.apply('dynamic_outline');
+                    api.close();
+                }
+            });
+        }
+    });
+    
+},
+
+setup: (editor) => {
+editor.ui.registry.addButton('divbackground', {
+    icon: 'fill',
+    tooltip: 'Set Mobile-Only Background Color',
+    onAction: () => {
+        editor.windowManager.open({
+            title: 'Mobile Background Settings',
+            body: {
+                type: 'panel',
+                items: [{
+                    type: 'colorinput',
+                    name: 'bgColor',
+                    label: 'Pick Color (Mobile Only)'
+                }]
+            },
+            buttons: [
+                { type: 'cancel', text: 'Close' },
+                { type: 'custom', name: 'clearBtn', text: 'Remove Background' },
+                { type: 'submit', text: 'Apply Color', primary: true }
+            ],
+            onAction: (api, details) => {
+                if (details.name === 'clearBtn') {
+                    // 1. Get the parent element of the selection
+                    const node = editor.selection.getNode();
+                    const closestDiv = editor.dom.getParent(node, 'div.responsive-bg-box');
+                    
+                    // 2. If we are inside our custom div, unwrapp it
+                    if (closestDiv) {
+                        editor.dom.remove(closestDiv, true); // 'true' keeps the text inside
+                    }
+                    api.close();
+                }
+            },
+            onSubmit: (api) => {
+                const data = api.getData();
+                const formatName = 'mobile_bg_format';
+
+                // 1. Manual check: If already inside a box, remove it first
+                const node = editor.selection.getNode();
+                const closestDiv = editor.dom.getParent(node, 'div.responsive-bg-box');
+                if (closestDiv) {
+                    editor.dom.remove(closestDiv, true);
+                }
+
+                // 2. Apply new format
+                editor.formatter.register(formatName, {
+                    block: 'div',
+                    classes: 'responsive-bg-box',
+                    styles: { 
+                        '--mobile-bg': data.bgColor,
+                        'background-color': data.bgColor,
+                        'padding':'10px' // Set color as a variable
+                        },
+                    wrapper: true
+                });
+                editor.formatter.apply(formatName);
+                
+                api.close();
+            }
+        });
+    }
+});
+},
+plugins: [
+    // Core editing features
+    'anchor',  'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+    // Your account includes a free trial of TinyMCE premium features
+    // Try the most popular premium features until Feb 8, 2026:
+    'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+    ],
+    block_formats: 'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3; Header 4=h4;Header 5=h5;Header 6=h6; Div Block=div; Span=span;',
+    font_size_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 26pt 28pt 30pt 32pt 34pt 36pt 38pt 40pt 42pt 44pt 46pt 48pt',
+    // This ensures TinyMCE doesn't delete your divs when you save
+    extended_valid_elements: 'div[*],span[*]',
+    toolbar: 'undo redo | blocks  fontfamily fontsize divbackground  | bold italic underline strikethrough outlinepicker | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+    tinycomments_mode: 'embedded',
+    tinycomments_author: 'Author name',
+    mergetags_list: [
+    { value: 'First.Name', title: 'First Name' },
+    { value: 'Email', title: 'Email' },
+    ],
+    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+    uploadcare_public_key: '34f8d9cb6174fd2c38b9', // Replace this CSS selector to match the placeholder element for TinyMCE
+});
+  
+</script>
 
 </body>
 

@@ -15,7 +15,7 @@ class ImageHelper
                 Storage::disk('public')->delete($path . '/' . $delete);
             }
 
-            $name = Str::random(4) . $file->getClientOriginalName();
+            $name =$file->getClientOriginalName();
             Storage::disk('public')->putFileAs($path, $file, $name);
             return $name;
         }
@@ -25,7 +25,7 @@ class ImageHelper
     public static function uploadSummernoteImage($file, $path)
     {
         if ($file) {
-            $name = 'OM_' . time() .  Str::random(8) . '.' . $file->getClientOriginalExtension();
+            $name = $file->getClientOriginalName().  '.' . $file->getClientOriginalExtension();
             Storage::disk('public')->putFileAs($path, $file, $name);
             return $name;
         }
@@ -35,19 +35,20 @@ class ImageHelper
 
     public static function ItemhandleUploadedImage($file, $path, $delete = null)
     {
+      
         if ($file) {
 
             if ($delete) {
                 Storage::disk('public')->delete($path . '/' . $delete);
             }
 
-            $photoName = 'OM_' . time() .  Str::random(8) . '.' . $file->getClientOriginalExtension();
-            $thumbnailName = 'OM_' . time() .  Str::random(8) . '.' . $file->getClientOriginalExtension();
+            $photoName = $file->getClientOriginalName();
+            $thumbnailName = $file->getClientOriginalName();
 
             Storage::disk('public')->putFileAs($path, $file, $photoName);
 
 
-            $image = \Image::make($file)->resize(230, 230);
+             $image = \Image::make($file);
 
 
             $thumbnailPath = $path . '/' . $thumbnailName;
@@ -61,7 +62,7 @@ class ImageHelper
     public static function handleUpdatedUploadedImage($file, $path, $data, $delete_path, $field)
     {
 
-        $name = 'OM_' . time() .  Str::random(8) . '.' . $file->getClientOriginalExtension();
+        $name = $file->getClientOriginalName()  .  '.' . $file->getClientOriginalExtension();
         
         
         Storage::disk('public')->putFileAs($path, $file, $name);
@@ -77,12 +78,12 @@ class ImageHelper
 
     public static function ItemhandleUpdatedUploadedImage($file, $path, $data, $delete_path, $field)
     {
+        
+        $photoName = $file->getClientOriginalName()     ;
+        $thumbnailName = $file->getClientOriginalName() ;
 
-        $photoName = 'OM_' . time() .  Str::random(8) . '.' . $file->getClientOriginalExtension();
-        $thumbnailName = 'OM_' . time() . Str::random(8) . '.' . $file->getClientOriginalExtension();
 
-
-        $image = \Image::make($file)->resize(230, 230);
+        $image = \Image::make($file);
 
 
         $thumbnailPath = $path . '/' . $thumbnailName;

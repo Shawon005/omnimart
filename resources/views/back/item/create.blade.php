@@ -96,6 +96,12 @@
                         <br>
                         <span class="mt-1 text-info">{{ __('Image Size Should Be 800 x 800. or square size') }}</span>
                     </div>
+                    <div class="form-group">
+                        <label for="alt_text">{{ __('Alt Text') }}</label>
+                        <input type="text" name="alt_text" class="form-control"
+                            id="alt_text" placeholder="{{ __('Enter Alt Text for SEO') }}"
+                            value="{{ old('alt_text') }}">
+                    </div>
                 </div>
             </div>
             <div class="card">
@@ -255,9 +261,18 @@
                     @endif -->
                     <div class="tab-content">
                         @foreach($languages as $index => $lang)
-                        <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                            <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
                              id="meta-lang-{{ $lang->id }}" 
                              role="tabpanel">
+                             
+                            <div class="form-group">
+                                <label for="meta_title_{{ $lang->id }}">{{ __('Meta Title') }}</label>
+                                <input type="text" name="meta_title_{{ $lang->id }}" class="form-control"
+                                    id="meta_title_{{ $lang->id }}"
+                                    placeholder="{{ __('Enter Meta Title') }}"
+                                    value="{{ old("meta_title_{$lang->id}") }}">
+                            </div>
+
                             <div class="form-group">
                                 <label for="meta_keywords_{{ $lang->id }}">{{ __('Meta Keywords') }}</label>
                                 <input type="text" name="meta_keywords_{{ $lang->id }}" class="tags"
@@ -274,6 +289,7 @@
                                 >{{ old("meta_description_{$lang->id}") }}</textarea>
                             </div>
                             @if($lang->id == $defaultLang->id)
+                                <input type="hidden" name="meta_title" value="">
                                 <input type="hidden" name="meta_keywords" value="">
                                 <input type="hidden" name="meta_description" value="">
                             @endif

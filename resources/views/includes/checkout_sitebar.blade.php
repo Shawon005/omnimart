@@ -29,15 +29,6 @@
                 </tr>
             @endif
 
-            @if (DB::table('states')->count() > 0)
-                <tr class="{{ Auth::check() && Auth::user()->state_id ? '' : 'd-none' }} set__state_price_tr">
-                    <td>{{ __('Division tax') }}:</td>
-                    <td class="text-gray-dark set__state_price">
-                        {{ PriceHelper::setCurrencyPrice(Auth::check() && Auth::user()->state_id ? ($cart_total * Auth::user()->state->price) / 100 : 0) }}
-                    </td>
-                </tr>
-            @endif
-
             @if ($discount)
                 <tr>
                     <td>{{ __('Coupon discount') }}:</td>

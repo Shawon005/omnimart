@@ -9,6 +9,7 @@
         "anhskohbo/no-captcha": "^3.7",
         "authorizenet/authorizenet": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
+        "ifthenpay/payment-gateway-sdk": "^1.0",
         "intervention/image": "^2.6",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
@@ -26,6 +27,7 @@
         "spatie/laravel-cookie-consent": "^3.3",
         "spatie/laravel-sitemap": "^6.2.5",
         "srmklive/paypal": "~3.0",
+        "stevebauman/location": "^7.6",
         "stripe/stripe-php": "^12.6",
         "twilio/sdk": "^6.28",
         "zanysoft/laravel-zip": "^2.0"

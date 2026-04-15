@@ -116,6 +116,12 @@
                         <br>
                         <span class="mt-1 text-info">{{ __('Image Size Should Be 800 x 800. or square size') }}</span>
                     </div>
+                    <div class="form-group">
+                        <label for="alt_text">{{ __('Alt Text') }}</label>
+                        <input type="text" name="alt_text" class="form-control"
+                            id="alt_text" placeholder="{{ __('Enter Alt Text for SEO') }}"
+                            value="{{ old('alt_text', $item->alt_text) }}">
+                    </div>
                 </div>
             </div>
             <div class="card">
@@ -138,6 +144,15 @@
                                                 <img class="admin-gallery-img" src="{{ $gallery->photo ? url('/core/public/storage/images/'.$gallery->photo) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             </a>
+                                            <div class="mt-2">
+                                                <input type="number" name="gallery_positions[{{ $gallery->id }}]" class="form-control form-control-sm" 
+                                                    value="{{ $gallery->position ?? 0 }}" placeholder="Position" min="0" style="width: 80px;">
+                                            </div>
+                                            <div class="mt-2">
+                                                <input type="text" name="gallery_alt_texts[{{ $gallery->id }}]" class="form-control form-control-sm"
+                                                    value="{{ old('gallery_alt_texts.' . $gallery->id, $gallery->alt_text) }}"
+                                                    placeholder="{{ __('Alt Text') }}" style="width: 180px;">
+                                            </div>
                                     </div>
                                 @empty
                                     <h6><b>{{ __('No Images Added') }}</b></h6>
@@ -322,8 +337,16 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
+                <div class="card">
                 <div class="card-body">
+                    <div class="form-group">
+                        <label for="meta_title">{{ __('Meta Title') }}
+                            </label>
+                        <input type="text" name="meta_title" class="form-control"
+                            id="meta_title"
+                            placeholder="{{ __('Enter Meta Title') }}"
+                            value="{{ $item->meta_title ?? '' }}">
+                    </div>
                     <div class="form-group">
                         <label for="meta_keywords">{{ __('Meta Keywords') }}
                             </label>

@@ -4,9 +4,7 @@ namespace App\Http\Requests;
 
 use App\Helpers\PriceHelper;
 use App\Models\ShippingService;
-use App\Models\State;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Session;
 
 class PaymentRequest extends FormRequest
 {
@@ -32,13 +30,11 @@ class PaymentRequest extends FormRequest
         if(PriceHelper::CheckDigital() == false){
             return [];
         }
-        $state = State::whereStatus(1)->count() != 0  ? 'required' : '';
-        
         $shipping = ShippingService::whereStatus(1)->count() == 0 || PriceHelper::CheckDigital() == true? 'required' : '';
 
         if($this->single_page_checkout == 1){
             return [
-                'state_id' => $state,
+                'state_id' => 'nullable',
                 "shipping_id" => $shipping,
                 'bill_first_name' => 'required',
                 'bill_last_name' => 'required',
@@ -47,10 +43,11 @@ class PaymentRequest extends FormRequest
                 'bill_address1' => 'required',
                 'bill_city' => 'required',
                 'bill_zip' => 'required',
+                'bill_state' => 'required',
             ];
         }else{
             return [
-                'state_id' => $state,
+                'state_id' => 'nullable',
                 "shipping_id" => $shipping,
             ];
         }
@@ -64,7 +61,6 @@ class PaymentRequest extends FormRequest
     public function messages()
     {
         return [
-            'state_id.required'   => __('Please select your shipping state.'),
             'shipping_id.required'   => __('Please select your shipping method.'),
         ];
     }

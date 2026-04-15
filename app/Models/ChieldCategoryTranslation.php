@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ChieldCategoryTranslation extends Model
 {
     protected $fillable = [
-        'chieldcategory_id',
+        'chield_category_id',
         'language_id',
         'name',
         'slug',

@@ -17,6 +17,8 @@ class PaymentSettingRepository
      */
     public function payment()
     {
+        $this->ensureIfthenpayGatewayExists();
+
         $bank = PaymentSetting::whereUniqueKeyword('bank')->first();
         $data['bank'] = $bank;
 
@@ -65,6 +67,10 @@ class PaymentSettingRepository
         
         $data['paytabsData'] = $paytabs->convertJsonData();
         $data['paytabs'] = $paytabs;
+
+        $ifthenpay = PaymentSetting::whereUniqueKeyword('ifthenpay')->first();
+        $data['ifthenpayData'] = $ifthenpay->convertJsonData();
+        $data['ifthenpay'] = $ifthenpay;
      
         $cod = PaymentSetting::whereUniqueKeyword('cod')->first();
         $data['cod'] = $cod;
@@ -120,6 +126,14 @@ class PaymentSettingRepository
                 }
             }
 
+            if (array_key_exists("is_one_time_payment",$info_data)){
+                $info_data['is_one_time_payment'] = 1;
+            }else{
+                if (strpos($pay_data->information, 'is_one_time_payment') !== false) {
+                    $info_data['is_one_time_payment'] = 0;
+                }
+            }
+
             
         
             $input['information'] = json_encode($info_data);
@@ -151,6 +165,33 @@ class PaymentSettingRepository
             file_get_contents(app()->environmentFilePath())
         ));
 
+    }
+
+    private function ensureIfthenpayGatewayExists(): void
+    {
+        PaymentSetting::firstOrCreate(
+            ['unique_keyword' => 'ifthenpay'],
+            [
+                'name' => 'IfthenPay',
+                'information' => json_encode([
+                    'backoffice_key' => '',
+                    'anti_phishing_key' => '',
+                    'gateway_key' => '',
+                    'multibanco_entity' => '',
+                    'multibanco_sub_entity' => '',
+                    'mbway_key' => '',
+                    'payshop_key' => '',
+                    'credit_card_key' => '',
+                    'default_method' => 'CCARD',
+                    'language' => 'pt',
+                    'days_to_expire' => '3',
+                    'is_one_time_payment' => 1,
+                    'close_button_label' => 'Close',
+                ]),
+                'text' => 'Pay securely through IfthenPay. Configure your Pay By Link gateway key and the payment methods you want to expose.',
+                'status' => 0,
+            ]
+        );
     }
 
 }

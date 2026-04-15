@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
+ 
 <head>
     <meta charset="UTF-8">
     @if (url()->current() == route('front.index'))
         <title>@yield('hometitle')</title>
     @else
-        <title>{{ $setting->title }} -@yield('title')</title>
+        <title>@yield('title') | {{ $setting->title }}</title>
     @endif
 
     <!-- SEO Meta Tags-->
@@ -19,9 +19,8 @@
         <meta property="og:title" content="{{ $setting->title }}">
         <meta property="og:description" content="{{ $setting->meta_description }}">
         <meta property="og:image" content="{{ url('/core/public/storage/images/' . $setting->meta_image) }}">
-        <meta property="og:image:secure_url"
-            content="{{ url('/core/public/storage/images/' . $setting->meta_image) }}" />
-        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:secure_url" content="{{ url('/core/public/storage/images/' . $setting->meta_image) }}" />
+        <meta property="og:image:type" content="image/jpeg"/>
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="627" />
         <meta property="og:url" content="{{ url()->current() }}">
@@ -30,6 +29,17 @@
     @else
         @yield('meta')
     @endif
+
+    {{-- Hreflang Tags --}}
+    @php
+    $languages = \App\Models\Language::whereType('Website')->get();
+    $currentUrl = url()->current();
+    @endphp
+    @foreach($languages as $lang)
+   
+    <link rel="alternate" hreflang="{{ $lang->language }}" href="{{ $currentUrl . '/set/language/' . $lang->id }}" />
+    @endforeach
+    <link rel="alternate" hreflang="x-default" href="{{ $currentUrl }}" />
 
     <!-- Mobile Specific Meta Tag-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -54,10 +64,92 @@
         href="{{ asset('assets/front/css/color.php?primary_color=') . str_replace('#', '', $setting->primary_color) }}"
         rel="stylesheet">
 
+    <!-- Auto Language Detection -->
+    
+
+    <script>
+        (function() {
+            console.log('browserLang',navigator);
+            console.log('local',localStorage.getItem('lang_auto_detected'))
+            async function getCountry() {
+                const res = await http("https://ipapi.co/json/",headers = {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': 'http://localhost',
+                    'Access-Control-Allow-Methods': 'POST',
+                    'Access-Control-Allow-Headers': 'Content-Type, X-CSRF-TOKEN',
+                });
+                const data = await res.json();
+                return data.country_name;
+            }
+
+            getCountry().then(country => console.log(country));
+            if (localStorage.getItem('lang_auto_detected')) return;
+            localStorage.setItem('lang_auto_detected', '1');
+
+            // Map of browser locale codes to language names stored in DB
+            var localeToName = {
+                'af': 'Afrikaans', 'sq': 'Albanian', 'am': 'Amharic', 'ar': 'Arabic',
+                'hy': 'Armenian', 'az': 'Azerbaijani', 'eu': 'Basque', 'be': 'Belarusian',
+                'bn': 'Bengali', 'bs': 'Bosnian', 'bg': 'Bulgarian', 'ca': 'Catalan',
+                'zh': 'Chinese', 'hr': 'Croatian', 'cs': 'Czech', 'da': 'Danish',
+                'nl': 'Dutch', 'en': 'English', 'et': 'Estonian', 'fi': 'Finnish',
+                'fr': 'French', 'gl': 'Galician', 'ka': 'Georgian', 'de': 'German',
+                'el': 'Greek', 'gu': 'Gujarati', 'ht': 'Haitian Creole', 'ha': 'Hausa',
+                'he': 'Hebrew', 'hi': 'Hindi', 'hu': 'Hungarian', 'is': 'Icelandic',
+                'id': 'Indonesian', 'ga': 'Irish', 'it': 'Italian', 'ja': 'Japanese',
+                'kn': 'Kannada', 'kk': 'Kazakh', 'km': 'Khmer', 'ko': 'Korean',
+                'ku': 'Kurdish', 'ky': 'Kyrgyz', 'lo': 'Lao', 'lv': 'Latvian',
+                'lt': 'Lithuanian', 'lb': 'Luxembourgish', 'mk': 'Macedonian',
+                'mg': 'Malagasy', 'ms': 'Malay', 'ml': 'Malayalam', 'mt': 'Maltese',
+                'mi': 'Maori', 'mr': 'Marathi', 'mn': 'Mongolian', 'my': 'Myanmar',
+                'ne': 'Nepali', 'no': 'Norwegian', 'ps': 'Pashto', 'fa': 'Persian',
+                'pl': 'Polish', 'pt': 'Portuguese', 'pa': 'Punjabi', 'ro': 'Romanian',
+                'ru': 'Russian', 'sm': 'Samoan', 'sr': 'Serbian', 'si': 'Sinhala',
+                'sk': 'Slovak', 'sl': 'Slovenian', 'so': 'Somali', 'es': 'Spanish',
+                'su': 'Sundanese', 'sw': 'Swahili', 'sv': 'Swedish', 'tl': 'Filipino',
+                'tg': 'Tajik', 'ta': 'Tamil', 'te': 'Telugu', 'th': 'Thai',
+                'tr': 'Turkish', 'uk': 'Ukrainian', 'ur': 'Urdu', 'uz': 'Uzbek',
+                'vi': 'Vietnamese', 'cy': 'Welsh', 'xh': 'Xhosa', 'yi': 'Yiddish',
+                'yo': 'Yoruba', 'zu': 'Zulu'
+            };
+            
+            // Available languages from DB
+            var availableLanguages = @json($languages->map(fn($l) => ['id' => $l->id, 'language' => $l->language]));
+            console.log('availableLanguages',availableLanguages);
+            var browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+            
+            var langCode = browserLang.split('-')[0]; // e.g. "de" from "de-DE"
+            var targetName = localeToName[langCode] ? localeToName[langCode].toLowerCase() : null;
+            console.log('loca',targetName);
+            if (!targetName) return;
+
+            var match = null;
+            for (var i = 0; i < availableLanguages.length; i++) {
+                var dbName = availableLanguages[i].language.toLowerCase();
+                if (dbName === targetName || dbName.indexOf(targetName) === 0 || targetName.indexOf(dbName) === 0) {
+                    match = availableLanguages[i];
+                    break;
+                }
+            }
+
+            if (match) {
+                console.log('Matched language:', match);
+                // Build the language setup URL and redirect
+                // The controller uses return back() which will redirect back to the current page
+                var setupUrl = '{{ url("set/language") }}/' + match.id;
+                window.location.replace(setupUrl);
+            }
+        })();
+    </script>
+  
+
     <!-- Modernizr-->
     <script src="{{ asset('assets/front/js/modernizr.min.js') }}"></script>
-
-    @if (DB::table('languages')->where('is_default', 1)->first()->rtl == 1)
+    @php
+    $currentLanguage = Session::get('language') ;
+    @endphp
+    
+    @if ($currentLanguage == 2)
         <link rel="stylesheet" href="{{ asset('assets/front/css/rtl.css') }}">
     @endif
     <style>
@@ -196,17 +288,122 @@
         @media (max-width: 575.98px) {
             .to-chatbot-wrapper {
                 right: 10px;
+                bottom: 70px;
                 /* left: 10px; */
             }
             .to-chatbot-window {
                 width: 100%;
                 max-height: 60vh;
             }
-            .bar_mble{          
+            .bar_mble{
                 height: 30px;
             }
             .mble_v{
                 display:none;
+            }
+        }
+
+        /* ===== Mobile Top Bar - Compact ===== */
+        @media (max-width: 991.98px) {
+            .menu-top-area {
+                display: block !important;
+            }
+            /* Hide wishlist & compare from top bar on mobile (they're in bottom nav) */
+            .menu-top-area .wishlist-mobile,
+            .menu-top-area .compare-mobile,
+            .menu-top-area .login-register {
+                display: none !important;
+            }
+            .menu-top-area .t-m-s-a {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .menu-top-area .right-area {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 6px;
+            }
+            .menu-top-area .t-h-dropdown .main-link {
+                font-size: 11px;
+                padding: 2px 4px;
+            }
+            .menu-top-area .track-order-link {
+                font-size: 11px;
+            }
+            body {
+                padding-bottom: 60px;
+            }
+            .scroll-to-top-btn {
+                bottom: 70px;
+            }
+        }
+
+        /* ===== Mobile Bottom Navigation Bar ===== */
+        .mobile-bottom-nav {
+            display: none;
+        }
+        @media (max-width: 991.98px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 1050;
+                background: #fff;
+                border-top: 1px solid #e0e0e0;
+                box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+                height: 60px;
+                align-items: stretch;
+            }
+            .mobile-bottom-nav a {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: #555;
+                text-decoration: none;
+                font-size: 10px;
+                gap: 3px;
+                transition: color 0.2s;
+                padding: 6px 2px;
+            }
+            .mobile-bottom-nav a:hover,
+            .mobile-bottom-nav a.active {
+                color: #{{ str_replace('#', '', $setting->primary_color) }};
+            }
+            .mobile-bottom-nav a i {
+                font-size: 20px;
+                line-height: 1;
+            }
+            .mobile-bottom-nav a span {
+                font-size: 10px;
+                line-height: 1;
+            }
+            .mobile-bottom-nav .mbn-categories-btn {
+                cursor: pointer;
+                background: none;
+                border: none;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: #555;
+                font-size: 10px;
+                gap: 3px;
+                padding: 6px 2px;
+                transition: color 0.2s;
+            }
+            .mobile-bottom-nav .mbn-categories-btn:hover {
+                color: #{{ str_replace('#', '', $setting->primary_color) }};
+            }
+            .mobile-bottom-nav .mbn-categories-btn i {
+                font-size: 20px;
+                line-height: 1;
             }
         }
     </style>
@@ -233,13 +430,13 @@
 
 <body
     class="
-@if ($setting->theme == 'theme1') body_theme1
-@elseif($setting->theme == 'theme2')
-body_theme2
-@elseif($setting->theme == 'theme3')
-body_theme3
-@elseif($setting->theme == 'theme4')
-body_theme4 @endif
+    @if ($setting->theme == 'theme1') body_theme1
+    @elseif($setting->theme == 'theme2')
+    body_theme2
+    @elseif($setting->theme == 'theme3')
+    body_theme3
+    @elseif($setting->theme == 'theme4')
+    body_theme4 @endif
 ">
     @if ($setting->is_loader == 1)
         <!-- Preloader Start -->
@@ -265,7 +462,7 @@ body_theme4 @endif
         <div class="menu-top-area">
             <div class="container">
                 <div class="row">
-                    <div class="col-7">
+                    <div class="col-5">
                         <div class="t-m-s-a">
                             <a class="track-order-link" href="{{ route('front.order.track') }}"><i
                                     class="icon-map-pin"></i><span  class="mble_vs">{{ __('Track Order') }}</span></a>
@@ -274,15 +471,26 @@ body_theme4 @endif
                                     </span> </a>
                         </div>
                     </div>
-                    <div class="col-5">
+                    <div class="col-7">
                         <div class="right-area">
 
                             <a class="track-order-link wishlist-mobile d-inline-block d-lg-none"
                                 href="{{ route('user.wishlist.index') }}"><i
                                     class="icon-heart"></i><span class="mble_v">{{ __('Wishlist') }}</span></a>
 
+                            @php
+                                $activeLanguage = DB::table('languages')->whereType('Website')
+                                    ->where(function($q) {
+                                        if (Session::has('language')) {
+                                            $q->where('id', Session::get('language'));
+                                        } else {
+                                            $q->where('is_default', 1);
+                                        }
+                                    })->first();
+                                $activeLangName = $activeLanguage ? $activeLanguage->language : __('Language');
+                            @endphp
                             <div class="t-h-dropdown ">
-                                <a class="main-link" href="#">{{ __('Language') }}<i
+                                <a class="main-link" href="#">{{ $activeLangName }}<i
                                         class="icon-chevron-down"></i></a>
                                 <div class="t-h-dropdown-menu">
                                     @foreach (DB::table('languages')->whereType('Website')->get() as $language)
@@ -295,7 +503,7 @@ body_theme4 @endif
 
 
                             <div class="t-h-dropdown ">
-                                <a class="main-link" href="#"><i class='fas fa-dollar-sign me-2'></i><span class="mble_v">{{ __('Currency') }}</span><i
+                                <a class="main-link" href="#"><i class='fas fa-euro-sign me-2'></i><span class="mble_v">{{ __('Currency') }}</span><i
                                         class="icon-chevron-down"></i></a>
                                 <div class="t-h-dropdown-menu">
                                     @foreach (DB::table('currencies')->get() as $currency)
@@ -310,6 +518,9 @@ body_theme4 @endif
                                 @if (!Auth::user())
                                     <a class="track-order-link mr-0" href="{{ route('user.login') }}" style="border: 2px solid; border-radius: 10px; padding: 3px 6px;">
                                         {{ __('Login') }}
+                                    </a>
+                                    <a class="ms-2 track-order-link mr-0" href="{{ route('user.register') }}" style="border: 2px solid; border-radius: 10px; padding: 3px 6px;">
+                                        {{ __('Register') }}
                                     </a>
                                 @else
                                     <div class="t-h-dropdown">
@@ -337,11 +548,19 @@ body_theme4 @endif
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="d-flex justify-content-between">
+                            <div class="toolbar d-flex">
+                                <div class="toolbar-item visible-on-mobile mobile-menu-toggle"><a href="#">
+                                        <div><i class="icon-menu"></i><span
+                                                class="text-label">{{ __('Menu') }}</span></div>
+                                    </a>
+                                </div>
+                            </div>
                             <!-- Logo-->
                             <div class="site-branding"><a class="site-logo align-self-center"
                                     href="{{ route('front.index') }}"><img
                                         src="{{ url('/core/public/storage/images/' . $setting->logo) }}"
-                                        alt="{{ $setting->title }}"></a></div>
+                                        alt="{{ $setting->title }}"></a>
+                            </div>
                             <!-- Search / Categories-->
                             <div class="search-box-wrap d-none d-lg-block d-flex">
                                 <div class="search-box-inner align-self-center">
@@ -380,11 +599,7 @@ body_theme4 @endif
                                         </div>
                                     </a>
                                 </div>
-                                <div class="toolbar-item visible-on-mobile mobile-menu-toggle"><a href="#">
-                                        <div><i class="icon-menu"></i><span
-                                                class="text-label">{{ __('Menu') }}</span></div>
-                                    </a>
-                                </div>
+                               
 
                                 <div class="toolbar-item hidden-on-mobile"><a
                                         href="{{ route('fornt.compare.index') }}">
@@ -450,6 +665,11 @@ body_theme4 @endif
                                     <div class="tab-pane fade show active" id="mmenu" role="tabpanel"
                                         aria-labelledby="mmenu-tab">
                                         <nav class="slideable-menu">
+                                            @php
+                                                $mobileMenuCategories = \App\Models\Category::with(['subcategory' => function ($query) {
+                                                    $query->where('status', 1);
+                                                }])->where('status', 1)->orderBy('serial', 'asc')->take(2)->get();
+                                            @endphp
                                             <ul>
                                                 <li class="{{ request()->routeIs('front.index') ? 'active' : '' }}"><a
                                                         href="{{ route('front.index') }}"><i
@@ -461,6 +681,26 @@ body_theme4 @endif
                                                         <a href="{{ route('front.catalog') }}"><i
                                                                 class="icon-chevron-right"></i>{{ __('Shop') }}</a>
                                                     </li>
+
+                                                    @foreach ($mobileMenuCategories as $mobileMenuCategory)
+                                                        <li class="t-h-dropdown">
+                                                            <a class="" href="{{ route('front.catalog') . '?category=' . $mobileMenuCategory->slug }}">
+                                                                <i class="icon-chevron-right"></i>{{ $mobileMenuCategory->name }}
+                                                                @if ($mobileMenuCategory->subcategory->count() > 0)
+                                                                    <i class="icon-chevron-down"></i>
+                                                                @endif
+                                                            </a>
+                                                            @if ($mobileMenuCategory->subcategory->count() > 0)
+                                                                <div class="t-h-dropdown-menu">
+                                                                    @foreach ($mobileMenuCategory->subcategory as $mobileSubcategory)
+                                                                        <a href="{{ route('front.catalog') . '?subcategory=' . $mobileSubcategory->slug }}">
+                                                                            <i class="icon-chevron-right pr-2"></i>{{ $mobileSubcategory->name }}
+                                                                        </a>
+                                                                    @endforeach
+                                                                </div>
+                                                            @endif
+                                                        </li>
+                                                    @endforeach
                                                 @endif
                                                 @if ($setting->is_campaign == 1)
                                                     <li
@@ -469,13 +709,13 @@ body_theme4 @endif
                                                                 class="icon-chevron-right"></i>{{ __('Campaign') }}</a>
                                                     </li>
                                                 @endif
-                                                @if ($setting->is_brands == 1)
+                                                <!-- @if ($setting->is_brands == 1)
                                                     <li
                                                         class="{{ request()->routeIs('front.brand') ? 'active' : '' }}">
                                                         <a href="{{ route('front.brand') }}"><i
                                                                 class="icon-chevron-right"></i>{{ __('Brand') }}</a>
                                                     </li>
-                                                @endif
+                                                @endif -->
 
                                                 @if ($setting->is_blog == 1)
                                                     <li
@@ -623,7 +863,7 @@ body_theme4 @endif
                     <!-- Contact Info-->
                     <section class="widget widget-light-skin">
                         <h3 class="widget-title">{{ __('Get In Touch') }}</h3>
-                        <p class="mb-1"><strong>{{ __('Address') }}: </strong> {{ $setting->footer_address }}</p>
+                        <p class="mb-1"><strong>{{ __('Address') }}: </strong> {!! $setting->footer_address !!}</p>
                         <p class="mb-1"><strong>{{ __('Phone') }}: </strong> {{ $setting->footer_phone }}</p>
                         <p class="mb-1"><strong>{{ __('Email') }}: </strong> {{ $setting->footer_email }}</p>
                         <ul class="list-unstyled text-sm">
@@ -705,6 +945,40 @@ body_theme4 @endif
     <a class="scroll-to-top-btn" href="#">
         <i class="icon-chevron-up"></i>
     </a>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <a href="{{route('front.index')}}">
+            <i class="icon-home"></i>
+            <span>{{ __('Home') }}</span>
+        </a>
+        <a href="{{ route('front.catalog') }}" class="{{ request()->routeIs('front.catalog*') ? 'active' : '' }}">
+            <i class="icon-shopping-bag"></i>
+            <span>{{ __('Store') }}</span>
+        </a>
+        
+        <a href="{{ route('user.wishlist.index') }}" class="{{ request()->routeIs('user.wishlist*') ? 'active' : '' }}">
+            <i class="icon-heart"></i>
+            <span>{{ __('Wishlist') }}</span>
+        </a>
+        @if (Auth::check())
+            <a href="{{ route('user.dashboard') }}" class="{{ request()->routeIs('user.dashboard*') ? 'active' : '' }}">
+                <i class="icon-user"></i>
+                <span>{{ __('Account') }}</span>
+            </a>
+        @else
+            <a href="{{ route('user.login') }}" class="{{ request()->routeIs('user.login*') ? 'active' : '' }}">
+                <i class="icon-user"></i>
+                <span>{{ __('Account') }}</span>
+            </a>
+        @endif
+        <button type="button" class="mbn-categories-btn mobile-menu-toggle">
+            <i class="icon-menu"></i>
+            <span>{{ __('Categories') }}</span>
+        </button>
+    </nav>
+    <!-- Mobile Bottom Navigation Bar End -->
+
     <!-- Backdrop-->
     <div class="site-backdrop"></div>
 
@@ -1048,6 +1322,23 @@ body_theme4 @endif
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         handleSend();
+                    }
+                });
+            }
+        })();
+    </script>
+
+    <script>
+        // Mobile Bottom Nav - Search trigger
+        (function() {
+            var mbnSearch = document.getElementById('mbnSearchTrigger');
+            if (mbnSearch) {
+                mbnSearch.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Trigger the existing close-m-serch toggle (search box open)
+                    var searchToggle = document.querySelector('.toolbar-item.close-m-serch.visible-on-mobile a');
+                    if (searchToggle) {
+                        searchToggle.click();
                     }
                 });
             }

@@ -1,7 +1,25 @@
 @extends('master.back')
 
 @section('content')
+<style>
+	    /* General style for the div inside the editor and website */
+.responsive-bg-box {
+    background-color: transparent; /* No background on Desktop */
+    padding: 0;
+    transition: all 0.3s ease;
+}
 
+/* Media Query: Only apply the background on Mobile */
+@media screen and (max-width: 768px) {
+    .responsive-bg-box {
+        /* This pulls the color from the --mobile-bg variable we set in JS */
+        background-color: var(--mobile-bg); 
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+}
+</style>
 <div class="container-fluid">
 
 	<!-- Page Heading -->
@@ -37,27 +55,68 @@
 
 									@if ($slider->home_page != 'theme4')
 									<div class="form-group">
-										<label id="change_label" for="name">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Feature Image') : __('Logo') }}</label>
-										<br>
+										<!-- <label id="change_label" for="name">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Feature Image') : __('Logo') }}</label> -->
+										<!-- <br>
 											<img class="admin-img"
 												src="{{ $slider->logo ? url('/core/public/storage/images/'.$slider->logo) : url('/core/public/storage/images/placeholder.png') }}"
 												alt="No Image Found">
 										<br>
-										<span id="change_message" class="mt-1">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Image Size Should Be 435 x 530')  :  __('Image Size Should Be 130 x 40')}}</span>
-									</div>
-
-									<div class="form-group position-relative ">
-										<label class="file">
-											<input type="file"  accept="image/*"  class="upload-photo" name="logo" id="file"
-												aria-label="File browser example">
-											<span class="file-custom text-left">{{ __('Upload Image...') }}</span>
-										</label>
+										<span id="change_message" class="mt-1">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Image Size Should Be 435 x 530')  :  __('Image Size Should Be 130 x 40')}}</span> -->
 									</div>
 									@php
 										$languages = \App\Models\Language::whereType('Website')->get();
 										$defaultLang = \App\Models\Language::whereType('Website')->where('is_default', 1)->first();
 										$slider->load('translations');
 									@endphp
+
+									@if($languages->count() > 1)
+                                        <ul class="nav nav-tabs mb-3" id="sliderTabs3" role="tablist">
+                                            @foreach($languages as $index => $lang)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $index === 0 || $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                                   id="slider3-lang-{{ $lang->id }}-tab" 
+                                                   data-toggle="tab" 
+                                                   href="#slider3-lang-{{ $lang->id }}" 
+                                                   role="tab">
+                                                    <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                    @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                        <div class="tab-content">
+                                            @foreach($languages as $index => $lang)
+											@php
+											$translation = $slider->translations->where('language_id', $lang->id)->first();
+										@endphp
+                                            <div class="tab-pane fade {{ $index === 0 || $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                                 id="slider3-lang-{{ $lang->id }}" 
+                                                 role="tabpanel">
+                                               
+                                                 <div class="form-group">
+                                                <label id="change_label" for="logo_{{ $lang->id }}">{{ __('Feature Text') }} </label>
+                                                <br>
+                                                <textarea name="logo_{{ $lang->id }}" id="logo_{{ $lang->id }}" class="form-control text-editor" rows="5"
+													placeholder="logo_{{ $lang->id }}">
+													{{ $translation ? $translation->logo : ($lang->id == $defaultLang->id ? $slider->logo : '') }}
+												</textarea>
+                                            <!-- <span id="change_message" class="mt-1">{{ __('Image Size Should Be 130 x 40') }}</span> -->
+                                            </div> 
+											@if($lang->id == $defaultLang->id)
+												<input type="hidden" name="logo" value="{{ $slider->logo }}">
+											@endif
+                                            </div>
+                                            @endforeach
+                                        </div>
+									<!-- <div class="form-group position-relative ">
+									<label id="change_label" for="name">{{ __('Feature Text') }} </label>
+                                            <br>
+                                            <textarea name="logo" id="logo" class="form-control text-editor" rows="5"placeholder="Feature Text">
+											{{$slider->logo}}
+											</textarea>
+									</div> -->
+									
 									@if($languages->count() > 1)
 									<ul class="nav nav-tabs mb-3" id="sliderTabs" role="tablist">
 										@foreach($languages as $index => $lang)
@@ -84,7 +143,7 @@
 											 role="tabpanel">
 											<div class="form-group">
 												<label for="title_{{ $lang->id }}">{{ __('Title') }} </label>
-												<textarea name="title_{{ $lang->id }}" id="title_{{ $lang->id }}" class="form-control text-editor" rows="5"
+												<textarea name="title_{{ $lang->id }} " id="title_{{ $lang->id }}" class="form-control  text-editor" rows="5"
 													placeholder="title_{{ $lang->id }}">{{ $translation ? $translation->title : ($lang->id == $defaultLang->id ? $slider->title : '') }}</textarea>
 												<!-- <input type="text" name="title_{{ $lang->id }}" class="form-control" id="title_{{ $lang->id }}"
 												
@@ -94,7 +153,7 @@
 
 											<div class="form-group">
 												<label for="details_{{ $lang->id }}">{{ __('Details') }} </label>
-												<textarea name="details_{{ $lang->id }}" id="details_{{ $lang->id }}" class="form-control text-editor" rows="5"
+												<textarea name="details_{{ $lang->id }} text-editor" id="myeditorinstance1" class="form-control text-editor" rows="5"
 													placeholder="{{ __('Enter Details') }}"
 												>{{ $translation ? $translation->details : ($lang->id == $defaultLang->id ? $slider->details : '') }}</textarea>
 											</div>

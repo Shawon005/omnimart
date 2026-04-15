@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+    @include('includes.checkout-payment-radio-styles')
     <!-- Page Title-->
     <div class="page-title">
         <div class="container">
@@ -121,7 +122,14 @@
                                                         value="{{ isset($user) ? $user->bill_city : '' }}">
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-sm-6">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="checkout-state">{{ __('State') }}*</label>
+                                                    <input class="form-control {{ $errors->has('bill_state') ? 'requireInput' : '' }}" name="bill_state" type="text"
+                                                        id="checkout-state" value="{{ old('bill_state') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label for="checkout-country">{{ __('Country') }}</label>
                                                     <select class="form-control"  name="bill_country"
@@ -134,7 +142,7 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                            </div> -->
+                                            </div>
                                         </div>
                                     @endif
                                 </form>

@@ -11,7 +11,7 @@
                      @csrf
                      <input type="hidden" name="payment_method" value="Cash On Delivery" id="">
                      <input type="hidden" name="state_id"
-                         value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                         value=""
                          class="state_id_setup">
                      <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                      <div class="card-body">
@@ -45,7 +45,7 @@
                          <input type="hidden" name="payment_method" value="Mollie">
                          <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                          <input type="hidden" name="state_id"
-                             value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                             value=""
                              class="state_id_setup">
                          <button class="btn btn-primary btn-sm" type="button"
                              data-bs-dismiss="modal"><span>{{ __('Cancel') }}</span></button>
@@ -76,7 +76,7 @@
                      <input type="hidden" name="payment_method" value="Paypal">
                      <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                      <input type="hidden" name="state_id"
-                         value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                         value=""
                          class="state_id_setup">
                      <div class="modal-footer">
                          <button class="btn btn-primary btn-sm" type="button"
@@ -109,7 +109,7 @@
                              <input type="hidden" name="payment_method" value="Stripe">
                              <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                              <input type="hidden" name="state_id"
-                                 value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                                 value=""
                                  class="state_id_setup">
                              <p class="p-3">{{ PriceHelper::GatewayText('stripe') }}</p>
                      </div>
@@ -147,7 +147,7 @@
                              <input type="hidden" name="payment_method" value="Authorize.Net">
                              <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                              <input type="hidden" name="state_id"
-                                 value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                                 value=""
                                  class="state_id_setup">
                              <div class="form-group col-sm-6">
                                  <input class="form-control" type="text" name="month"
@@ -196,7 +196,7 @@
                      <input type="hidden" name="payment_method" value="Paypal">
                      <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                      <input type="hidden" name="state_id"
-                         value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                         value=""
                          class="state_id_setup">
                      <div class="modal-footer">
                          <button class="btn btn-primary btn-sm" type="button"
@@ -230,7 +230,7 @@
                      <input type="hidden" name="payment_method" value="Rezorpay">
                      <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                      <input type="hidden" name="state_id"
-                         value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                         value=""
                          class="state_id_setup">
                      <div class="modal-footer">
                          <button class="btn btn-primary btn-sm" type="button"
@@ -263,7 +263,7 @@
                      <input type="hidden" name="payment_method" value="Flutterwave">
                      <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                      <input type="hidden" name="state_id"
-                         value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                         value=""
                          class="state_id_setup">
                      <div class="modal-footer">
                          <button class="btn btn-primary btn-sm" type="button"
@@ -295,7 +295,7 @@
                      <input type="hidden" name="payment_method" value="Paytm">
                      <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                      <input type="hidden" name="state_id"
-                         value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                         value=""
                          class="state_id_setup">
                      <div class="modal-footer">
                          <button class="btn btn-primary btn-sm" type="button"
@@ -327,7 +327,7 @@
                      <input type="hidden" name="payment_method" value="SSLCommerz">
                      <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                      <input type="hidden" name="state_id"
-                         value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                         value=""
                          class="state_id_setup">
                      <div class="modal-footer">
                          <button class="btn btn-primary btn-sm" type="button"
@@ -396,7 +396,7 @@
                          <input type="hidden" name="payment_method" value="Mercadopago">
                          <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                          <input type="hidden" name="state_id"
-                             value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                             value=""
                              class="state_id_setup">
                          <div class="modal-footer">
                              <button class="btn btn-primary btn-sm" type="button"
@@ -565,7 +565,7 @@
                      <input type="hidden" name="payment_method" value="Paystack">
                      <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                      <input type="hidden" name="state_id"
-                         value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                         value=""
                          class="state_id_setup">
                      <div class="modal-footer">
                          <button class="btn btn-primary btn-sm" type="button"
@@ -641,7 +641,7 @@
                          <input type="hidden" name="payment_method" value="Bank">
                          <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                          <input type="hidden" name="state_id"
-                             value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                             value=""
                              class="state_id_setup">
                          <button class="btn btn-primary btn-sm" type="button"
                              data-bs-dismiss="modal">{{ __('Cancel') }}</button>
@@ -673,7 +673,7 @@
                             <input type="hidden" name="payment_method" value="Paytabs">
                             <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
                             <input type="hidden" name="state_id"
-                                value="{{ auth()->check() && auth()->user()->state_id ? auth()->user()->state_id : '' }}"
+                                value=""
                                 class="state_id_setup">
                             <p class="p-3">{{ PriceHelper::GatewayText('paytabs') }}</p>
                     </div>
@@ -689,3 +689,63 @@
         </div>
     </div>
 
+    @php
+        $ifthenpayPayment = App\Models\PaymentSetting::where('unique_keyword', 'ifthenpay')->first();
+        $ifthenpayData = $ifthenpayPayment ? $ifthenpayPayment->convertJsonData() : [];
+        $ifthenpayOptions = [];
+        if (!empty($ifthenpayData['credit_card_key'])) {
+            $ifthenpayOptions['CCARD'] = __('Credit Or Debit Card');
+        }
+        if (!empty($ifthenpayData['multibanco_entity']) && !empty($ifthenpayData['multibanco_sub_entity'])) {
+            $ifthenpayOptions['MB'] = __('Multibanco');
+        }
+        if (!empty($ifthenpayData['mbway_key'])) {
+            $ifthenpayOptions['MBWAY'] = __('MB WAY');
+        }
+        if (!empty($ifthenpayData['payshop_key'])) {
+            $ifthenpayOptions['PAYSHOP'] = __('Payshop');
+        }
+    @endphp
+    @if ($ifthenpayPayment && count($ifthenpayOptions))
+        <div class="modal fade" id="ifthenpay" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title">{{ __('Transactions via IfthenPay') }}</h6>
+                        <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card-body">
+
+                            <form class="interactive-credit-card row" action="{{ route('front.ifthenpay.submit') }}"
+                                method="POST">
+                                @csrf
+
+                                <input type="hidden" name="payment_method" value="IfthenPay">
+                                <input type="hidden" name="shipping_id" value="" class="shipping_id_setup">
+                                <input type="hidden" name="state_id" value="" class="state_id_setup">
+                                <div class="col-12 form-group">
+                                    <label class="mb-3 d-block">{{ __('Select IfthenPay payment option') }}</label>
+                                    @include('includes.ifthenpay-option-radios', [
+                                        'ifthenpayOptions' => $ifthenpayOptions,
+                                        'ifthenpayData' => $ifthenpayData,
+                                        'ifthenpayFieldName' => 'ifthenpay_option',
+                                        'ifthenpayIdPrefix' => 'single-modal-ifthenpay',
+                                        'selectedIfthenpayOption' => $ifthenpayData['default_method'] ?? 'CCARD',
+                                    ])
+                                </div>
+                                <p class="p-3">{{ $ifthenpayPayment->text }}</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm" type="button"
+                            data-bs-dismiss="modal"><span>{{ __('Cancel') }}</span></button>
+                        <button class="btn btn-primary btn-sm"
+                            type="submit"><span>{{ __('Checkout With IfthenPay') }}</span></button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif

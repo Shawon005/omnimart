@@ -273,6 +273,7 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             Route::get('language/status/{id}/{status}', 'Back\LanguageController@status')->name('back.language.status');
 
             //------------ SLIDER ------------
+            Route::post('slider/toggle-status', 'Back\SliderController@toggleStatus')->name('back.slider.toggle-status');
             Route::resource('slider', 'Back\SliderController', ['as' => 'back', 'except' => 'show']);
 
             //------------ SERVICE ------------
@@ -454,6 +455,12 @@ Route::group(['middleware' => 'maintainance'], function () {
         Route::post('/sslcommerz/submit', 'Payment\SslCommerzController@store')->name('front.sslcommerz.submit');
         Route::post('/paytab/submit', 'Payment\PaytabsCheckout@store')->name('front.paytab.submit');
         Route::post('/paytab/callback', 'Payment\PaytabsCheckout@paytabCallback')->name('paytab.callback');
+        Route::post('/ifthenpay/submit', 'Payment\IfthenpayController@store')->name('front.ifthenpay.submit');
+        Route::get('/ifthenpay/success', 'Payment\IfthenpayController@success')->name('front.ifthenpay.success');
+        Route::get('/ifthenpay/return', 'Payment\IfthenpayController@returnPage')->name('front.ifthenpay.return');
+        Route::get('/ifthenpay/cancel', 'Payment\IfthenpayController@cancel')->name('front.ifthenpay.cancel');
+        Route::get('/ifthenpay/error', 'Payment\IfthenpayController@error')->name('front.ifthenpay.error');
+        Route::match(['get', 'post'], '/ifthenpay/webhook', 'Payment\IfthenpayController@webhook')->name('front.ifthenpay.webhook');
         
         // ----------- TRACK ORDER ----------//
         Route::get('/track/order', 'Front\FrontendController@trackOrder')->name('front.order.track');
@@ -485,5 +492,3 @@ Route::get('/run/queue', function () {
     Artisan::call('queue:work --stop-when-empty');
     return "Queue is running";
 });
-
-

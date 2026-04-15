@@ -73,11 +73,6 @@
                                             <span class="file-custom text-left">{{ __('Upload Images...') }}</span>
                                         </label>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="title">{{ __('Title') }} *</label>
-                                        <input type="text" name="title" class="form-control" id="title"
-                                            placeholder="{{ __('Enter Title') }}" value="{{ $post->title }}">
-                                    </div>
 
                                     <div class="form-group">
                                         <label for="category_id">{{ __('Select Category') }} *</label>
@@ -91,32 +86,62 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="details">{{ __('Details') }} *</label>
-                                        <textarea name="details" id="details" class="form-control text-editor" rows="5"
-                                            placeholder="{{ __('Enter Details') }}">{{ $post->details }}</textarea>
-                                    </div>
+                                    @if($languages->count() > 1)
+                                    <ul class="nav nav-tabs mb-3" id="postTabs" role="tablist">
+                                        @foreach($languages as $index => $lang)
+                                        <li class="nav-item">
+                                            <a class="nav-link {{ $lang->id == $defaultLang->id ? 'active' : '' }}" 
+                                               id="post-lang-{{ $lang->id }}-tab" 
+                                               data-toggle="tab" 
+                                               href="#post-lang-{{ $lang->id }}" 
+                                               role="tab">
+                                                <i class="fas fa-globe"></i> {{ $lang->language }}
+                                                @if($lang->is_default == 1) <small>({{ __('Default') }})</small> @endif
+                                            </a>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                    @endif
+                                    <div class="tab-content">
+                                        @foreach($languages as $index => $lang)
+                                        @php
+                                            $translation = $post->translations->where('language_id', $lang->id)->first();
+                                        @endphp
+                                        <div class="tab-pane fade {{ $lang->id == $defaultLang->id ? 'show active' : '' }}" 
+                                             id="post-lang-{{ $lang->id }}" 
+                                             role="tabpanel">
+                                            <div class="form-group">
+                                                <label for="title_{{ $lang->id }}">{{ __('Title') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                <input type="text" name="title_{{ $lang->id }}" class="form-control" id="title_{{ $lang->id }}"
+                                                    placeholder="{{ __('Enter Title') }}" value="{{ $translation ? $translation->title : ($lang->id == $defaultLang->id ? $post->title : '') }}">
+                                            </div>
 
-                                    <div class="form-group">
-                                        <label for="tags">{{ __('Tags') }}
-                                        </label>
-                                        <input type="text" name="tags" class="tags" id="tags"
-                                            placeholder="{{ __('Tags') }}" value="{{ $post->tags }}">
-                                    </div>
+                                            <div class="form-group">
+                                                <label for="details_{{ $lang->id }}">{{ __('Details') }} @if($lang->is_default == 1) * @endif <small>({{ $lang->language }})</small></label>
+                                                <textarea name="details_{{ $lang->id }}" id="details_{{ $lang->id }}" class="form-control text-editor" rows="5"
+                                                    placeholder="{{ __('Enter Details') }}">{{ $translation ? $translation->details : ($lang->id == $defaultLang->id ? $post->details : '') }}</textarea>
+                                            </div>
 
-                                    <div class="form-group">
-                                        <label for="meta_keywords">{{ __('Meta Keywords') }}
-                                        </label>
-                                        <input type="text" name="meta_keywords" class="tags" id="meta_keywords"
-                                            placeholder="{{ __('Enter Meta Keywords') }}"
-                                            value="{{ $post->meta_keywords }}">
-                                    </div>
+                                            <div class="form-group">
+                                                <label for="tags_{{ $lang->id }}">{{ __('Tags') }} <small>({{ $lang->language }})</small></label>
+                                                <input type="text" name="tags_{{ $lang->id }}" class="tags" id="tags_{{ $lang->id }}"
+                                                    placeholder="{{ __('Tags') }}" value="{{ $translation ? $translation->tags : ($lang->id == $defaultLang->id ? $post->tags : '') }}">
+                                            </div>
 
-                                    <div class="form-group">
-                                        <label for="meta_description">{{ __('Meta Description') }}
-                                        </label>
-                                        <textarea name="meta_descriptions" id="meta_descriptions" class="form-control" rows="5"
-                                            placeholder="{{ __('Enter Meta Description') }}">{{ $post->meta_descriptions }}</textarea>
+                                            <div class="form-group">
+                                                <label for="meta_keywords_{{ $lang->id }}">{{ __('Meta Keywords') }} <small>({{ $lang->language }})</small></label>
+                                                <input type="text" name="meta_keywords_{{ $lang->id }}" class="tags" id="meta_keywords_{{ $lang->id }}"
+                                                    placeholder="{{ __('Enter Meta Keywords') }}"
+                                                    value="{{ $translation ? $translation->meta_keywords : ($lang->id == $defaultLang->id ? $post->meta_keywords : '') }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="meta_descriptions_{{ $lang->id }}">{{ __('Meta Description') }} <small>({{ $lang->language }})</small></label>
+                                                <textarea name="meta_descriptions_{{ $lang->id }}" id="meta_descriptions_{{ $lang->id }}" class="form-control" rows="5"
+                                                    placeholder="{{ __('Enter Meta Description') }}">{{ $translation ? $translation->meta_descriptions : ($lang->id == $defaultLang->id ? $post->meta_descriptions : '') }}</textarea>
+                                            </div>
+                                        </div>
+                                        @endforeach
                                     </div>
 
                                     <div class="form-group">

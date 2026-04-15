@@ -9,6 +9,7 @@ class SliderTranslation extends Model
     protected $fillable = [
         'slider_id',
         'language_id',
+        'logo',
         'title',
         'details',
     ];

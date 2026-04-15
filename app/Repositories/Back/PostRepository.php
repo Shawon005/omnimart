@@ -4,6 +4,8 @@ namespace App\Repositories\Back;
 
 use App\{
     Models\Post,
+    Models\PostTranslation,
+    Models\Language,
     Helpers\ImageHelper
 };
 use Illuminate\Support\Facades\Storage;
@@ -21,17 +23,46 @@ class PostRepository
 
     public function store($request)
     {
-        $input = $request->all();
-        $input['slug'] = Str::slug($request->title);
-        if ($request->has('tags')) {
-            $input['tags'] = str_replace(["value", "{", "}", "[", "]", ":", "\""], '', $request->tags);
+        $languages = Language::whereType('Website')->get();
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+
+        $input = [];
+        $input['title'] = $request->input('title_'.$defaultLang->id);
+        $input['slug'] = Str::slug($request->input('title_'.$defaultLang->id));
+        $input['details'] = $request->input('details_'.$defaultLang->id);
+        $input['category_id'] = $request->category_id;
+        
+        $tags = $request->input('tags_'.$defaultLang->id);
+        if ($tags) {
+            $input['tags'] = str_replace(["value", "{", "}", "[", "]", ":", "\""], '', $tags);
         }
+        $input['meta_keywords'] = $request->input('meta_keywords_'.$defaultLang->id);
+        $input['meta_descriptions'] = $request->input('meta_descriptions_'.$defaultLang->id);
+        
         if ($request->photo) {
             $input['photo'] = json_encode($this->storeImageData($request), true);
         }
 
+        $post = Post::create($input);
 
-        Post::create($input);
+        // Save translations for each language
+        foreach($languages as $lang) {
+            $langTags = $request->input('tags_'.$lang->id);
+            if ($langTags) {
+                $langTags = str_replace(["value", "{", "}", "[", "]", ":", "\""], '', $langTags);
+            }
+
+            PostTranslation::create([
+                'post_id' => $post->id,
+                'language_id' => $lang->id,
+                'title' => $request->input('title_'.$lang->id),
+                'slug' => Str::slug($request->input('title_'.$lang->id)),
+                'details' => $request->input('details_'.$lang->id),
+                'tags' => $langTags,
+                'meta_keywords' => $request->input('meta_keywords_'.$lang->id),
+                'meta_descriptions' => $request->input('meta_descriptions_'.$lang->id),
+            ]);
+        }
     }
 
     /**
@@ -43,15 +74,46 @@ class PostRepository
 
     public function update($post, $request)
     {
-        $input = $request->all();
-        $input['slug'] = Str::slug($request->title);
-        if ($request->has('tags')) {
-            $input['tags'] = str_replace(["value", "{", "}", "[", "]", ":", "\""], '', $request->tags);
+        $languages = Language::whereType('Website')->get();
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+
+        $input = [];
+        $input['title'] = $request->input('title_'.$defaultLang->id);
+        $input['slug'] = Str::slug($request->input('title_'.$defaultLang->id));
+        $input['details'] = $request->input('details_'.$defaultLang->id);
+        $input['category_id'] = $request->category_id;
+        
+        $tags = $request->input('tags_'.$defaultLang->id);
+        if ($tags) {
+            $input['tags'] = str_replace(["value", "{", "}", "[", "]", ":", "\""], '', $tags);
         }
+        $input['meta_keywords'] = $request->input('meta_keywords_'.$defaultLang->id);
+        $input['meta_descriptions'] = $request->input('meta_descriptions_'.$defaultLang->id);
+
         if ($request->photo) {
             $input['photo'] = json_encode($this->UpdateImageData($request, $post), true);
         }
         $post->update($input);
+
+        // Update translations for each language
+        foreach($languages as $lang) {
+            $langTags = $request->input('tags_'.$lang->id);
+            if ($langTags) {
+                $langTags = str_replace(["value", "{", "}", "[", "]", ":", "\""], '', $langTags);
+            }
+
+            PostTranslation::updateOrCreate(
+                ['post_id' => $post->id, 'language_id' => $lang->id],
+                [
+                    'title' => $request->input('title_'.$lang->id),
+                    'slug' => Str::slug($request->input('title_'.$lang->id)),
+                    'details' => $request->input('details_'.$lang->id),
+                    'tags' => $langTags,
+                    'meta_keywords' => $request->input('meta_keywords_'.$lang->id),
+                    'meta_descriptions' => $request->input('meta_descriptions_'.$lang->id),
+                ]
+            );
+        }
     }
 
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Back;
 
 use App\{
     Models\Faq,
+    Models\FaqTranslation,
+    Models\Language,
     Http\Controllers\Controller
 };
 
@@ -42,7 +44,9 @@ class FaqController extends Controller
      */
     public function create()
     {
-        return view('back.faq.create');
+        $languages = Language::whereType('Website')->get();
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+        return view('back.faq.create', compact('languages', 'defaultLang'));
     }
 
     /**
@@ -53,7 +57,32 @@ class FaqController extends Controller
      */
     public function store(Request $request)
     {
-        Faq::create($request->all());
+        $languages = Language::whereType('Website')->get();
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+
+        $request->validate([
+            'title_'.$defaultLang->id => 'required|max:255',
+            'details_'.$defaultLang->id => 'required',
+            'category_id' => 'required',
+        ]);
+
+        // Create FAQ with default language data
+        $faq = Faq::create([
+            'title' => $request->input('title_'.$defaultLang->id),
+            'details' => $request->input('details_'.$defaultLang->id),
+            'category_id' => $request->category_id,
+        ]);
+
+        // Save translations for each language
+        foreach($languages as $lang) {
+            FaqTranslation::create([
+                'faq_id' => $faq->id,
+                'language_id' => $lang->id,
+                'title' => $request->input('title_'.$lang->id),
+                'details' => $request->input('details_'.$lang->id),
+            ]);
+        }
+
         return redirect()->route('back.faq.index')->withSuccess(__('New Faq Added Successfully.'));
     }
 
@@ -65,7 +94,10 @@ class FaqController extends Controller
      */
     public function edit(Faq $faq)
     {
-        return view('back.faq.edit',compact('faq'));
+        $languages = Language::whereType('Website')->get();
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+        $faq->load('translations');
+        return view('back.faq.edit', compact('faq', 'languages', 'defaultLang'));
     }
 
     /**
@@ -77,7 +109,33 @@ class FaqController extends Controller
      */
     public function update(Request $request, Faq $faq)
     {
-        $faq->update($request->all());
+        $languages = Language::whereType('Website')->get();
+        $defaultLang = Language::whereType('Website')->where('is_default', 1)->first();
+
+        $request->validate([
+            'title_'.$defaultLang->id => 'required|max:255',
+            'details_'.$defaultLang->id => 'required',
+            'category_id' => 'required',
+        ]);
+
+        // Update FAQ with default language data
+        $faq->update([
+            'title' => $request->input('title_'.$defaultLang->id),
+            'details' => $request->input('details_'.$defaultLang->id),
+            'category_id' => $request->category_id,
+        ]);
+
+        // Update translations for each language
+        foreach($languages as $lang) {
+            FaqTranslation::updateOrCreate(
+                ['faq_id' => $faq->id, 'language_id' => $lang->id],
+                [
+                    'title' => $request->input('title_'.$lang->id),
+                    'details' => $request->input('details_'.$lang->id),
+                ]
+            );
+        }
+
         return redirect()->route('back.faq.index')->withSuccess(__('Faq Updated Successfully.'));
     }
 

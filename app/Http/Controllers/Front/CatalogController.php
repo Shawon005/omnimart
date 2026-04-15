@@ -16,6 +16,7 @@ use App\Models\Attribute;
 use App\Models\AttributeOption;
 use App\Models\Brand;
 use App\Models\ChieldCategory;
+use App\Models\Language;
 use App\Models\Setting;
 use App\Models\Subcategory;
 use Illuminate\Support\Facades\Session;
@@ -70,6 +71,9 @@ class CatalogController extends Controller
         $minPrice = $request->has('minPrice') ?  ( !empty($request->minPrice) ? PriceHelper::convertPrice($request->minPrice) : null ) : null;
         $maxPrice = $request->has('maxPrice') ?  ( !empty($request->maxPrice) ? PriceHelper::convertPrice($request->maxPrice) : null ) : null;
         $tag = $request->has('tag') ?  ( !empty($request->tag) ? $request->tag : null ) : null;
+        $currentLanguageId = Session::has('language')
+            ? Session::get('language')
+            : optional(Language::whereType('Website')->where('is_default', 1)->first())->id;
         $items = Item::with(['category', 'translations'])
         ->when($category, function ($query, $category) {
             return $query->where('category_id', $category->id);
@@ -85,8 +89,17 @@ class CatalogController extends Controller
             return $query->whereIsType('feature');
         })
 
-        ->when($tag, function ($query, $tag) {
-            return $query->where('tags', 'like', '%' . $tag . '%');
+        ->when($tag, function ($query, $tag) use ($currentLanguageId) {
+            return $query->where(function ($tagQuery) use ($tag, $currentLanguageId) {
+                $tagQuery->where('tags', 'like', '%' . $tag . '%');
+
+                if ($currentLanguageId) {
+                    $tagQuery->orWhereHas('translations', function ($translationQuery) use ($tag, $currentLanguageId) {
+                        $translationQuery->where('language_id', $currentLanguageId)
+                            ->where('tags', 'like', '%' . $tag . '%');
+                    });
+                }
+            });
         })
       
 

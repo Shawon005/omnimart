@@ -8,4 +8,9 @@ class Page extends Model
 {
     protected $fillable = ['title', 'slug', 'details','pos','meta_keywords','meta_descriptions'];
     public $timestamps = false;
+
+    public function translations()
+    {
+        return $this->hasMany(PageTranslation::class);
+    }
 }

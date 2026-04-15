@@ -5,7 +5,17 @@
 @endsection
 
 @section('content')
-
+<style>
+    .feateate_text{
+        margin-bottom:50px;
+    }
+    @media screen and (max-width: 748px) {
+    .feateate_text { 
+        margin-bottom:unset;
+    }
+   
+}
+</style>
     @if ($setting->is_slider == 1)
         <div class="slider-area-wrapper">
             <div class="container">
@@ -18,18 +28,21 @@
                                     <div class="item
                                     @if (DB::table('languages')->where('is_default', 1)->first()->rtl == 1) d-flex justify-content-end @endif
                                     "
-                                        style="background: url('{{ url('/core/public/storage/images/' . $slider->photo) }}')">
+                                        style="background: url('{{ url('/core/public/storage/images/' . $slider->photo) }}');">
                                         <div class="item-inner">
                                             <div class="from-bottom">
                                                 @if ($slider->logo)
-                                                    <img class="d-inline-block brand-logo"
-                                                        src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="logo">
+                                                <div class="feateate_text">
+                                                            {!! $slider->logo !!}
+                                                        </div>
+                                                    <!-- <img class="d-inline-block brand-logo"
+                                                        src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="logo"> -->
                                                 @endif
                                                 <div class="text-body">{!! $slider->title !!}</div>
                                                 <div class="text-body">{!! $slider->details !!}</div>
                                             </div>
                                             @if ($slider->link != '#')
-                                                <a class="btn btn-primary scale-up delay-1" href="{{ $slider->link }}"style="bottom: 40px;buttom: 10px;position: absolute;">
+                                                <a class="btn btn-primary scale-up delay-1" href="{{ $slider->link }}"style="bottom: 20px;buttom: 10px;position: absolute;border: 1px solid #665f5f;">
                                                     <span>{{ __('Buy Now') }}</span>
                                                 </a>
                                             @endif
@@ -41,28 +54,38 @@
                     </div>
 
                     @if (isset($hero_banner))
-                        <div class="col-lg-4 d-none d-lg-block">
+                        <div class="col-lg-4  d-lg-block mt-3 mt-lg-0">
                             <a href="{{ $hero_banner['url1'] }}" class="sright-image">
                                 <img src="{{ url('/core/public/storage/images/' . $hero_banner['img1']) }}" alt="">
-                                <div class="inner-content">
-
-                                    @if (isset($hero_banner['subtitle1']))
-                                        <p>{{ $hero_banner['subtitle1'] }}</p>
+                                <div class="inner-content"> 
+                                    @if (isset($hero_banner['heading1']))
+                                        {!! $hero_banner['heading1'] !!}
                                     @endif
-
                                     @if (isset($hero_banner['title1']))
-                                        <h4>{{ $hero_banner['title1'] }}</h4>
+                                       {!! $hero_banner['title1'] !!}
+                                    @endif
+                                    @if (isset($hero_banner['subtitle1']))
+                                        {!! $hero_banner['subtitle1'] !!}
+                                    @endif
+                                    @if (isset($hero_banner['payment1']))
+                                        {!! $hero_banner['payment1'] !!}
                                     @endif
                                 </div>
                             </a>
                             <a href="{{ $hero_banner['url2'] }}" class="sright-image mb-0">
                                 <img src="{{ url('/core/public/storage/images/' . $hero_banner['img2']) }}" alt="">
                                 <div class="inner-content">
-                                    @if (isset($hero_banner['subtitle2']))
-                                        <p>{{ $hero_banner['subtitle2'] }}</p>
+                                    @if (isset($hero_banner['heading2']))
+                                        {!! $hero_banner['heading2'] !!}
                                     @endif
                                     @if (isset($hero_banner['title2']))
-                                        <h4>{{ $hero_banner['title2'] }}</h4>
+                                        {!! $hero_banner['title2'] !!}
+                                    @endif
+                                    @if (isset($hero_banner['subtitle2']))
+                                        {!! $hero_banner['subtitle2'] !!}
+                                    @endif
+                                    @if (isset($hero_banner['payment2']))
+                                       {!! $hero_banner['payment2'] !!}
                                     @endif
                                 </div>
                             </a>
@@ -72,7 +95,30 @@
             </div>
         </div>
     @endif
+<style>
+    /* General style for the div inside the editor and website */
+    .responsive-bg-box {
+    background-color: transparent !important; /* No background on Desktop */
+    padding: 0 !important;
+    transition: all 0.3s ease;
+}
+.opcity{
+    opacity: 1;
+}
 
+/* Media Query: Only apply the background on Mobile */
+@media screen and (max-width: 768px) {
+    .responsive-bg-box {
+        /* This pulls the color from the --mobile-bg variable we set in JS */
+        background-color: var(--mobile-bg) !important; 
+        padding: 10px !important;
+        border-radius: 6px;
+    }
+    .opcity{
+    opacity: 1;
+}
+}
+</style>
 
     @if ($setting->is_service == 1)
         <section class="service-section">
