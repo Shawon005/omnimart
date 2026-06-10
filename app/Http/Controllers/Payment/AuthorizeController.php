@@ -203,7 +203,7 @@ class AuthorizeController extends Controller
                         $orderData['currency_value'] = PriceHelper::setCurrencyValue();
                         $order = Order::create($orderData);
 
-                        $new_txn =  $new_txn = 'ORD-' . str_pad(Carbon::now()->format('Ymd'), 4, '0000', STR_PAD_LEFT) . '-' . $order->id;
+                        $new_txn = Order::formatTransactionNumber($order->id);
                         $order->transaction_number = $new_txn;
                         $order->save();
 

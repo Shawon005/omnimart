@@ -10,6 +10,7 @@ use App\Models\AttributeOption;
 use App\Models\Item;
 use App\Models\Notification;
 use App\Models\Order;
+use App\Models\PaymentSetting;
 use App\Models\PromoCode;
 use App\Models\Setting;
 use App\Models\TrackOrder;
@@ -28,7 +29,7 @@ class OrderPaymentFinalizer
         $order->payment_status = 'Paid';
 
         if (!str_starts_with((string) $order->transaction_number, 'ORD-')) {
-            $order->transaction_number = 'ORD-' . str_pad(Carbon::now()->format('Ymd'), 4, '0000', STR_PAD_LEFT) . '-' . $order->id;
+            $order->transaction_number = Order::formatTransactionNumber($order->id);
         }
 
         $order->save();
@@ -146,6 +147,14 @@ class OrderPaymentFinalizer
         $setting = Setting::first();
 
         if (!$setting) {
+            return;
+        }
+
+        $ifthenpaySetting = PaymentSetting::whereUniqueKeyword('ifthenpay')->first();
+        $ifthenpayData = $ifthenpaySetting ? ($ifthenpaySetting->convertJsonData() ?: []) : [];
+        $sendOrderEmail = (int) ($ifthenpayData['send_order_email'] ?? 1);
+
+        if ($sendOrderEmail !== 1) {
             return;
         }
 

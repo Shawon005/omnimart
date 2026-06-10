@@ -50,6 +50,10 @@
                                     <td>{transaction_number}</td>
                                     <td>{{ __('Order Transaction Number') }}</td>
                                 </tr>
+                                <tr>
+                                    <td>{order_details}</td>
+                                    <td>{{ __('Full order summary table and billing/shipping address block') }}</td>
+                                </tr>
                                 </tbody>
                             </table>
                             </div>

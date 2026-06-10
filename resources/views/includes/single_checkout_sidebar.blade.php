@@ -62,10 +62,10 @@
                     @endphp
 
                     <select name="shipping_id" class="form-control" id="shipping_id_select" required
-                        data-base-grand-total="{{ PriceHelper::setCurrencyPrice($grand_total) }}">
+                        data-base-grand-total="{{ PriceHelper::setCurrencyPrice($grand_total) }}" disabled>
                         <option value="" selected disabled>{{ __('Select Shipping Method') }}*</option>
                         @foreach (DB::table('shipping_services')->whereStatus(1)->get() as $shipping)
-                            @if ($shipping->id == 1 && isset($free_shipping) && $free_shipping->minimum_price <= $cart_total)
+                            @if (($shipping->id == 1 || $shipping->title=='Europe') && isset($free_shipping) && $free_shipping->minimum_price <= $cart_total)
                                 <option value="{{ $shipping->id }}" data-href="{{ route('front.shipping.setup') }}"
                                     data-title="{{ $shipping->title }}">
                                     {{ $shipping->title }}

@@ -11,7 +11,6 @@ use App\{
     Repositories\Back\ItemRepository
 };
 use App\Helpers\ImageHelper;
-use App\Models\Category;
 use App\Models\ChieldCategory;
 use App\Models\Currency;
 use App\Models\Subcategory;
@@ -95,8 +94,9 @@ class ItemController extends Controller
     {
 
         if ($request->category_id) {
-            $data = Category::findOrFail($request->category_id);
-            $data = $data->subcategory;
+            $data = Subcategory::where('category_id', $request->category_id)
+                ->orderBy('name', 'asc')
+                ->get();
         } else {
             $data = [];
         }

@@ -10,7 +10,6 @@ use App\{
     Http\Requests\GalleryRequest,
     Repositories\Back\ItemRepository
 };
-use App\Models\Category;
 use App\Models\Currency;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
@@ -43,8 +42,9 @@ class AffiliateController extends Controller
     {
 
         if($request->category_id){
-            $data = Category::findOrFail($request->category_id);
-            $data = $data->subcategory;
+            $data = Subcategory::where('category_id', $request->category_id)
+                ->orderBy('name', 'asc')
+                ->get();
         }else{
             $data = [];
         }

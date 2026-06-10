@@ -134,6 +134,14 @@ class PaymentSettingRepository
                 }
             }
 
+            if (array_key_exists("send_order_email",$info_data)){
+                $info_data['send_order_email'] = 1;
+            }else{
+                if (strpos($pay_data->information, 'send_order_email') !== false) {
+                    $info_data['send_order_email'] = 0;
+                }
+            }
+
             
         
             $input['information'] = json_encode($info_data);
@@ -186,6 +194,7 @@ class PaymentSettingRepository
                     'language' => 'pt',
                     'days_to_expire' => '3',
                     'is_one_time_payment' => 1,
+                    'send_order_email' => 1,
                     'close_button_label' => 'Close',
                 ]),
                 'text' => 'Pay securely through IfthenPay. Configure your Pay By Link gateway key and the payment methods you want to expose.',

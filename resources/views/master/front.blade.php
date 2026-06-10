@@ -667,7 +667,7 @@
                                         <nav class="slideable-menu">
                                             @php
                                                 $mobileMenuCategories = \App\Models\Category::with(['subcategory' => function ($query) {
-                                                    $query->where('status', 1);
+                                                    $query->where('status', 1)->orderBy('name', 'asc');
                                                 }])->where('status', 1)->orderBy('serial', 'asc')->take(2)->get();
                                             @endphp
                                             <ul>
@@ -684,7 +684,7 @@
 
                                                     @foreach ($mobileMenuCategories as $mobileMenuCategory)
                                                         <li class="t-h-dropdown">
-                                                            <a class="" href="{{ route('front.catalog') . '?category=' . $mobileMenuCategory->slug }}">
+                                                            <a class="" >
                                                                 <i class="icon-chevron-right"></i>{{ $mobileMenuCategory->name }}
                                                                 @if ($mobileMenuCategory->subcategory->count() > 0)
                                                                     <i class="icon-chevron-down"></i>

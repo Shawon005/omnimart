@@ -1,6 +1,8 @@
 
     @php
-        $categories = App\Models\Category::with('subcategory')->whereStatus(1)->orderby('serial','asc')->take(8)->get();
+        $categories = App\Models\Category::with(['subcategory' => function ($query) {
+            $query->where('status', 1)->orderBy('name', 'asc');
+        }])->whereStatus(1)->orderby('serial','asc')->take(8)->get();
     @endphp
 
 
@@ -50,5 +52,4 @@
 
 
     </div>
-
 

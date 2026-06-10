@@ -3,7 +3,7 @@
   
     $links = json_decode($menus->menus, true);
     $menuCategories = \App\Models\Category::with(['subcategory' => function ($query) {
-            $query->where('status', 1);
+            $query->where('status', 1)->orderBy('name', 'asc');
         }])
         ->where('status', 1)
         ->orderBy('serial', 'asc')
@@ -63,7 +63,7 @@
 
                             if (!empty($level2CategorySlugs)) {
                                 $level2CategoryMap = \App\Models\Category::with(['subcategory' => function ($query) {
-                                        $query->where('status', 1);
+                                        $query->where('status', 1)->orderBy('name', 'asc');
                                     }])
                                     ->whereIn('slug', $level2CategorySlugs)
                                     ->where('status', 1)

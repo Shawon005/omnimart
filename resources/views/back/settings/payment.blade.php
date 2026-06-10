@@ -1621,6 +1621,20 @@
                                                                             </div>
                                                                         </div>
 
+                                                                        <div class="form-group col-xl-4 col-md-6">
+                                                                            <div class="custom-control custom-checkbox">
+                                                                                <input type="checkbox"
+                                                                                    name="pkey[send_order_email]"
+                                                                                    class="custom-control-input"
+                                                                                    {{ ($ifthenpayData['send_order_email'] ?? 1) == 1 ? 'checked' : '' }}
+                                                                                    id="ifthenpay_send_order_email">
+                                                                                <label class="custom-control-label"
+                                                                                    for="ifthenpay_send_order_email">
+                                                                                    {{ __('Send order email for unpaid and paid orders') }}
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+
                                                                         <div class="form-group">
                                                                             <label for="text">{{ __('Enter Text') }}
                                                                                 *</label>

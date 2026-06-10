@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Back;
 
 use App\{
+    Helpers\EmailHelper,
+    Jobs\EmailSendJob,
     Models\Order,
     Models\PromoCode,
+    Models\Setting,
     Models\TrackOrder,
     Http\Controllers\Controller
 };
@@ -149,6 +152,10 @@ class OrderController extends Controller
             $this->setPromoCode($order);
         }
         $this->setTrackOrder($order);
+
+        if($field == 'order_status'){
+            $this->sendOrderStatusEmail($order);
+        }
         
         $sms = new SmsHelper();
         $user_number = $order->user->phone;
@@ -255,6 +262,42 @@ class OrderController extends Controller
             $code->no_of_times--;
             $code->update();
         }
+    }
+
+    private function sendOrderStatusEmail(Order $order): void
+    {
+        $setting = Setting::first();
+        if(!$setting){
+            return;
+        }
+
+        $billingInfo = json_decode($order->billing_info, true) ?: [];
+        $recipient = $order->user_id && $order->user ? $order->user->email : ($billingInfo['bill_email'] ?? '');
+
+        if(!$recipient){
+            return;
+        }
+
+        $subject = __('Order Status Updated') . ' - ' . $order->transaction_number;
+        $body = '<p>' . __('Hello') . ' ' . e($billingInfo['bill_first_name'] ?? __('Customer')) . ',</p>';
+        $body .= '<p>' . __('Your order status has been updated.') . '</p>';
+        $body .= '<p><strong>' . __('Order Number') . ':</strong> ' . e($order->transaction_number) . '<br>';
+        $body .= '<strong>' . __('New Status') . ':</strong> ' . e($order->order_status) . '</p>';
+        $body .= '<p>' . __('Thank you for shopping with us.') . '</p>';
+
+        $emailData = [
+            'to' => $recipient,
+            'subject' => $subject,
+            'body' => $body,
+        ];
+
+        if($setting->is_queue_enabled == 1){
+            dispatch(new EmailSendJob($emailData));
+            return;
+        }
+
+        $email = new EmailHelper();
+        $email->sendCustomMail($emailData);
     }
 
 

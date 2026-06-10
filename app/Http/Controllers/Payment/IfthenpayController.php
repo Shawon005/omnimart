@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Payment;
 
+use App\Helpers\EmailHelper;
 use App\Helpers\PriceHelper;
 use App\Http\Controllers\Controller;
+use App\Jobs\EmailSendJob;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\PaymentSetting;
+use App\Models\Setting;
 use App\Models\ShippingService;
 use App\Models\State;
 use App\Services\OrderPaymentFinalizer;
@@ -19,9 +22,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
-
+use Illuminate\Support\Str;
 class IfthenpayController extends Controller
 {
     public function __construct(private OrderPaymentFinalizer $orderPaymentFinalizer)
@@ -34,10 +36,10 @@ class IfthenpayController extends Controller
         PriceHelper::checkCheckout($request);
 
         $data = $request->all();
-        $order = $this->createPendingOrder($data);
+        $selectedOption = $this->normalizeSelectedOption((string) $request->input('ifthenpay_option'));
+        $order = $this->createPendingOrder($data, $selectedOption);
 
         // try {
-            $selectedOption = $this->normalizeSelectedOption((string) $request->input('ifthenpay_option'));
             $gateway = $this->makeGateway($selectedOption);
             $this->registerWebhook($gateway);
             //dd($gateway);
@@ -55,6 +57,7 @@ class IfthenpayController extends Controller
 
             $order->charge_id = $payment->getPinCode();
             $order->save();
+            $this->sendPendingOrderEmail($order);
 
             return redirect()->away($payment->getPaymentUrl());
         // } catch (\Throwable $exception) {
@@ -218,7 +221,7 @@ class IfthenpayController extends Controller
         return null;
     }
 
-    private function createPendingOrder(array $data): Order
+    private function createPendingOrder(array $data, string $selectedOption): Order
     {
         $user = Auth::user();
         $cart = Session::get('cart');
@@ -249,7 +252,7 @@ class IfthenpayController extends Controller
         $orderData['state_price'] = PriceHelper::StatePrce($data['state_id'], $cartTotal);
         $orderData['shipping_info'] = json_encode(Session::get('shipping_address'), true);
         $orderData['billing_info'] = json_encode(Session::get('billing_address'), true);
-        $orderData['payment_method'] = 'IfthenPay';
+        $orderData['payment_method'] = $this->ifthenpayPaymentMethodLabel($selectedOption);
         $orderData['user_id'] = isset($user) ? $user->id : 0;
         $orderData['transaction_number'] = Str::random(10);
         $orderData['currency_sign'] = PriceHelper::setCurrencySign();
@@ -257,7 +260,11 @@ class IfthenpayController extends Controller
         $orderData['payment_status'] = 'Unpaid';
         $orderData['order_status'] = 'Pending';
 
-        return Order::create($orderData);
+        $order = Order::create($orderData);
+        $order->transaction_number = Order::formatTransactionNumber($order->id);
+        $order->save();
+
+        return $order;
     }
 
     private function validateCheckoutRequest(Request $request): void
@@ -371,6 +378,53 @@ class IfthenpayController extends Controller
         return number_format($amount, 2, '.', '');
     }
 
+    private function sendPendingOrderEmail(Order $order): void
+    {
+        
+        $setting = Setting::first();
+        if (!$setting) {
+            return;
+        }
+
+        $gatewayData = $this->getGatewaySettings();
+        if ((int) ($gatewayData['send_order_email'] ?? 1) !== 1) {
+            return;
+        }
+
+        $billingInfo = json_decode($order->billing_info, true) ?: [];
+        $emailData = [
+            'to' => $order->user_id && $order->user ? $order->user->email : ($billingInfo['bill_email'] ?? ''),
+            'type' => 'Order',
+            'user_name' => $order->user_id && $order->user ? $order->user->displayName() : ($billingInfo['bill_first_name'] ?? 'Customer'),
+            'order_cost' => PriceHelper::OrderTotal($order, 'trns'),
+            'transaction_number' => $order->transaction_number,
+            'site_title' => $setting->title,
+            'order'=> $order,
+        ];
+       // dd($order);
+        $email = new EmailHelper();
+        $userEmailSent = false;
+        //$email->adminMail($emailData);
+        if (!empty($emailData['to'])) {
+            if ($setting->is_queue_enabled == 1) {
+                dispatch(new EmailSendJob($emailData, 'template'));
+                $userEmailSent = true;
+            } else {
+                $userEmailSent = $email->sendTemplateMail($emailData);
+                
+            }
+        }
+
+        // Ensure admin receives order email for IfthenPay even if user email is missing/fails.
+        if (
+            (int) $setting->order_mail !== 1 ||
+            empty($emailData['to']) ||
+            ($setting->is_queue_enabled != 1 && !$userEmailSent)
+        ) {
+            // $email->adminMail($emailData);
+        }
+    }
+
     private function getGatewaySettings(): array
     {
         $paymentData = PaymentSetting::whereUniqueKeyword('ifthenpay')->firstOrFail();
@@ -389,6 +443,7 @@ class IfthenpayController extends Controller
             'language' => 'pt',
             'days_to_expire' => '3',
             'is_one_time_payment' => 1,
+            'send_order_email' => 1,
             'close_button_label' => 'Close',
         ], $gatewayData);
     }
@@ -435,6 +490,17 @@ class IfthenpayController extends Controller
         return match ($selectedOption) {
             'CCARD', 'MBWAY', 'PAYSHOP', 'MB' => $selectedOption,
             default => throw new InvalidArgumentException('Please select a valid IfthenPay payment option.'),
+        };
+    }
+
+    private function ifthenpayPaymentMethodLabel(string $selectedOption): string
+    {
+        return match ($selectedOption) {
+            'CCARD' => 'Credit Card',
+            'MB' => 'Multibanco',
+            'MBWAY' => 'MB WAY',
+            'PAYSHOP' => 'Payshop',
+            default => 'IfthenPay',
         };
     }
 }

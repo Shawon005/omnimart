@@ -243,8 +243,8 @@
     @yield('scripts')
     <script src="{{ asset('assets/back/js/custom.js') }}"></script>
 
-    <script src="https://cdn.tiny.cloud/1/zwmet5zwiseexmg68njgwjjj65x0q9rufht5kvy00dyzsd56/tinymce/8/tinymce.min.js" referrerpolicy="origin"></script>
-<script>
+    <!-- <script src="https://cdn.tiny.cloud/1/zwmet5zwiseexmg68njgwjjj65x0q9rufht5kvy00dyzsd56/tinymce/8/tinymce.min.js" referrerpolicy="origin"></script> -->
+<!-- <script>
 
 tinymce.init({
     selector: 'textarea#myeditorinstance',
@@ -468,7 +468,7 @@ plugins: [
     uploadcare_public_key: '34f8d9cb6174fd2c38b9', // Replace this CSS selector to match the placeholder element for TinyMCE
 });
   
-</script>
+</script> -->
 
 </body>
 
