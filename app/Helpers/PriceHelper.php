@@ -142,7 +142,8 @@ class PriceHelper
         if (count($item->attributes) > 0) {
             foreach ($item->attributes as $attr) {
                 if (isset($attr->options[0])) {
-                    $option_price += $attr->options[0]->price;
+                    $option = $attr->options[0];
+                    $option_price += $option->current_price ?? $option->price;
                 }
             }
         }
@@ -172,7 +173,8 @@ class PriceHelper
         if (count($item->attributes) > 0) {
             foreach ($item->attributes as $attr) {
                 if (isset($attr->options[0])) {
-                    $option_price += PriceHelper::convertPrice($attr->options[0]->price);
+                    $option = $attr->options[0];
+                    $option_price += PriceHelper::convertPrice($option->current_price ?? $option->price);
                 }
 
             }

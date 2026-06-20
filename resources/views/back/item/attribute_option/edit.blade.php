@@ -60,18 +60,29 @@
 									</div>
 
                                     <div class="form-group">
-                                        <label for="price">{{ __('Price') }} *</label>
+                                        <label for="current_price">{{ __('Current Price') }} *</label>
                                         <small>({{ __('Set 0 to make it free') }})</small>
                                         <div class="input-group mb-3">
                                             <div class="input-group-prepend">
-                                                <span
-                                                    class="input-group-text">{{ $curr->sign }}</span>
+                                                <span class="input-group-text">{{ $curr->sign }}</span>
                                             </div>
-                                            <input type="text" id="price"
-                                                name="price" class="form-control"
-                                                placeholder="{{ __('Enter Price') }}"
+                                            <input type="text" id="current_price"
+                                                name="current_price" class="form-control"
+                                                placeholder="{{ __('Enter Current Price') }}"
+                                                value="{{ PriceHelper::setPrice($option->current_price ?? $option->price) }}" >
+                                        </div>
+                                    </div>
 
-                                                value="{{ PriceHelper::setPrice($option->price) }}" >
+                                    <div class="form-group">
+                                        <label for="previous_price">{{ __('Previous Price') }}</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">{{ $curr->sign }}</span>
+                                            </div>
+                                            <input type="text" id="previous_price"
+                                                name="previous_price" class="form-control"
+                                                placeholder="{{ __('Enter Previous Price') }}"
+                                                value="{{ PriceHelper::setPrice($option->previous_price) }}" >
                                         </div>
                                     </div>
 

@@ -163,6 +163,49 @@ class Item extends Model
     	return $this->belongsTo('App\Models\User','vendor_id')->withDefault();
     }
 
+    public function attributeOptionStock()
+    {
+        $attributes = $this->relationLoaded('attributes')
+            ? $this->getRelation('attributes')
+            : $this->attributes()->with('options')->get();
+
+        $hasVariantStock = false;
+        $totalStock = 0;
+
+        foreach ($attributes as $attribute) {
+            foreach ($attribute->options as $option) {
+                $stock = $option->stock;
+
+                if ($stock === null || $stock === '') {
+                    continue;
+                }
+
+                $hasVariantStock = true;
+
+                if (is_string($stock) && strtolower($stock) === 'unlimited') {
+                    return 'unlimited';
+                }
+
+                if (is_numeric($stock)) {
+                    $totalStock += (int) $stock;
+                }
+            }
+        }
+
+        return $hasVariantStock ? $totalStock : null;
+    }
+
+    public function getAvailableStockAttribute()
+    {
+        $variantStock = $this->attributeOptionStock();
+
+        if ($variantStock !== null) {
+            return $variantStock;
+        }
+
+        return $this->stock;
+    }
+
 
     public function is_stock()
     {
@@ -189,7 +232,7 @@ class Item extends Model
         if($item->item_type == 'affiliate'){
             return true;
         }
-
+    
         // physical product stock check
 
         if($item->item_type == 'normal'){

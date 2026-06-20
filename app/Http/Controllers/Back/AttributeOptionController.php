@@ -37,7 +37,17 @@ class AttributeOptionController extends Controller
             'curr' => Currency::where('is_default',1)->first(),
             'datas' => $item->join('attributes','attributes.item_id','=','items.id')
                     ->join('attribute_options','attribute_options.attribute_id','=','attributes.id')
-                    ->select('attribute_options.id','attribute_options.attribute_id','attribute_options.name','attribute_options.keyword','attribute_options.stock','attribute_options.price',\DB::raw('attributes.name as attribute'))
+                    ->select(
+                        'attribute_options.id',
+                        'attribute_options.attribute_id',
+                        'attribute_options.name',
+                        'attribute_options.keyword',
+                        'attribute_options.stock',
+                        'attribute_options.price',
+                        'attribute_options.current_price',
+                        'attribute_options.previous_price',
+                        \DB::raw('attributes.name as attribute')
+                    )
                     ->where('items.id','=',$item->id)
                     ->latest('id')
                     ->get()
@@ -69,7 +79,11 @@ class AttributeOptionController extends Controller
 
         $input = $request->all();
         $curr = Currency::where('is_default',1)->first();
-        $input['price'] = $request->price / $curr->value;
+        $currentPrice = $request->input('current_price', $request->price);
+        $previousPrice = $request->input('previous_price', 0);
+        $input['current_price'] = $currentPrice / $curr->value;
+        $input['previous_price'] = $previousPrice / $curr->value;
+        $input['price'] = $input['current_price'];
         AttributeOption::create($input);
 
         return redirect()->route('back.option.index',$item->id)->withSuccess(__('New Attribute Option Added Successfully.'));
@@ -105,7 +119,11 @@ class AttributeOptionController extends Controller
 
         $input = $request->all();
         $curr = Currency::where('is_default',1)->first();
-        $input['price'] = $request->price / $curr->value;
+        $currentPrice = $request->input('current_price', $request->price);
+        $previousPrice = $request->input('previous_price', 0);
+        $input['current_price'] = $currentPrice / $curr->value;
+        $input['previous_price'] = $previousPrice / $curr->value;
+        $input['price'] = $input['current_price'];
         $option->update($input);
 
         return redirect()->route('back.option.index',$item->id)->withSuccess(__('Attribute Option Updated Successfully.'));

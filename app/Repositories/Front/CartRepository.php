@@ -48,10 +48,12 @@ class CartRepository
         $qty = is_numeric($qty) ? $qty : 1;
 
 
-        if ($input['options_ids']) {
+        $hasVariantOptions = !empty($input['options_ids']);
+
+        if ($hasVariantOptions) {
             foreach (explode(',', $input['options_ids']) as $optionId) {
                 $option = AttributeOption::findOrFail($optionId);
-                if ($qty > $option->stock) {
+                if ($option->stock !== 'unlimited' && (!is_numeric($option->stock) || $qty > (int) $option->stock)) {
                     $data = ['message' => 'Product Out Of Stock', 'status' => 'outStock'];
                     return $data;
                 }
@@ -63,7 +65,7 @@ class CartRepository
         $item = Item::where('id', $input['item_id'])->select('id', 'name', 'photo', 'discount_price', 'previous_price', 'slug', 'item_type', 'license_name', 'license_key', 'stock')->first();
        
         
-        if ($item->item_type == 'normal') {
+        if ($item->item_type == 'normal' && !$hasVariantOptions) {
             if ($item->stock < (int)$request->quantity) {
                 $data = ['message' => 'Product Out Of Stock', 'status' => 'outStock'];
                 return $data;
@@ -104,7 +106,8 @@ class CartRepository
                     if (isset($attr->options[0]->name)) {
                         $attr_name[] = $attr->name;
                         $option_name[] = $attr->options[0]->name;
-                        $option_price[] = $attr->options[0]->price;
+                        $option = $attr->options[0];
+                        $option_price[] = $option->current_price ?? $option->price;
                         $option_id[] = $attr->options[0]->id;
                     }
                 }
@@ -139,7 +142,7 @@ class CartRepository
                 foreach (explode(',', $input['options_ids']) as $optionId) {
                     $option = AttributeOption::findOrFail($optionId);
                     $option_name[] = $option->name;
-                    $option_price[] = $option->price;
+                    $option_price[] = $option->current_price ?? $option->price;
                     $option_id[] = $option->id;
                 }
                 $input['option_name'] = $option_name;
@@ -222,7 +225,15 @@ class CartRepository
                 $cart[$item->id . '-' . $cart_item_key]['qty'] =  $qty;
             }
            
-            if ($item->item_type == 'normal') {
+            if ($hasVariantOptions) {
+                foreach (explode(',', $input['options_ids']) as $optionId) {
+                    $option = AttributeOption::findOrFail($optionId);
+                    if ($option->stock !== 'unlimited' && (!is_numeric($option->stock) || $cart[$item->id . '-' . $cart_item_key]['qty'] > (int) $option->stock)) {
+                        $data = ['message' => 'Product Out Of Stock', 'status' => 'outStock'];
+                        return $data;
+                    }
+                }
+            } elseif ($item->item_type == 'normal') {
 
                 if ($item->stock < (int)$cart[$item->id . '-' . $cart_item_key]['qty']) {
                     $data = ['message' => 'Product Out Of Stock', 'status' => 'outStock'];

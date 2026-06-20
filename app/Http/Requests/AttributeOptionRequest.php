@@ -27,17 +27,22 @@ class AttributeOptionRequest extends FormRequest
      */
     public function rules()
     {
-
         $data = $this->request->all();
         $id = $this->option ?  $this->option->id : '';
 
-        return  [
-            'name' => 'required|max:100',Rule::unique('attribute_options', 'name')->where(function ($query) use ($data) {
-                return $query->where('attribute_id', $data['attribute_id']);
-            })->ignore($id),
+        return [
+            'name' => [
+                'required',
+                'max:100',
+                Rule::unique('attribute_options', 'name')->where(function ($query) use ($data) {
+                    return $query->where('attribute_id', $data['attribute_id'] ?? null);
+                })->ignore($id),
+            ],
             'attribute_id' => 'required',
             'stock' => 'required',
-            'price' => 'required|numeric|max:9999999999'
+            'current_price' => 'required_without:price|numeric|max:9999999999',
+            'previous_price' => 'nullable|numeric|max:9999999999',
+            'price' => 'nullable|numeric|max:9999999999'
         ];
     }
 

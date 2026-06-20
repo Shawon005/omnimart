@@ -30,7 +30,7 @@
 						<tr>
               <th width="20%">{{ __('Option Name') }}</th>
               <th width="20%">{{ __('Attribute') }}</th>
-              <th width="20%">{{ __('Price') }}</th>
+              <th width="20%">{{ __('Current / Previous Price') }}</th>
               <th width="20%">{{ __('Stock') }}</th>
 							<th width="15%">{{ __('Actions') }}</th>
 						</tr>

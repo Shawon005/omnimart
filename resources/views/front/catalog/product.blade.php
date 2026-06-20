@@ -52,7 +52,11 @@
                             </div>
                         </div>
                     @endif
-                    @if ($item->is_stock())
+                    @php
+                        $availableStock = $item->available_stock;
+                        $hasAvailableStock = $availableStock === 'unlimited' || $availableStock > 0;
+                    @endphp
+                    @if ($hasAvailableStock)
                         <span
                             class="product-badge
                         @if ($item->is_type == 'feature') bg-warning
@@ -93,6 +97,8 @@
                         <input type="hidden" id="item_id" value="{{ $item->id }}">
                         <input type="hidden" id="demo_price"
                             value="{{ PriceHelper::setConvertPrice($item->discount_price) }}">
+                        <input type="hidden" id="demo_previous_price"
+                            value="{{ PriceHelper::setConvertPrice($item->previous_price) }}">
                         <input type="hidden" value="{{ PriceHelper::setCurrencySign() }}" id="set_currency">
                         <input type="hidden" value="{{ PriceHelper::setCurrencyValue() }}" id="set_currency_val">
                         <input type="hidden" value="{{ $setting->currency_direction }}" id="currency_direction">
@@ -101,9 +107,19 @@
                             <div class="rating-stars d-inline-block gmr-3">
                                 {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
                             </div>
-                            @if ($item->is_stock())
-                                <span class="text-success  d-inline-block">{{ __('In Stock') }} <b>({{ $item->stock }}
-                                        @lang('items'))</b></span>
+                            @if ($hasAvailableStock)
+                                <span class="text-success d-inline-block">
+                                    {{ __('In Stock') }} <b>(
+                                        <span id="stock_display_text" data-unlimited-label="{{ __('Unlimited') }}" data-items-label="{{ __('items') }}">
+                                            {{ $availableStock === 'unlimited' ? __('Unlimited') : $availableStock }}
+                                        </span>
+                                        <span id="stock_unit_text">
+                                            @if ($availableStock !== 'unlimited')
+                                                @lang('items')
+                                            @endif
+                                        </span>
+                                    )</b>
+                                </span>
                             @else
                                 <span class="text-danger  d-inline-block">{{ __('Out of stock') }}</span>
                             @endif
@@ -118,10 +134,10 @@
                         @endif
 
                         <span class="h3 d-block price-area">
-                            @if ($item->previous_price != 0)
-                                <small
-                                    class="d-inline-block"><del>{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del></small>
-                            @endif
+                            <small id="previous_price_area"
+                                class="d-inline-block {{ $item->previous_price != 0 ? '' : 'd-none' }}">
+                                <del id="previous_price">{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
+                            </small>
                             <span id="main_price" class="main-price">{{ PriceHelper::grandCurrencyPrice($item) }}</span>
                         </span>
 
@@ -138,7 +154,9 @@
                                                 @foreach ($attribute->options->where('stock', '!=', '0') as $option)
                                                     <option value="{{ $option->name }}" data-type="{{ $attribute->id }}"
                                                         data-href="{{ $option->id }}"
-                                                        data-target="{{ PriceHelper::setConvertPrice($option->price) }}">
+                                                        data-stock="{{ $option->stock }}"
+                                                        data-target="{{ PriceHelper::setConvertPrice($option->current_price ?? $option->price) }}"
+                                                        data-previous="{{ PriceHelper::setConvertPrice($option->previous_price) }}">
                                                         {{ $option->name }}</option>
                                                 @endforeach
                                             </select>
@@ -154,12 +172,12 @@
                                         <span class="decreaseQty subclick"><i class="fas fa-minus "></i></span>
                                         <input type="text" class="qtyValue cart-amount" value="1">
                                         <span class="increaseQty addclick"><i class="fas fa-plus"></i></span>
-                                        <input type="hidden" value="3333" id="current_stock">
+                                        <input type="hidden" value="{{ $availableStock === 'unlimited' ? '' : $availableStock }}" id="current_stock">
                                     </div>
                                 @endif
                                 <div class="p-action-button">
                                     @if ($item->item_type != 'affiliate')
-                                        @if ($item->is_stock())
+                                        @if ($hasAvailableStock)
                                             <button class="btn btn-primary m-0 a-t-c-mr" id="add_to_cart"><i
                                                     class="icon-bag"></i><span>{{ __('Add to Cart') }}</span></button>
                                             <button class="btn btn-primary m-0" id="but_to_cart"><i

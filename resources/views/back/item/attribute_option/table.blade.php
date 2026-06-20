@@ -7,7 +7,14 @@
             {{ $data->attribute }}
         </td>
         <td>
-            {{ $data->price == 0 ? __('Free') : PriceHelper::adminCurrencyPrice($data->price) }}
+            <div>
+                <strong>{{ __('Current') }}:</strong>
+                {{ ($data->current_price ?? $data->price) == 0 ? __('Free') : PriceHelper::adminCurrencyPrice($data->current_price ?? $data->price) }}
+            </div>
+            <div class="text-muted">
+                <strong>{{ __('Previous') }}:</strong>
+                {{ $data->previous_price && $data->previous_price != 0 ? PriceHelper::adminCurrencyPrice($data->previous_price) : __('Free') }}
+            </div>
         </td>
         <td class="{{$data->stock < 10 && $data->stock != 'unlimited' ? 'bg-danger text-white'  :''}} ">
             @if ($data->stock == '0')

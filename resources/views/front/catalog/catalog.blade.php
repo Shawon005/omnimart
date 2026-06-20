@@ -2,10 +2,14 @@
     @if($items->count() > 0)
         @if ($checkType != 'list')
             @foreach ($items as $item)
+            @php
+                $availableStock = $item->available_stock;
+                $hasAvailableStock = $availableStock === 'unlimited' || $availableStock > 0;
+            @endphp
             <div class="col-xxl-3 col-md-4 col-6">
                 <div class="product-card ">
                 <a href="{{route('front.product',$item->slug)}}">
-                    @if ($item->is_stock())
+                    @if ($hasAvailableStock)
                         <div class="product-badge
                             @if($item->is_type == 'feature')
                             bg-warning
@@ -21,8 +25,8 @@
                             "> {{ __($item->is_type != 'undefine' ?  (str_replace('_',' ',__("$item->is_type"))) : '') }}
                         </div>
                     @else
-                    <div class="product-badge bg-secondary border-default text-body
-                    ">{{__('out of stock')}}</div>
+                    <div class="product-badge bg-secondary border-default  text-danger 
+                    "><b>{{__('out of stock')}}</b></div>
                     @endif
 
                     @if($item->previous_price && $item->previous_price !=0)
@@ -52,6 +56,17 @@
                             @endif
                             {{PriceHelper::grandCurrencyPrice($item)}}
                         </h4>
+                        <!-- <div class="small {{ $hasAvailableStock ? 'text-success' : 'text-danger' }}">
+                            @if ($hasAvailableStock)
+                                {{ __('In Stock') }}:
+                                {{ $availableStock === 'unlimited' ? __('Unlimited') : $availableStock }}
+                                @if ($availableStock !== 'unlimited')
+                                    {{ __('items') }}
+                                @endif
+                            @else
+                                {{ __('Out of stock') }}
+                            @endif
+                        </div> -->
                     </div>
                     </a>
                 </div>
@@ -59,10 +74,14 @@
             @endforeach
         @else
             @foreach ($items as $item)
+                @php
+                    $availableStock = $item->available_stock;
+                    $hasAvailableStock = $availableStock === 'unlimited' || $availableStock > 0;
+                @endphp
                 <div class="col-lg-12">
                     <div class="product-card product-list">
                         <div class="product-thumb" >
-                        @if ($item->is_stock())
+                        @if ($hasAvailableStock)
 
                             <div class="product-badge
                                 @if($item->is_type == 'feature')
@@ -108,6 +127,17 @@
                                         @endif
                                         {{PriceHelper::grandCurrencyPrice($item)}}
                                     </h4>
+                                    <div class="small {{ $hasAvailableStock ? 'text-success' : 'text-danger' }}">
+                                        @if ($hasAvailableStock)
+                                            {{ __('In Stock') }}:
+                                            {{ $availableStock === 'unlimited' ? __('Unlimited') : $availableStock }}
+                                            @if ($availableStock !== 'unlimited')
+                                                {{ __('items') }}
+                                            @endif
+                                        @else
+                                            {{ __('Out of stock') }}
+                                        @endif
+                                    </div>
                                     <p class="text-sm sort_details_show  text-muted hidden-xs-down my-1">
                                     {{ Str::limit(strip_tags($item->sort_details), 100) }}
                                     </p>
