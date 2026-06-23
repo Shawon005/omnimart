@@ -14,7 +14,7 @@
                             @if($item->is_type == 'feature')
                             bg-warning
                             @elseif($item->is_type == 'new')
-                            bg-danger
+                            bg-success
                             @elseif($item->is_type == 'top')
                             bg-info
                             @elseif($item->is_type == 'best')

@@ -108,8 +108,10 @@
                                 {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
                             </div>
                             @if ($hasAvailableStock)
-                                <span class="text-success d-inline-block">
-                                    {{ __('In Stock') }} <b>(
+                                <span id="stock_status_wrapper" class="text-success d-inline-block"
+                                    data-in-stock-label="{{ __('In Stock') }}"
+                                    data-out-of-stock-label="{{ __('Out of stock') }}">
+                                    <span id="stock_status_text">{{ __('In Stock') }}</span> <b id="stock_count_wrap">(
                                         <span id="stock_display_text" data-unlimited-label="{{ __('Unlimited') }}" data-items-label="{{ __('items') }}">
                                             {{ $availableStock === 'unlimited' ? __('Unlimited') : $availableStock }}
                                         </span>
@@ -151,13 +153,17 @@
                                         <div class="form-group">
                                             <label for="{{ $attribute->name }}">{{ $attribute->name }}</label>
                                             <select class="form-control attribute_option" id="{{ $attribute->name }}">
-                                                @foreach ($attribute->options->where('stock', '!=', '0') as $option)
+                                                @foreach ($attribute->options as $option)
+                                                    @php
+                                                        $isOutOfStock = (int) $option->stock <= 0;
+                                                    @endphp
                                                     <option value="{{ $option->name }}" data-type="{{ $attribute->id }}"
                                                         data-href="{{ $option->id }}"
                                                         data-stock="{{ $option->stock }}"
                                                         data-target="{{ PriceHelper::setConvertPrice($option->current_price ?? $option->price) }}"
                                                         data-previous="{{ PriceHelper::setConvertPrice($option->previous_price) }}">
-                                                        {{ $option->name }}</option>
+                                                        {{ $option->name }}{{ $isOutOfStock ? ' - ' . __('Out of stock') : '' }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -182,8 +188,10 @@
                                                     class="icon-bag"></i><span>{{ __('Add to Cart') }}</span></button>
                                             <button class="btn btn-primary m-0" id="but_to_cart"><i
                                                     class="icon-bag"></i><span>{{ __('Buy Now') }}</span></button>
+                                            <button class="btn btn-primary m-0 d-none" id="out_of_stock_button"><i
+                                                    class="icon-bag"></i><span>{{ __('Out of stock') }}</span></button>
                                         @else
-                                            <button class="btn btn-primary m-0"><i
+                                            <button class="btn btn-primary m-0" id="out_of_stock_button"><i
                                                     class="icon-bag"></i><span>{{ __('Out of stock') }}</span></button>
                                         @endif
                                     @else
