@@ -1,5 +1,5 @@
 @if ($sitem->item_type != 'affiliate')
-    @if ($sitem->is_stock())
+    @if ($sitem->available_stock === 'unlimited' || $sitem->available_stock > 0)
     <a class="product-button add_to_single_cart"  data-target="{{ $sitem->id }}" href="javascript:;"  title="{{__('To Cart')}}"><i class="icon-shopping-cart"></i>
     </a>
     @else

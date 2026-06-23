@@ -42,6 +42,7 @@ class AttributeOptionController extends Controller
                         'attribute_options.attribute_id',
                         'attribute_options.name',
                         'attribute_options.keyword',
+                        'attribute_options.position',
                         'attribute_options.stock',
                         'attribute_options.price',
                         'attribute_options.current_price',
@@ -49,7 +50,8 @@ class AttributeOptionController extends Controller
                         \DB::raw('attributes.name as attribute')
                     )
                     ->where('items.id','=',$item->id)
-                    ->latest('id')
+                    ->orderBy('attribute_options.position', 'asc')
+                    ->orderBy('attribute_options.id', 'asc')
                     ->get()
         ]);
     }
@@ -81,6 +83,7 @@ class AttributeOptionController extends Controller
         $curr = Currency::where('is_default',1)->first();
         $currentPrice = $request->input('current_price', $request->price);
         $previousPrice = $request->input('previous_price', 0);
+        $input['position'] = (int) $request->input('position', 0);
         $input['current_price'] = $currentPrice / $curr->value;
         $input['previous_price'] = $previousPrice / $curr->value;
         $input['price'] = $input['current_price'];
@@ -121,6 +124,7 @@ class AttributeOptionController extends Controller
         $curr = Currency::where('is_default',1)->first();
         $currentPrice = $request->input('current_price', $request->price);
         $previousPrice = $request->input('previous_price', 0);
+        $input['position'] = (int) $request->input('position', 0);
         $input['current_price'] = $currentPrice / $curr->value;
         $input['previous_price'] = $previousPrice / $curr->value;
         $input['price'] = $input['current_price'];

@@ -49,6 +49,12 @@
 											placeholder="{{ __('Enter Name') }}" value="{{ $option->name }}" >
 									</div>
 
+									<div class="form-group">
+										<label for="position">{{ __('Position') }}</label>
+										<input type="number" name="position" class="form-control" id="position"
+											placeholder="{{ __('Enter Position') }}" value="{{ $option->position ?? 0 }}" min="0">
+									</div>
+
                                     <div class="form-group">
 										<label for="stock">{{ __('Stock') }} *</label>
 										<input type="text" name="stock" class="form-control" id="stock"

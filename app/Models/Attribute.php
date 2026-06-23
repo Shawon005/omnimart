@@ -12,7 +12,9 @@ class Attribute extends Model
 
     public function options()
     {
-        return $this->hasMany('App\Models\AttributeOption','attribute_id','id');
+        return $this->hasMany('App\Models\AttributeOption','attribute_id','id')
+            ->orderBy('position', 'asc')
+            ->orderBy('id', 'asc');
     }
 
   

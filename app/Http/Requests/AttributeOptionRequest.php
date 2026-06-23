@@ -39,6 +39,7 @@ class AttributeOptionRequest extends FormRequest
                 })->ignore($id),
             ],
             'attribute_id' => 'required',
+            'position' => 'nullable|integer|min:0',
             'stock' => 'required',
             'current_price' => 'required_without:price|numeric|max:9999999999',
             'previous_price' => 'nullable|numeric|max:9999999999',

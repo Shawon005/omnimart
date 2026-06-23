@@ -157,6 +157,7 @@
     </style>
     {{-- Simple Chatbot Styles --}}
     <style>
+
         .to-chatbot-wrapper {
             position: fixed;
             right: 20px;

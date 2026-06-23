@@ -172,7 +172,7 @@
                                         <div class="product-thumb">
                                             @if (!$compaign_item->item->is_stock())
                                                 <div
-                                                    class="product-badge bg-secondary border-default text-body
+                                                    class="product-badge bg-secondary border-default text-danger
                                         ">
                                                     {{ __('out of stock') }}</div>
                                             @endif
@@ -224,6 +224,19 @@
 
                                                 {{ PriceHelper::grandCurrencyPrice($compaign_item->item) }}
                                             </h4>
+                                            @php
+                                                $availableStock = $compaign_item->item->available_stock;
+                                            @endphp
+                                            <!-- <div class="small {{ $availableStock === 'unlimited' || $availableStock > 0 ? 'text-success' : 'text-danger' }}">
+                                                @if ($availableStock === 'unlimited' || $availableStock > 0)
+                                                    {{ $availableStock === 'unlimited' ? __('Unlimited') : $availableStock }}
+                                                    @if ($availableStock !== 'unlimited')
+                                                        {{ __('items') }}
+                                                    @endif
+                                                @else
+                                                    <span class="text-danger">{{ __('Out of stock') }}</span>
+                                                @endif
+                                            </div> -->
 
                                         </div>
 
@@ -322,7 +335,7 @@
 
                                             @if (!$popular_category_item->is_stock())
                                                 <div
-                                                    class="product-badge bg-secondary border-default text-body
+                                                    class="product-badge bg-secondary border-default text-danger
                                             ">
                                                     {{ __('out of stock') }}</div>
                                             @endif
@@ -365,6 +378,19 @@
                                                 @endif
                                                 {{ PriceHelper::grandCurrencyPrice($popular_category_item) }}
                                             </h4>
+                                            @php
+                                                $availableStock = $popular_category_item->available_stock;
+                                            @endphp
+                                            <!-- <div class="small {{ $availableStock === 'unlimited' || $availableStock > 0 ? 'text-success' : 'text-danger' }}">
+                                                @if ($availableStock === 'unlimited' || $availableStock > 0)
+                                                    {{ $availableStock === 'unlimited' ? __('Unlimited') : $availableStock }}
+                                                    @if ($availableStock !== 'unlimited')
+                                                        {{ __('items') }}
+                                                    @endif
+                                                @else
+                                                    <span class="text-danger">{{ __('Out of stock') }}</span>
+                                                @endif
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -464,7 +490,7 @@
                                             <div class="product-thumb">
                                                 @if (!$item->is_stock())
                                                     <div
-                                                        class="product-badge bg-secondary border-default text-body
+                                                        class="product-badge bg-secondary border-default text-danger
                                                     ">
                                                         {{ __('out of stock') }}</div>
                                                 @endif
@@ -539,7 +565,7 @@
                                                 <div class="product-thumb">
                                                     @if (!$item->is_stock())
                                                         <div
-                                                            class="product-badge bg-secondary border-default text-body
+                                                            class="product-badge bg-secondary border-default text-danger
                                             ">
                                                             {{ __('out of stock') }}</div>
                                                     @endif
@@ -575,13 +601,26 @@
                                                         <div class="rating-stars">
                                                             {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
                                                         </div>
-                                                        <h4 class="product-price">
-                                                            @if ($item->previous_price != 0)
-                                                                <del>{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
-                                                            @endif
+                                                    <h4 class="product-price">
+                                                        @if ($item->previous_price != 0)
+                                                            <del>{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
+                                                        @endif
 
-                                                            {{ PriceHelper::grandCurrencyPrice($item) }}
-                                                        </h4>
+                                                        {{ PriceHelper::grandCurrencyPrice($item) }}
+                                                    </h4>
+                                                    @php
+                                                        $availableStock = $item->available_stock;
+                                                    @endphp
+                                                    <!-- <div class="small {{ $availableStock === 'unlimited' || $availableStock > 0 ? 'text-success' : 'text-danger' }}">
+                                                        @if ($availableStock === 'unlimited' || $availableStock > 0)
+                                                            {{ $availableStock === 'unlimited' ? __('Unlimited') : $availableStock }}
+                                                            @if ($availableStock !== 'unlimited')
+                                                                {{ __('items') }}
+                                                            @endif
+                                                        @else
+                                                            <span class="text-danger">{{ __('Out of stock') }}</span>
+                                                        @endif
+                                                    </div> -->
                                                         @if (date('d-m-y') != \Carbon\Carbon::parse($item->date)->format('d-m-y'))
                                                             <div class="countdown countdown-alt mb-3"
                                                                 data-date-time="{{ $item->date }}">
@@ -621,7 +660,7 @@
                                                         href="{{ route('front.product', $two_column_category_item->slug) }}">
                                                         @if (!$two_column_category_item->is_stock())
                                                             <div
-                                                                class="product-badge bg-secondary border-default text-body
+                                                                class="product-badge bg-secondary border-default text-danger
                                                     ">
                                                                 {{ __('out of stock') }}</div>
                                                         @endif
@@ -644,6 +683,19 @@
                                                             @endif
                                                             {{ PriceHelper::grandCurrencyPrice($two_column_category_item) }}
                                                         </h4>
+                                                        @php
+                                                            $availableStock = $two_column_category_item->available_stock;
+                                                        @endphp
+                                                        <!-- <div class="small {{ $availableStock === 'unlimited' || $availableStock > 0 ? 'text-success' : 'text-danger' }}">
+                                                            @if ($availableStock === 'unlimited' || $availableStock > 0)
+                                                                {{ $availableStock === 'unlimited' ? __('Unlimited') : $availableStock }}
+                                                                @if ($availableStock !== 'unlimited')
+                                                                    {{ __('items') }}
+                                                                @endif
+                                                            @else
+                                                                <span class="text-danger">{{ __('Out of stock') }}</span>
+                                                            @endif
+                                                        </div> -->
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -728,7 +780,7 @@
 
                                     @if (!$feature_category_item->is_stock())
                                         <div
-                                            class="product-badge bg-secondary border-default text-body
+                                            class="product-badge bg-secondary border-default text-danger
                                     ">
                                             {{ __('out of stock') }}</div>
                                     @endif
@@ -770,6 +822,19 @@
                                         @endif
                                         {{ PriceHelper::grandCurrencyPrice($feature_category_item) }}
                                     </h4>
+                                    @php
+                                        $availableStock = $feature_category_item->available_stock;
+                                    @endphp
+                                    <!-- <div class="small {{ $availableStock === 'unlimited' || $availableStock > 0 ? 'text-success' : 'text-danger' }}">
+                                        @if ($availableStock === 'unlimited' || $availableStock > 0)
+                                            {{ $availableStock === 'unlimited' ? __('Unlimited') : $availableStock }}
+                                            @if ($availableStock !== 'unlimited')
+                                                {{ __('items') }}
+                                            @endif
+                                        @else
+                                            <span class="text-danger">{{ __('Out of stock') }}</span>
+                                        @endif
+                                    </div> -->
                                 </div>
 
                             </div>

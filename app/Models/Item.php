@@ -236,15 +236,17 @@ class Item extends Model
         // physical product stock check
 
         if($item->item_type == 'normal'){
-            if($item->stock){
-                if($item->stock != 0){
-                    return true;
-                }else{
-                    return false;
-                }
-            }else{
-                return false;
+            $stock = $item->available_stock;
+
+            if ($stock === 'unlimited') {
+                return true;
             }
+
+            if (is_numeric($stock)) {
+                return (int) $stock !== 0;
+            }
+
+            return false;
           
         }
      

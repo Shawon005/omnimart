@@ -1,6 +1,9 @@
 @foreach($datas as $data)
     <tr>
         <td>
+            {{ $data->position ?? 0 }}
+        </td>
+        <td>
             {{ $data->name }}
         </td>
         <td>

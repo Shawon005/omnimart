@@ -28,11 +28,12 @@
 
 					<thead>
 						<tr>
-              <th width="20%">{{ __('Option Name') }}</th>
-              <th width="20%">{{ __('Attribute') }}</th>
-              <th width="20%">{{ __('Current / Previous Price') }}</th>
-              <th width="20%">{{ __('Stock') }}</th>
-							<th width="15%">{{ __('Actions') }}</th>
+              <th width="12%">{{ __('Position') }}</th>
+              <th width="18%">{{ __('Option Name') }}</th>
+              <th width="18%">{{ __('Attribute') }}</th>
+              <th width="22%">{{ __('Current / Previous Price') }}</th>
+              <th width="12%">{{ __('Stock') }}</th>
+							<th width="18%">{{ __('Actions') }}</th>
 						</tr>
 					</thead>
 
