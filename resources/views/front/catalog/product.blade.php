@@ -39,6 +39,96 @@
             </div>
         </div>
     </div>
+    <style>
+        .product-title-main {
+            font-size: 2rem;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .product-short-details {
+            font-size: 1rem;
+            line-height: 1.7;
+            max-width: 42rem;
+        }
+
+        .product-price-wrap {
+            margin-bottom: 1.5rem;
+        }
+
+        .attribute-option-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .75rem;
+            margin-top: .5rem;
+        }
+
+        .attribute-option-chip {
+            margin: 0;
+            cursor: pointer;
+            min-width: 7.25rem;
+        }
+
+        .attribute-option-chip input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .attribute-option-chip-inner {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 2.5rem;
+            padding: .8rem 1rem;
+            border: 1px solid #d7d7d7;
+            border-radius: .85rem;
+            background: #fff;
+            text-align: center;
+            transition: all .2s ease;
+        }
+
+        .attribute-option-name {
+            font-weight: 600;
+            font-size: .95rem;
+            line-height: 1.1;
+        }
+
+        .attribute-option-meta {
+            margin-top: .2rem;
+            font-size: .78rem;
+            color: #7a7a7a;
+        }
+
+        .attribute-option-chip input:checked + .attribute-option-chip-inner {
+            border-color: #111;
+            box-shadow: 0 0 0 1px #111 inset;
+        }
+
+        .attribute-option-chip.is-out-of-stock .attribute-option-chip-inner {
+            opacity: .45;
+        }
+
+        .attribute-option-chip.is-out-of-stock input:checked + .attribute-option-chip-inner {
+            opacity: .55;
+        }
+
+        .product-review-summary {
+            padding-top: .25rem;
+        }
+
+        @media (max-width: 767.98px) {
+            .product-title-main {
+                font-size: 1.5rem;
+            }
+
+            .attribute-option-chip {
+                min-width: calc(50% - .75rem);
+                flex: 1 1 calc(50% - .75rem);
+            }
+        }
+    </style>
     <!-- Page Content-->
     <div class="container padding-bottom-1x mb-1">
         <div class="row">
@@ -102,11 +192,16 @@
                         <input type="hidden" value="{{ PriceHelper::setCurrencySign() }}" id="set_currency">
                         <input type="hidden" value="{{ PriceHelper::setCurrencyValue() }}" id="set_currency_val">
                         <input type="hidden" value="{{ $setting->currency_direction }}" id="currency_direction">
-                        <h1 class="mb-2 p-title-main">{{ $item->name }}</h1>
+                        <h1 class="mb-2 p-title-main product-title-main">{{ $item->name }}</h1>
+
                         <div class="mb-3">
-                            <div class="rating-stars d-inline-block gmr-3">
-                                {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
-                            </div>
+                            <p class="text-muted product-short-details mb-2">
+                                {{ $item->sort_details }}
+                                <a href="#details" class="scroll-to">{{ __('See more') }}</a>
+                            </p>
+                        </div>
+
+                        <div class="mb-3">
                             @if ($hasAvailableStock)
                                 <span id="stock_status_wrapper" class="text-success d-inline-block"
                                     data-in-stock-label="{{ __('In Stock') }}"
@@ -123,7 +218,7 @@
                                     )</b>
                                 </span>
                             @else
-                                <span class="text-danger  d-inline-block">{{ __('Out of stock') }}</span>
+                                <span class="text-danger d-inline-block">{{ __('Out of stock') }}</span>
                             @endif
                         </div>
 
@@ -135,7 +230,7 @@
                             @endif
                         @endif
 
-                        <span class="h3 d-block price-area">
+                        <span class="h3 d-block price-area product-price-wrap">
                             <small id="previous_price_area"
                                 class="d-inline-block {{ $item->previous_price != 0 ? '' : 'd-none' }}">
                                 <del id="previous_price">{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
@@ -143,33 +238,53 @@
                             <span id="main_price" class="main-price">{{ PriceHelper::grandCurrencyPrice($item) }}</span>
                         </span>
 
-                        <p class="text-muted">{{ $item->sort_details }} <a href="#details"
-                                class="scroll-to">{{ __('Read more') }}</a></p>
-
-                        <div class="row margin-top-1x">
+                        <div class="row margin-top-1x product-attribute-area">
                             @foreach ($attributes as $attribute)
                                 @if ($attribute->options->count() != 0)
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label for="{{ $attribute->name }}">{{ $attribute->name }}</label>
-                                            <select class="form-control attribute_option" id="{{ $attribute->name }}">
+                                            <label class="d-block">{{ $attribute->name }}</label>
+                                            <div class="attribute_option attribute-option-grid" id="attribute_{{ $attribute->id }}">
                                                 @foreach ($attribute->options as $option)
                                                     @php
                                                         $isOutOfStock = (int) $option->stock <= 0;
                                                     @endphp
-                                                    <option value="{{ $option->name }}" data-type="{{ $attribute->id }}"
-                                                        data-href="{{ $option->id }}"
-                                                        data-stock="{{ $option->stock }}"
-                                                        data-target="{{ PriceHelper::setConvertPrice($option->current_price ?? $option->price) }}"
-                                                        data-previous="{{ PriceHelper::setConvertPrice($option->previous_price) }}">
-                                                        {{ $option->name }}{{ $isOutOfStock ? ' - ' . __('Out of stock') : '' }}
-                                                    </option>
+                                                    <label class="attribute-option-chip {{ $isOutOfStock ? 'is-out-of-stock' : '' }}">
+                                                        <input type="radio"
+                                                            name="attribute_{{ $attribute->id }}"
+                                                            value="{{ $option->name }}"
+                                                            data-type="{{ $attribute->id }}"
+                                                            data-href="{{ $option->id }}"
+                                                            data-stock="{{ $option->stock }}"
+                                                            data-target="{{ PriceHelper::setConvertPrice($option->current_price ?? $option->price) }}"
+                                                            data-previous="{{ PriceHelper::setConvertPrice($option->previous_price) }}"
+                                                            @checked($loop->first)>
+                                                        <span class="attribute-option-chip-inner">
+                                                            <span class="attribute-option-name">{{ $option->name }}</span>
+                                                            <span class="attribute-option-meta">
+                                                                <!-- {{ PriceHelper::setConvertPrice($option->current_price ?? $option->price) }} -->
+                                                                <!-- {{ $isOutOfStock ? ' - ' . __('Out of stock') : '' }} -->
+                                                            </span>
+                                                        </span>
+                                                    </label>
                                                 @endforeach
-                                            </select>
+                                            </div>
                                         </div>
                                     </div>
                                 @endif
                             @endforeach
+                        </div>
+
+                        <div class="product-review-summary mb-4">
+                            <div class="d-flex align-items-center flex-wrap">
+                                <div class="rating-stars mr-2">
+                                    {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
+                                </div>
+                                <div class="text-muted">
+                                    {{ number_format((float) $item->reviews->avg('rating'), 2) }} -
+                                    {{ $item->reviews->where('status', 1)->count() }} {{ __('reviews') }}
+                                </div>
+                            </div>
                         </div>
                         <div class="row align-items-end pb-4">
                             <div class="col-sm-12">
