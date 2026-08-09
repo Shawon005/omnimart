@@ -41,7 +41,7 @@
           <h3 class="widget-title padding-bottom-1x">{{__('Store address')}}</h3>
           <p>{{__('Our address information')}}</p>
           <ul class="list-icon margin-bottom-1x">
-            <li> <i class="icon-map-pin text-muted"></i>{{$setting->footer_address}}</li>
+            <li> <i class="icon-map-pin text-muted"></i>{!!$setting->footer_address!!}</li>
             <li> <i class="icon-phone text-muted"></i>{{$setting->footer_phone}}</li>
           </ul>
 
