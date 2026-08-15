@@ -423,6 +423,12 @@
                         .detailsP p{
                             margin-right:unset !important;
                         }
+
+                        .specification-pagination .page-item.disabled .page-link {
+                            cursor: default;
+                            opacity: .5;
+                            pointer-events: none;
+                        }
                     </style>
                     <div class="tab-content card">
                         <div class="tab-pane fade show active detailsP" id="description" role="tabpanel"
@@ -432,7 +438,7 @@
                         <div class="tab-pane fade show" id="specification" role="tabpanel"
                             aria-labelledby="specification-tab">
                             <div class="comparison-table">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered" id="specification-table">
                                     <thead class="bg-secondary">
                                     </thead>
                                     <tbody>
@@ -442,7 +448,7 @@
                                         </tr>
                                         @if ($sec_name)
                                             @foreach (array_combine($sec_name, $sec_details) as $sname => $sdetail)
-                                                <tr>
+                                                <tr class="specification-row">
                                                     <th>{{ $sname }}</th>
                                                     <td>{{ $sdetail }}</td>
                                                 </tr>
@@ -455,6 +461,10 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <nav class="specification-pagination d-none mt-3" id="specification-pagination"
+                                aria-label="{{ __('Specifications pagination') }}">
+                                <ul class="pagination mb-0"></ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -655,7 +665,7 @@
                                         </div>
                                         <h3 class="product-title"><a
                                                 href="{{ route('front.product', $related->slug) }}">
-                                                {{ Str::limit($related->name, 35) }}
+                                                {{ Str::limit($related->name, 55) }}
                                             </a></h3>
                                         <h4 class="product-price">
                                             @if ($related->previous_price != 0)
@@ -742,4 +752,102 @@
         </form>
     @endauth
 
+@endsection
+
+@section('script')
+    <script>
+        (function () {
+            const rows = Array.from(document.querySelectorAll('#specification-table .specification-row'));
+            const pagination = document.getElementById('specification-pagination');
+
+            if (!pagination) {
+                return;
+            }
+
+            const paginationList = pagination.querySelector('.pagination');
+            const pageSize = 10;
+            const pageCount = Math.ceil(rows.length / pageSize);
+            let currentPage = 1;
+
+            if (pageCount <= 1) {
+                return;
+            }
+
+            const createPageItem = function (label, page, options = {}) {
+                const item = document.createElement('li');
+                const link = document.createElement('a');
+
+                item.className = 'page-item';
+                link.className = 'page-link';
+                link.href = '#specification';
+                link.textContent = label;
+                link.dataset.page = page;
+
+                if (options.active) {
+                    item.classList.add('active');
+                    link.setAttribute('aria-current', 'page');
+                }
+
+                if (options.disabled) {
+                    item.classList.add('disabled');
+                    link.setAttribute('aria-disabled', 'true');
+                    link.setAttribute('tabindex', '-1');
+                }
+
+                if (options.ariaLabel) {
+                    link.setAttribute('aria-label', options.ariaLabel);
+                }
+
+                item.appendChild(link);
+                return item;
+            };
+
+            const render = function () {
+                const firstVisibleRow = (currentPage - 1) * pageSize;
+                const lastVisibleRow = firstVisibleRow + pageSize;
+
+                rows.forEach(function (row, index) {
+                    row.classList.toggle('d-none', index < firstVisibleRow || index >= lastVisibleRow);
+                });
+
+                paginationList.innerHTML = '';
+                paginationList.appendChild(createPageItem('\u2039', currentPage - 1, {
+                    disabled: currentPage === 1,
+                    ariaLabel: @json(__('Previous'))
+                }));
+
+                for (let page = 1; page <= pageCount; page++) {
+                    paginationList.appendChild(createPageItem(page, page, {
+                        active: page === currentPage,
+                        ariaLabel: @json(__('Go to page')) + ' ' + page
+                    }));
+                }
+
+                paginationList.appendChild(createPageItem('\u203a', currentPage + 1, {
+                    disabled: currentPage === pageCount,
+                    ariaLabel: @json(__('Next'))
+                }));
+            };
+
+            paginationList.addEventListener('click', function (event) {
+                const link = event.target.closest('.page-link');
+
+                if (!link) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                if (link.parentElement.classList.contains('disabled')) {
+                    return;
+                }
+
+                currentPage = Number(link.dataset.page);
+                render();
+            });
+
+            pagination.classList.remove('d-none');
+            render();
+        })();
+    </script>
 @endsection

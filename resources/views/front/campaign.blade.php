@@ -81,7 +81,7 @@
 
                         <div class="product-category"><a href="{{route('front.catalog').'?category='.$compaign_item->item->category->slug}}">{{$compaign_item->item->category->name}}</a></div>
                         <h3 class="product-title"><a href="{{route('front.product',$compaign_item->item->slug)}}">
-                            {{ Str::limit($compaign_item->item->name, 35) }}
+                            {{ Str::limit($compaign_item->item->name, 55) }}
                         </a></h3>
                         <div class="rating-stars">
                             {!! Helper::renderStarRating($compaign_item->item->reviews->avg('rating')) !!}

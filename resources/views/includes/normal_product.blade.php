@@ -19,7 +19,7 @@
                     <div class="product-card-body">
                         <div class="product-category"><a href="{{route('front.catalog').'?category='.$item->category->slug}}">{{$item->category->name}}</a></div>
                         <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
-                            {{ Str::limit($item->name, 45) }}
+                            {{ Str::limit($item->name, 55) }}
                         </a></h3>
                         <div class="rating-stars">
                         <i class="fas fa-star filled"></i><i class="fas fa-star filled"></i><i class="fas fa-star filled"></i><i class="fas fa-star filled"></i><i class="fas fa-star filled"></i>

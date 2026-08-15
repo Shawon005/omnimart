@@ -105,7 +105,7 @@
                                             <div class="product-card-body">
                                                 <div class="product-category"><a href="{{route('front.catalog').'?category='.$item->category->slug}}">{{$item->category->name}}</a></div>
                                                 <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
-                                                    {{ Str::limit($item->name,35) }}
+                                                    {{ Str::limit($item->name,55) }}
                                                 </a></h3>
                                                 <div class="rating-stars">
                                                     {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
@@ -217,7 +217,7 @@
 
                                                     <div class="product-category"><a href="{{route('front.catalog').'?category='.$item->category->slug}}">{{$item->category->name}}</a></div>
                                                     <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
-                                                        {{ Str::limit($item->name,50) }}
+                                                        {{ Str::limit($item->name,55) }}
                                                     </a></h3>
                                                     <div class="rating-stars">
                                                         {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
@@ -353,7 +353,7 @@
 
                                                     <div class="product-category"><a href="{{route('front.catalog').'?category='.$item->category->slug}}">{{$item->category->name}}</a></div>
                                                     <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
-                                                        {{ Str::limit($item->name,35) }}
+                                                        {{ Str::limit($item->name,55) }}
                                                     </a></h3>
                                                     <div class="rating-stars">
                                                         {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
@@ -509,4 +509,3 @@
     @endif
 
 @endsection
-

@@ -175,7 +175,7 @@
                                             <div class="product-card-body">
                                                 <div class="product-category"><a href="{{route('front.catalog').'?category='.$item->category->slug}}">{{$item->category->name}}</a></div>
                                                 <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
-                                                    {{ Str::limit($item->name,35) }}
+                                                    {{ Str::limit($item->name,55) }}
                                                 </a></h3>
                                                 <div class="rating-stars">
                                                     {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
@@ -239,7 +239,7 @@
 
                                                     <div class="product-category"><a href="{{route('front.catalog').'?category='.$item->category->slug}}">{{$item->category->name}}</a></div>
                                                     <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
-                                                        {{ Str::limit($item->name,50) }}
+                                                        {{ Str::limit($item->name,55) }}
                                                     </a></h3>
                                                     <div class="rating-stars">
                                                         {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
@@ -367,7 +367,7 @@
                                     <div class="product-card-body">
                                         <div class="product-category"><a href="{{route('front.catalog').'?category='.$popular_category_item->category->slug}}">{{$popular_category_item->category->name}}</a></div>
                                         <h3 class="product-title"><a href="{{route('front.product',$popular_category_item->slug)}}">
-                                            {{ Str::limit($popular_category_item->name,35) }}
+                                            {{ Str::limit($popular_category_item->name,55) }}
                                         </a></h3>
                                         <div class="rating-stars">
                                         <i class="fas fa-star filled"></i><i class="fas fa-star filled"></i><i class="fas fa-star filled"></i><i class="fas fa-star filled"></i><i class="fas fa-star filled"></i>
@@ -416,7 +416,7 @@
                                             <img class="lazy" data-src="{{url('/core/public/storage/images/'.$two_column_category_item->thumbnail)}}" alt="Product"></a>
                                         <div class="product-card-body">
                                             <h3 class="product-title"><a href="{{route('front.product',$two_column_category_item->slug)}}">
-                                                {{ Str::limit($two_column_category_item->name,40) }}
+                                                {{ Str::limit($two_column_category_item->name,55) }}
                                             </a></h3>
                                             <div class="rating-stars">
                                                 {!! Helper::renderStarRating($two_column_category_item->reviews->avg('rating')) !!}
@@ -552,4 +552,3 @@
 
 
 @endsection
-
