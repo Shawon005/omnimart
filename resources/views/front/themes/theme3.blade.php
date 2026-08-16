@@ -26,9 +26,11 @@
                                         </p>
                                     </div>
                                     <div class="layer-2">
-                                        <h1 class="title">
-                                            {{ $slider->details }}
-                                        </h1>
+                                        @if ($loop->first)
+                                            <h1 class="title">{{ $slider->details }}</h1>
+                                        @else
+                                            <h2 class="title">{{ $slider->details }}</h2>
+                                        @endif
                                     </div>
                                     @if($slider->link != '#')
                                     <div class="layer-3">
@@ -47,7 +49,7 @@
                         <div class="col-xl-7 col-lg-6 order-first order-lg-last">
                         <div class="layer-4">
                             <div class="right-img">
-                            <img class="img-fluid full-img" src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="">
+                            <img class="img-fluid full-img" src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="{{ $slider->title }}">
                             </div>
                         </div>
                         </div>
@@ -165,7 +167,7 @@
                                                 @if($item->previous_price && $item->previous_price !=0)
                                                 <div class="product-badge product-badge2 bg-info"> -{{PriceHelper::DiscountPercentage($item)}}</div>
                                                 @endif
-                                                <img class="lazy" data-src="{{url('/core/public/storage/images/'.$item->thumbnail)}}" alt="Product">
+                                                <img class="lazy" data-src="{{url('/core/public/storage/images/'.$item->thumbnail)}}" alt="{{ $item->alt_text ?: $item->name }}">
                                                 <div class="product-button-group"><a class="product-button wishlist_store" href="{{route('user.wishlist.store',$item->id)}}" title="{{__('Wishlist')}}"><i class="icon-heart"></i></a>
                                                     <a data-target="{{route('fornt.compare.product',$item->id)}}" class="product-button product_compare" href="javascript:;" title="{{__('Compare')}}"><i class="icon-repeat"></i></a>
                                                     @include('includes.item_footer',['sitem' => $item])
@@ -228,7 +230,7 @@
                                                 @if($item->previous_price && $item->previous_price !=0)
                                                 <div class="product-badge product-badge2 bg-info"> -{{PriceHelper::DiscountPercentage($item)}}</div>
                                                 @endif
-                                                <img class="lazy" data-src="{{url('/core/public/storage/images/'.$item->thumbnail)}}" alt="Product">
+                                                <img class="lazy" data-src="{{url('/core/public/storage/images/'.$item->thumbnail)}}" alt="{{ $item->alt_text ?: $item->name }}">
                                                 <div class="product-button-group"><a class="product-button wishlist_store" href="{{route('user.wishlist.store',$item->id)}}" title="{{__('Wishlist')}}"><i class="icon-heart"></i></a>
                                                     <a data-target="{{route('fornt.compare.product',$item->id)}}" class="product-button product_compare" href="javascript:;" title="{{__('Compare')}}"><i class="icon-repeat"></i></a>
                                                     @include('includes.item_footer',['sitem' => $item])
@@ -357,7 +359,7 @@
                                         @if($popular_category_item->previous_price && $popular_category_item->previous_price !=0)
                                         <div class="product-badge product-badge2 bg-info"> -{{PriceHelper::DiscountPercentage($popular_category_item)}}</div>
                                         @endif
-                                            <img class="lazy" data-src="{{url('/core/public/storage/images/'.$popular_category_item->thumbnail)}}" alt="Product">
+                                            <img class="lazy" data-src="{{url('/core/public/storage/images/'.$popular_category_item->thumbnail)}}" alt="{{ $popular_category_item->alt_text ?: $popular_category_item->name }}">
                                         <div class="product-button-group"><a class="product-button wishlist_store" href="{{route('user.wishlist.store',$popular_category_item->id)}}" title="{{__('Wishlist')}}"><i class="icon-heart"></i></a>
                                             <a data-target="{{route('fornt.compare.product',$popular_category_item->id)}}" class="product-button product_compare" href="javascript:;" title="{{__('Compare')}}"><i class="icon-repeat"></i></a>
 
@@ -413,7 +415,7 @@
                                                 ">{{__('out of stock')}}</div>
                                                 @endif
 
-                                            <img class="lazy" data-src="{{url('/core/public/storage/images/'.$two_column_category_item->thumbnail)}}" alt="Product"></a>
+                                            <img class="lazy" data-src="{{url('/core/public/storage/images/'.$two_column_category_item->thumbnail)}}" alt="{{ $two_column_category_item->alt_text ?: $two_column_category_item->name }}"></a>
                                         <div class="product-card-body">
                                             <h3 class="product-title"><a href="{{route('front.product',$two_column_category_item->slug)}}">
                                                 {{ Str::limit($two_column_category_item->name,55) }}

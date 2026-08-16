@@ -1,10 +1,16 @@
 @extends('master.front')
+@php
+    $catalogEntity = $category ?? $subcategory ?? $childcategory ?? $brand ?? null;
+    $catalogHeading = $catalogEntity ? $catalogEntity->name : __('Products');
+    $catalogDescription = ($category->meta_descriptions ?? null)
+        ?: __('Shop :name at Moon Fashion PT. Discover authentic fragrances, fashion and accessories with delivery from Portugal.', ['name' => $catalogHeading]);
+@endphp
 @section('meta')
-<meta name="keywords" content="{{$setting->meta_keywords}}">
-<meta name="description" content="{{$setting->meta_description}}">
+<meta name="keywords" content="{{ $category->meta_keywords ?? $setting->meta_keywords }}">
+<meta name="description" content="{{ Str::limit(trim(strip_tags($catalogDescription)), 160, '') }}">
 @endsection
 @section('title')
-    {{__('Products')}}
+    {{ $catalogHeading }}
 @endsection
 
 @section('content')
@@ -25,6 +31,7 @@
 
   <!-- Page Content-->
   <div class="container padding-bottom-3x mb-1">
+        <h1 class="sr-only">{{ $catalogHeading }}</h1>
         <div class="row">
             <div class="col-lg-12">
                 <div class="shop-top-filter-wrapper">
@@ -185,4 +192,3 @@
         <button type="submit" id="search_button" class="d-none"></button>
     </form>
 @endsection
-

@@ -4,6 +4,10 @@
     {{ __('Blog') }}
 @endsection
 
+@section('meta')
+    <meta name="description" content="{{ __('Read fragrance guides, perfume care advice and fashion inspiration from Moon Fashion PT.') }}">
+@endsection
+
 @section('content')
     <!-- Page Title-->
     <div class="page-title">
@@ -21,6 +25,7 @@
     </div>
 
     <div class="container blog-page">
+        <h1 class="sr-only">{{ __('Moon Fashion PT Blog') }}</h1>
         <div class="row ">
             <!-- Content-->
             <div class="col-xl-9 col-lg-8 order-lg-2">

@@ -24,6 +24,7 @@
   </div>
   <!-- Page Content-->
   <div class="container padding-bottom-3x mb-1 contact-page">
+    <h1 class="sr-only">{{ __('Contact Moon Fashion PT') }}</h1>
     <div class="row">
       <div class="col-lg-4 col-md-5 col-sm-5 order-lg-1 order-md-2 order-sm-2">
 

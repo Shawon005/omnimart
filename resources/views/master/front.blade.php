@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ config('seo.default_locale', 'en') }}">
  
 <head>
     <meta charset="UTF-8">
@@ -15,34 +15,57 @@
         <meta name="distribution" content="web">
         <meta name="description" content="{{ $setting->meta_description }}">
         <meta name="keywords" content="{{ $setting->meta_keywords }}">
-        <meta name="image" content="{{ url('/core/public/storage/images/' . $setting->meta_image) }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ $setting->home_page_title ?: $setting->title }}">
+        <meta name="twitter:description" content="{{ $setting->meta_description }}">
+        <meta name="twitter:image" content="{{ \App\Helpers\SeoHelper::imageUrl($setting->meta_image) }}">
         <meta property="og:title" content="{{ $setting->title }}">
         <meta property="og:description" content="{{ $setting->meta_description }}">
-        <meta property="og:image" content="{{ url('/core/public/storage/images/' . $setting->meta_image) }}">
-        <meta property="og:image:secure_url" content="{{ url('/core/public/storage/images/' . $setting->meta_image) }}" />
-        <meta property="og:image:type" content="image/jpeg"/>
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="627" />
-        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:image" content="{{ \App\Helpers\SeoHelper::imageUrl($setting->meta_image) }}">
+        <meta property="og:url" content="{{ \App\Helpers\SeoHelper::siteUrl() }}/">
         <meta property="og:site_name" content="{{ $setting->title }}">
         <meta property="og:type" content="website">
     @else
         @yield('meta')
     @endif
 
-    {{-- Hreflang Tags --}}
+    <link rel="canonical" href="@yield('canonical', \App\Helpers\SeoHelper::canonicalUrl())">
+    <meta name="robots" content="@yield('robots', \App\Helpers\SeoHelper::robots())">
+
     @php
-    $languages = \App\Models\Language::whereType('Website')->get();
-    $currentUrl = url()->current();
+        $organizationSchema = array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            '@id' => \App\Helpers\SeoHelper::siteUrl() . '/#organization',
+            'name' => $setting->title ?: 'Moon Fashion PT',
+            'url' => \App\Helpers\SeoHelper::siteUrl() . '/',
+            'logo' => \App\Helpers\SeoHelper::imageUrl($setting->logo),
+            'email' => $setting->footer_email ?: $setting->contact_email,
+            'telephone' => $setting->footer_phone,
+            'address' => [
+                '@type' => 'PostalAddress',
+                'streetAddress' => $setting->footer_address,
+                'addressCountry' => 'PT',
+            ],
+        ], fn ($value) => $value !== null && $value !== '');
     @endphp
-    @foreach($languages as $lang)
-   
-    <link rel="alternate" hreflang="{{ $lang->language }}" href="{{ $currentUrl . '/set/language/' . $lang->id }}" />
-    @endforeach
-    <link rel="alternate" hreflang="x-default" href="{{ $currentUrl }}" />
+    <script type="application/ld+json">{!! \App\Helpers\SeoHelper::jsonLd($organizationSchema) !!}</script>
+    @if (request()->routeIs('front.index'))
+        @php
+            $websiteSchema = [
+                '@context' => 'https://schema.org',
+                '@type' => 'WebSite',
+                '@id' => \App\Helpers\SeoHelper::siteUrl() . '/#website',
+                'url' => \App\Helpers\SeoHelper::siteUrl() . '/',
+                'name' => $setting->title ?: 'Moon Fashion PT',
+                'publisher' => ['@id' => \App\Helpers\SeoHelper::siteUrl() . '/#organization'],
+            ];
+        @endphp
+        <script type="application/ld+json">{!! \App\Helpers\SeoHelper::jsonLd($websiteSchema) !!}</script>
+    @endif
 
     <!-- Mobile Specific Meta Tag-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Favicon Icons-->
     <link rel="icon" type="image/png" href="{{ url('/core/public/storage/images/' . $setting->favicon) }}">
@@ -114,7 +137,11 @@
             };
             
             // Available languages from DB
-            var availableLanguages = @json($languages->map(fn($l) => ['id' => $l->id, 'language' => $l->language]));
+            var availableLanguages = @json(
+                DB::table('languages')
+                    ->where('type', 'Website')
+                    ->get(['id', 'language'])
+            );
             console.log('availableLanguages',availableLanguages);
             var browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
             

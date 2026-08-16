@@ -2,9 +2,24 @@
 @section('meta')
 <meta name="keywords" content="{{$category->meta_keywords}}">
 <meta name="description" content="{{$category->meta_descriptions}}">
+@php
+    $faqSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'FAQPage',
+        'mainEntity' => $category->faqs->map(fn ($faq) => [
+            '@type' => 'Question',
+            'name' => $faq->title,
+            'acceptedAnswer' => [
+                '@type' => 'Answer',
+                'text' => trim(strip_tags($faq->details)),
+            ],
+        ])->values()->all(),
+    ];
+@endphp
+<script type="application/ld+json">{!! \App\Helpers\SeoHelper::jsonLd($faqSchema) !!}</script>
 @endsection
 @section('title')
-    {{__('FAQ')}}
+    {{ $category->name }}
 @endsection
 
 @section('content')
@@ -28,6 +43,7 @@
   </div>
   <!-- Page Content-->
   <div class="container padding-bottom-1x mb-3">
+      <h1 class="sr-only">{{ $category->name }}</h1>
       @foreach ($category->faqs as $key => $faq)
       <div class="accordion" id="accordion1">
         <div class="card accordion-item mb-4">

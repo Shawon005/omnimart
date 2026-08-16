@@ -1,6 +1,6 @@
 @extends('master.front')
 @section('title')
-    {{ __('Blog Details') }}
+    {{ $post->title }}
 @endsection
 @php
     if ($post->meta_keywords) {
@@ -10,18 +10,59 @@
     }
 @endphp
 @section('meta')
+    @php
+        $seo = \App\Helpers\SeoHelper::class;
+        $canonicalUrl = $seo::routeUrl('front.blog.details', $post->getRawOriginal('slug'));
+        $postPhotos = array_values(array_filter((array) json_decode($post->photo, true)));
+        $postImages = array_values(array_filter(array_map(fn ($photo) => $seo::imageUrl($photo), $postPhotos)));
+        $postDescription = $post->meta_descriptions ?: Str::limit(trim(strip_tags($post->details)), 160, '');
+        $articleSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BlogPosting',
+            '@id' => $canonicalUrl . '#article',
+            'mainEntityOfPage' => $canonicalUrl,
+            'headline' => $post->title,
+            'description' => $postDescription,
+            'image' => $postImages,
+            'datePublished' => optional($post->created_at)->toIso8601String(),
+            'dateModified' => optional($post->updated_at ?: $post->created_at)->toIso8601String(),
+            'author' => ['@type' => 'Organization', 'name' => $setting->title ?: 'Moon Fashion PT'],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => $setting->title ?: 'Moon Fashion PT',
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => $seo::imageUrl($setting->logo),
+                ],
+            ],
+        ];
+        $breadcrumbSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => __('Home'), 'item' => $seo::routeUrl('front.index')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => __('Blog'), 'item' => $seo::routeUrl('front.blog')],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $post->title, 'item' => $canonicalUrl],
+            ],
+        ];
+    @endphp
     <meta name="title" content="{{ $post->title }}">
     <meta name="keywords" content="{{ $keyword }}">
-    <meta name="description" content="{{ $post->meta_descriptions }}">
+    <meta name="description" content="{{ $postDescription }}">
 
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $post->title }}">
-    <meta name="twitter:image" content="{{ url('/core/public/storage/images/' . json_decode($post->photo, true)[0]) }}">
-    <meta name="twitter:description" content="{{ $post->meta_descriptions }}">
+    <meta name="twitter:image" content="{{ $postImages[0] ?? null }}">
+    <meta name="twitter:description" content="{{ $postDescription }}">
 
-    <meta name="og:title" content="{{ $post->title }}">
-    <meta name="og:image" content="{{ url('/core/public/storage/images/' . json_decode($post->photo, true)[0]) }}">
-    <meta name="og:description" content="{{ $post->meta_descriptions }}">
+    <meta property="og:title" content="{{ $post->title }}">
+    <meta property="og:image" content="{{ $postImages[0] ?? null }}">
+    <meta property="og:description" content="{{ $postDescription }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    <meta property="og:type" content="article">
 
+    <script type="application/ld+json">{!! $seo::jsonLd(array_filter($articleSchema, fn ($value) => $value !== null && $value !== '')) !!}</script>
+    <script type="application/ld+json">{!! $seo::jsonLd($breadcrumbSchema) !!}</script>
 @endsection
 
 
@@ -57,7 +98,7 @@
                         @endforeach
                     </div>
                     <div class="blog-details-main-content">
-                        <h4 class="pt-4 b-d-title">{{ $post->title }}</h4>
+                        <h1 class="pt-4 b-d-title">{{ $post->title }}</h1>
                         <ul class="post-meta mb-4">
                             <li><i class="icon-user"></i><a href="javascript:;}">{{ __('Admin') }}</a></li>
                             <li><i class="icon-tag"></i><a

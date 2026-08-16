@@ -6,17 +6,83 @@
 
 
 @section('meta')
-    <meta name="title" content="{{ $item->meta_title }}">
+    @php
+        $seo = \App\Helpers\SeoHelper::class;
+        $canonicalUrl = $seo::routeUrl('front.product', $item->getRawOriginal('slug'));
+        $productImage = $seo::imageUrl($item->photo);
+        $productDescription = $item->meta_description ?: ($item->sort_details ?: strip_tags($item->details));
+        $defaultCurrency = \App\Models\Currency::where('is_default', 1)->first();
+        $currencyCode = strtoupper($defaultCurrency->name ?? 'EUR');
+        $schemaPrice = round((float) $item->discount_price * (float) ($defaultCurrency->value ?? 1), 2);
+        $schemaStock = $item->available_stock;
+        $approvedReviews = $item->reviews->where('status', 1);
+        $productImages = array_values(array_filter(array_merge(
+            [$productImage],
+            $galleries->map(fn ($gallery) => $seo::imageUrl($gallery->photo))->all()
+        )));
+        $productSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            '@id' => $canonicalUrl . '#product',
+            'name' => $item->name,
+            'image' => $productImages,
+            'description' => trim(strip_tags($productDescription)),
+            'sku' => $item->sku,
+            'category' => $item->category->name,
+            'brand' => $item->brand_id ? [
+                '@type' => 'Brand',
+                'name' => $item->brand->name,
+            ] : null,
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => $canonicalUrl,
+                'priceCurrency' => $currencyCode,
+                'price' => number_format($schemaPrice, 2, '.', ''),
+                'availability' => ($schemaStock === 'unlimited' || (int) $schemaStock > 0)
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/OutOfStock',
+                'itemCondition' => 'https://schema.org/NewCondition',
+                'seller' => [
+                    '@type' => 'Organization',
+                    'name' => $setting->title ?: 'Moon Fashion PT',
+                ],
+            ],
+        ];
+        if ($approvedReviews->isNotEmpty()) {
+            $productSchema['aggregateRating'] = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => number_format((float) $approvedReviews->avg('rating'), 1, '.', ''),
+                'reviewCount' => $approvedReviews->count(),
+            ];
+        }
+        $breadcrumbSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => __('Home'), 'item' => $seo::routeUrl('front.index')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => __('Shop'), 'item' => $seo::routeUrl('front.catalog')],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $item->category->name, 'item' => $seo::routeUrl('front.catalog', ['category' => $item->category->getRawOriginal('slug')])],
+                ['@type' => 'ListItem', 'position' => 4, 'name' => $item->name, 'item' => $canonicalUrl],
+            ],
+        ];
+    @endphp
+    <meta name="title" content="{{ $item->meta_title ?: $item->name }}">
     <meta name="keywords" content="{{ $item->meta_keywords }}">
-    <meta name="description" content="{{ $item->meta_description }}">
+    <meta name="description" content="{{ Str::limit(trim(strip_tags($productDescription)), 160, '') }}">
 
-    <meta name="twitter:title" content="{{ $item->meta_title }}">
-    <meta name="twitter:image" content="{{ url('/core/public/storage/images/' . $item->photo) }}">
-    <meta name="twitter:description" content="{{ $item->meta_description }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $item->meta_title ?: $item->name }}">
+    <meta name="twitter:image" content="{{ $productImage }}">
+    <meta name="twitter:description" content="{{ Str::limit(trim(strip_tags($productDescription)), 160, '') }}">
 
-    <meta name="og:title" content="{{ $item->name }}">
-    <meta name="og:image" content="{{ url('/core/public/storage/images/' . $item->photo) }}">
-    <meta name="og:description" content="{{ $item->meta_description }}">
+    <meta property="og:title" content="{{ $item->name }}">
+    <meta property="og:image" content="{{ $productImage }}">
+    <meta property="og:description" content="{{ Str::limit(trim(strip_tags($productDescription)), 160, '') }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    <meta property="og:type" content="product">
+
+    <script type="application/ld+json">{!! $seo::jsonLd(array_filter($productSchema, fn ($value) => $value !== null && $value !== '')) !!}</script>
+    <script type="application/ld+json">{!! $seo::jsonLd($breadcrumbSchema) !!}</script>
 @endsection
 
 

@@ -24,6 +24,7 @@
   </div>
   <!-- Page Content-->
   <div class="container">
+    <h1 class="sr-only">{{ __('Frequently Asked Questions') }}</h1>
     <div class="row">
         @foreach ($fcategories as $category)
             <div class="col-lg-4 col-md-6">

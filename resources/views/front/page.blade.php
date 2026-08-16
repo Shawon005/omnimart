@@ -1,7 +1,12 @@
 @extends('master.front')
 
 @section('title')
-    {{__('Page')}}
+    {{ $page->title }}
+@endsection
+
+@section('meta')
+    <meta name="keywords" content="{{ $page->meta_keywords }}">
+    <meta name="description" content="{{ Str::limit(trim(strip_tags($page->meta_descriptions ?: $page->details)), 160, '') }}">
 @endsection
 
 @section('content')
@@ -28,7 +33,7 @@
                 <div class="card mb-5">
                     <div class="card-body px-3 py-5">
                         <div class="d-page-content">
-                            <h4 class="d-block text-center"><b>{{$page->title}}</b></h4>
+                            <h1 class="h4 d-block text-center"><b>{{$page->title}}</b></h1>
                             {!! $page->details !!}
                         </div>
                     </div>

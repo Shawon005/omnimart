@@ -301,6 +301,31 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
 
 // ************************************ ADMIN PANEL ENDS**********************************************
 
+// Preserve authority from the previous storefront while consolidating old URLs.
+Route::get('/shop/page/{page}', function (int $page) {
+    return redirect(\App\Helpers\SeoHelper::url('catalog').'?page='.$page, 301);
+})->whereNumber('page');
+Route::get('/shop', function () {
+    return redirect(\App\Helpers\SeoHelper::url('catalog'), 301);
+});
+Route::get('/product-category/{slug}/page/{page}', function (string $slug, int $page) {
+    return redirect(\App\Helpers\SeoHelper::url('catalog').'?category='.rawurlencode($slug).'&page='.$page, 301);
+})->whereNumber('page');
+Route::get('/product-category/{slug}', function (string $slug) {
+    return redirect(\App\Helpers\SeoHelper::url('catalog').'?category='.rawurlencode($slug), 301);
+});
+
+// This must be registered before the catch-all /{slug} content-page route.
+Route::get('/sitemap.xml', 'Front\SitemapController')
+    ->withoutMiddleware([
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ])
+    ->name('sitemap');
+
 
 
 // ************************************ GLOBAL LOCALIZATION **********************************************

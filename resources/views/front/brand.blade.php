@@ -24,6 +24,7 @@
   </div>
   <!-- Page Content-->
   <div class="container">
+    <h1 class="sr-only">{{ __('Shop by Brand') }}</h1>
     <div class="row g-3">
         @foreach ($brands as $brand)
             <div class="col-xxl-2 col-xl-3 col-lg-4 col-md-4 col-6">

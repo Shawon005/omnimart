@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-title">
-                        <h2 class="h3">{{ $setting->campaign_title }}</h2>
+                        <h1 class="h3">{{ $setting->campaign_title }}</h1>
                         <div class="right-area">
                                 <div class="countdown countdown-alt" data-date-time="{{$setting->campaign_end_date}}"></div>
                         </div>
